@@ -24,6 +24,7 @@ import {
 } from "@/components/RetoIcons";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import CircuitBackdrop from "@/components/CircuitBackdrop";
+import StickyInscriptionCTA from "@/components/StickyInscriptionCTA";
 
 export const metadata = {
   title: `Reto Nacional CSI ${RETO_YEAR} — Competencia Nacional de Arduino`,
@@ -44,6 +45,7 @@ const cronogramaTone: Record<string, string> = {
 export default function RetoNacionalPage() {
   return (
     <>
+      <StickyInscriptionCTA />
       {/* HERO */}
       <section className="bg-ink text-surface relative overflow-hidden">
         <CircuitBackdrop variant="stack" />
@@ -96,18 +98,19 @@ export default function RetoNacionalPage() {
             </div>
           </div>
 
-          <div className="mt-10 flex flex-wrap gap-3">
+          <div className="mt-10 flex flex-wrap gap-4 items-center">
             <Link
               href="/reto-nacional/inscripcion"
-              className="inline-flex items-center bg-accent text-ink px-7 py-3.5 text-base font-semibold hover:bg-accent-bright glow-gold transition"
+              className="inline-flex items-center gap-2 bg-accent text-ink px-9 py-5 text-lg font-semibold hover:bg-accent-bright glow-gold transition shadow-lg shadow-accent/20"
             >
-              Inscribir mi equipo →
+              <span>Inscribir mi equipo</span>
+              <span aria-hidden>→</span>
             </Link>
             <a
               href="#reglas"
-              className="inline-flex items-center px-7 py-3.5 text-base text-muted-2 hover:text-surface transition"
+              className="inline-flex items-center border border-white/20 px-6 py-3 text-sm text-muted-2 hover:border-surface hover:text-surface transition"
             >
-              Ver reglas y cronograma
+              Ver reglas
             </a>
           </div>
         </div>
@@ -273,20 +276,17 @@ export default function RetoNacionalPage() {
             </p>
           </div>
 
-          <div className="space-y-4 max-w-3xl">
-            {criterios.map((c) => (
-              <div
-                key={c.t}
-                className="grid grid-cols-12 gap-4 md:gap-6 items-baseline border-b border-border pb-4"
-              >
-                <div className="col-span-3 md:col-span-2 font-mono text-3xl text-accent-dark">
-                  {c.pct}%
+          <div className="grid md:grid-cols-2 gap-px bg-border border border-border max-w-3xl">
+            {criterios.map((c, i) => (
+              <div key={c.t} className="bg-surface p-6 md:p-7">
+                <div className="font-mono text-sm text-accent-dark mb-3">
+                  {String(i + 1).padStart(2, "0")}
                 </div>
-                <div className="col-span-9 md:col-span-10">
-                  <div className="font-display text-xl tracking-tight">
-                    {c.t}
-                  </div>
-                  <div className="mt-1 text-muted">{c.d}</div>
+                <div className="font-display text-xl tracking-tight">
+                  {c.t}
+                </div>
+                <div className="mt-2 text-sm text-muted leading-relaxed">
+                  {c.d}
                 </div>
               </div>
             ))}

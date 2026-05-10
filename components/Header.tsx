@@ -40,9 +40,10 @@ export default function Header() {
 
         <Link
           href="/reto-nacional/inscripcion"
-          className="hidden md:inline-flex items-center bg-ink text-surface px-4 py-2 text-sm font-medium hover:bg-accent hover:text-ink transition"
+          className="hidden md:inline-flex items-center gap-1.5 bg-accent text-ink px-5 py-2.5 text-sm font-semibold hover:bg-accent-bright glow-gold transition"
         >
-          Inscribirme →
+          <span>Inscribirme</span>
+          <span aria-hidden>→</span>
         </Link>
       </div>
     </header>

@@ -1,7 +1,7 @@
 export const RETO_YEAR = "2026";
 
 export const RETO_DATES = {
-  inscripcionFrom: "14 de mayo",
+  inscripcionFrom: "18 de mayo",
   inscripcionTo: "31 de mayo",
   entregaProyecto: "15 de junio",
   finalistas: "20 de junio",
@@ -41,7 +41,7 @@ export const requisitos = [
 
 export const cronograma = [
   {
-    date: "14 May",
+    date: "18 May",
     event: "Lanzamiento del Reto + apertura de inscripciones",
     tone: "open",
   },
@@ -91,10 +91,10 @@ export const entregables = [
 ];
 
 export const criterios = [
-  { pct: 30, t: "Funcionalidad", d: "¿La simulación funciona correctamente?" },
-  { pct: 25, t: "Creatividad", d: "¿Es original e innovador?" },
-  { pct: 25, t: "Impacto social", d: "¿Resuelve un problema real?" },
-  { pct: 20, t: "Calidad del código", d: "¿Está bien estructurado y documentado?" },
+  { t: "Funcionalidad", d: "¿La simulación funciona correctamente?" },
+  { t: "Creatividad", d: "¿Es original e innovador?" },
+  { t: "Impacto social", d: "¿Resuelve un problema real?" },
+  { t: "Calidad del código", d: "¿Está bien estructurado y documentado?" },
 ];
 
 export const finalSegments = [
@@ -126,8 +126,14 @@ export const premios = [
     premio: "Laptop para cada integrante del equipo",
     featured: true,
   },
-  { lugar: "2do lugar", premio: "Por anunciar" },
-  { lugar: "3er lugar", premio: "Por anunciar" },
+  {
+    lugar: "2do lugar",
+    premio: "Celular Samsung para cada integrante del equipo",
+  },
+  {
+    lugar: "3er lugar",
+    premio: "Certificado de regalo de $100 para cada integrante",
+  },
 ];
 
 export const REGIONES_EDUCATIVAS = [

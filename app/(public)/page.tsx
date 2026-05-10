@@ -12,6 +12,28 @@ import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 export default function HomePage() {
   return (
     <>
+      {/* RETO BANNER */}
+      <Link
+        href="/reto-nacional/inscripcion"
+        className="block bg-accent text-ink hover:bg-accent-bright transition relative overflow-hidden group"
+      >
+        <div className="mx-auto max-w-6xl px-6 py-3 flex flex-wrap items-center justify-center md:justify-between gap-3 text-center md:text-left">
+          <div className="flex items-center gap-3 flex-wrap justify-center">
+            <span className="text-xl">🏆</span>
+            <span className="text-sm md:text-base font-semibold">
+              Reto Nacional CSI 2026 · Inscripciones abiertas
+            </span>
+            <span className="hidden md:inline text-xs font-mono opacity-80">
+              18 al 31 de mayo
+            </span>
+          </div>
+          <span className="inline-flex items-center gap-1.5 text-sm font-semibold bg-ink text-accent px-4 py-1.5 group-hover:bg-ink/80 transition whitespace-nowrap">
+            <span>Inscribir mi equipo</span>
+            <span aria-hidden>→</span>
+          </span>
+        </div>
+      </Link>
+
       {/* HERO */}
       <section className="bg-ink text-surface relative overflow-hidden">
         <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
