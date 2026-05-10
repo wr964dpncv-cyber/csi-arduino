@@ -14,6 +14,7 @@ const navItems = [
   { href: "/admin/respuestas", label: "Respuestas Quiz" },
   { href: "/admin/talleres", label: "Talleres" },
   { href: "/admin/calendario", label: "Calendario" },
+  { href: "/admin/usuarios", label: "Usuarios" },
 ];
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {

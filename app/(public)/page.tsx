@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import ArduinoSchematic from "@/components/ArduinoSchematic";
 import CodeBlock from "@/components/CodeBlock";
@@ -232,38 +233,50 @@ export default function HomePage() {
       {/* INSTRUCTOR */}
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
-          <div className="max-w-3xl">
-            <div className="text-sm text-muted mb-3">El instructor</div>
-            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
-              Daniel Abadi
-            </h2>
-            <p className="mt-6 text-lg text-muted leading-relaxed">
-              Creador del programa Principios de Arduino y miembro del Cuerpo
-              de Solidaridad Informática del MEDUCA. Diseñó este currículo para
-              que cualquier estudiante panameño pueda construir sus propios
-              proyectos con Arduino.
-            </p>
-            <p className="mt-4 text-muted leading-relaxed">
-              Para consultas sobre el programa, talleres o quizzes, contáctalo
-              directamente.
-            </p>
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            <div className="lg:col-span-5">
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-2">
+                <Image
+                  src="/daniel-abadi.jpg"
+                  alt="Daniel Abadi · Instructor del programa Principios de Arduino"
+                  fill
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+            <div className="lg:col-span-7">
+              <div className="text-sm text-muted mb-3">El instructor</div>
+              <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+                Daniel Abadi
+              </h2>
+              <p className="mt-6 text-lg text-muted leading-relaxed">
+                Creador del programa Principios de Arduino. Diseñó este
+                currículo para que cualquier estudiante panameño pueda construir
+                sus propios proyectos con Arduino.
+              </p>
+              <p className="mt-4 text-muted leading-relaxed">
+                Para consultas sobre el programa, talleres o quizzes,
+                contáctalo directamente.
+              </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="mailto:daniel10abadi@gmail.com"
-                className="inline-flex items-center border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
-              >
-                daniel10abadi@gmail.com
-              </a>
-              <a
-                href="https://wa.me/50768641929"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
-              >
-                <WhatsAppIcon className="h-4 w-4 text-[#25D366] transition-transform group-hover:scale-110" />
-                <span>+507 6864-1929</span>
-              </a>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a
+                  href="mailto:daniel10abadi@gmail.com"
+                  className="inline-flex items-center border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
+                >
+                  daniel10abadi@gmail.com
+                </a>
+                <a
+                  href="https://wa.me/50768641929"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
+                >
+                  <WhatsAppIcon className="h-4 w-4 text-[#25D366] transition-transform group-hover:scale-110" />
+                  <span>+507 6864-1929</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
