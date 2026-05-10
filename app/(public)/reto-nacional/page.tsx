@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   RETO_YEAR,
@@ -11,7 +12,6 @@ import {
   premios,
 } from "@/lib/reto";
 import {
-  TrophyIcon,
   TinkercadIcon,
   ChipIcon,
   CheckIcon,
@@ -48,7 +48,14 @@ export default function RetoNacionalPage() {
       <section className="bg-ink text-surface relative overflow-hidden">
         <CircuitBackdrop variant="stack" />
         <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-28">
-          <TrophyIcon className="h-12 w-12 text-accent mb-8" />
+          <Image
+            src="/csi-logo.png"
+            alt="Logo CSI · Cuerpo de Solidaridad Informática"
+            width={470}
+            height={531}
+            priority
+            className="h-24 w-auto mb-8 drop-shadow-[0_0_30px_rgba(245,200,66,0.25)]"
+          />
           <div className="text-xs font-mono text-muted-2 mb-4">
             Reto Nacional CSI · {RETO_YEAR}
           </div>
