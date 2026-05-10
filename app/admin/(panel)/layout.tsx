@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { isOwner } from "@/lib/adminAuth";
 
 export const metadata = {
   title: "Admin · Principios de Arduino",
@@ -14,8 +15,9 @@ const navItems = [
   { href: "/admin/respuestas", label: "Respuestas Quiz" },
   { href: "/admin/talleres", label: "Talleres" },
   { href: "/admin/calendario", label: "Calendario" },
-  { href: "/admin/usuarios", label: "Usuarios" },
 ];
+
+const ownerOnlyNavItems = [{ href: "/admin/usuarios", label: "Usuarios" }];
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   let userEmail: string | null = null;
@@ -28,6 +30,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       userEmail = user?.email ?? null;
     } catch {}
   }
+
+  const visibleNavItems = isOwner(userEmail)
+    ? [...navItems, ...ownerOnlyNavItems]
+    : navItems;
 
   return (
     <div className="min-h-screen flex flex-col bg-surface">
@@ -70,7 +76,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <div className="flex-1 mx-auto max-w-7xl px-6 py-10 grid lg:grid-cols-12 gap-8 w-full">
         <nav className="lg:col-span-3">
           <ul className="space-y-1 sticky top-20">
-            {navItems.map((item) => (
+            {visibleNavItems.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}

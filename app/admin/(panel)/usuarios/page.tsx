@@ -1,5 +1,7 @@
+import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase/admin";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { isOwner } from "@/lib/adminAuth";
 import UsersClient from "./UsersClient";
 
 export const metadata = { title: "Usuarios · Admin" };
@@ -28,22 +30,26 @@ async function getUsers(): Promise<User[]> {
   }
 }
 
-async function getCurrentUserId(): Promise<string | null> {
+async function getCurrentUser(): Promise<{
+  id: string;
+  email: string | null;
+} | null> {
   try {
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    return user?.id ?? null;
+    if (!user) return null;
+    return { id: user.id, email: user.email ?? null };
   } catch {
     return null;
   }
 }
 
 export default async function UsuariosPage() {
-  const [users, currentUserId] = await Promise.all([
-    getUsers(),
-    getCurrentUserId(),
-  ]);
-  return <UsersClient initialUsers={users} currentUserId={currentUserId} />;
+  const me = await getCurrentUser();
+  if (!isOwner(me?.email)) notFound();
+
+  const users = await getUsers();
+  return <UsersClient initialUsers={users} currentUserId={me?.id ?? null} />;
 }

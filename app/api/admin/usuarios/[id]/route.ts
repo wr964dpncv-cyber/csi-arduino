@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { adminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { isOwner } from "@/lib/adminAuth";
 
 export async function DELETE(
   _req: Request,
@@ -12,6 +13,9 @@ export async function DELETE(
   } = await supabase.auth.getUser();
   if (!user) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+  if (!isOwner(user.email)) {
+    return NextResponse.json({ error: "Prohibido" }, { status: 403 });
   }
 
   const { id } = await params;
