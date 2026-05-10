@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import DeleteButton from "@/components/DeleteButton";
 
 export const metadata = { title: "Entregas · Admin" };
 export const dynamic = "force-dynamic";
@@ -61,8 +62,14 @@ export default async function EntregasPage() {
             >
               <div className="flex flex-wrap items-baseline justify-between gap-3">
                 <h3 className="font-display text-xl">{r.proyecto_nombre}</h3>
-                <div className="font-mono text-xs text-muted">
-                  {new Date(r.created_at).toLocaleString("es-PA")}
+                <div className="flex items-center gap-4">
+                  <div className="font-mono text-xs text-muted">
+                    {new Date(r.created_at).toLocaleString("es-PA")}
+                  </div>
+                  <DeleteButton
+                    url={`/api/admin/entregas/${r.id}`}
+                    confirmMessage={`¿Eliminar la entrega "${r.proyecto_nombre}"? Esta acción no se puede deshacer.`}
+                  />
                 </div>
               </div>
               <div className="mt-1 text-sm text-muted">

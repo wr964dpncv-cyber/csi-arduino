@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import DeleteButton from "@/components/DeleteButton";
 
 export const metadata = { title: "Inscripciones · Admin" };
 export const dynamic = "force-dynamic";
@@ -80,6 +81,9 @@ export default async function InscripcionesPage() {
                 <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted">
                   Integrantes
                 </th>
+                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted text-right">
+                  Acciones
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -111,6 +115,12 @@ export default async function InscripcionesPage() {
                         </li>
                       ))}
                     </ul>
+                  </td>
+                  <td className="px-4 py-3 align-top text-right whitespace-nowrap">
+                    <DeleteButton
+                      url={`/api/admin/inscripciones/${r.id}`}
+                      confirmMessage={`¿Eliminar la inscripción del equipo "${r.equipo_nombre}"? Esta acción no se puede deshacer.`}
+                    />
                   </td>
                 </tr>
               ))}
