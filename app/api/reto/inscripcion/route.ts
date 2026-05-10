@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 type Member = {
   nombre: string;
@@ -19,7 +20,8 @@ function validate(body: unknown): body is Body {
   if (!b.equipo?.nombre || !b.equipo?.escuela || !b.equipo?.region) return false;
   if (!Array.isArray(b.integrantes) || b.integrantes.length !== 3) return false;
   for (const m of b.integrantes) {
-    if (!m.nombre || !m.apellido || !m.emailInstitucional || !m.telefono) return false;
+    if (!m.nombre || !m.apellido || !m.emailInstitucional || !m.telefono)
+      return false;
   }
   return true;
 }
@@ -39,32 +41,34 @@ export async function POST(req: Request) {
     );
   }
 
-  const url = process.env.RETO_INSCRIPCION_URL;
-
-  if (!url) {
-    console.log("[reto:inscripcion] (sin RETO_INSCRIPCION_URL configurada):", body);
+  if (!isSupabaseConfigured()) {
+    console.log("[reto:inscripcion] Supabase no configurado, registrando en consola:", body);
     return NextResponse.json({ ok: true, configured: false });
   }
 
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ form: "inscripcion", ...(body as Body) }),
+    const supabase = await createClient();
+    const { error } = await supabase.from("reto_inscripciones").insert({
+      equipo_nombre: (body as Body).equipo.nombre,
+      escuela: (body as Body).equipo.escuela,
+      region: (body as Body).equipo.region,
+      integrantes: (body as Body).integrantes,
     });
-    if (!res.ok) {
-      console.error("[reto:inscripcion] upstream error", res.status);
+
+    if (error) {
+      console.error("[reto:inscripcion] DB error", error);
       return NextResponse.json(
-        { error: "El servidor de registro no respondió. Intenta de nuevo." },
-        { status: 502 }
+        { error: "No se pudo guardar la inscripción. Intenta de nuevo." },
+        { status: 500 }
       );
     }
+
     return NextResponse.json({ ok: true, configured: true });
   } catch (err) {
-    console.error("[reto:inscripcion] fetch failed", err);
+    console.error("[reto:inscripcion] failed", err);
     return NextResponse.json(
-      { error: "No se pudo conectar al servidor de registro." },
-      { status: 502 }
+      { error: "Error al procesar la inscripción." },
+      { status: 500 }
     );
   }
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getCalendarEvents } from "@/lib/data";
 
 export const metadata = {
   title: "Calendario — Principios de Arduino",
@@ -6,19 +7,15 @@ export const metadata = {
     "Fechas oficiales de publicación de cada taller del programa Principios de Arduino. Todos se habilitan a las 6:00 PM.",
 };
 
-const schedule = [
-  { n: 4, day: "Lun", date: "6 de abril" },
-  { n: 5, day: "Lun", date: "20 de abril" },
-  { n: 6, day: "Jue", date: "23 de abril" },
-  { n: 7, day: "Lun", date: "27 de abril" },
-  { n: 8, day: "Jue", date: "30 de abril" },
-  { n: 9, day: "Lun", date: "4 de mayo" },
-  { n: 10, day: "Jue", date: "7 de mayo" },
-  { n: 11, day: "Lun", date: "11 de mayo" },
-  { n: 12, day: "Jue", date: "14 de mayo" },
-];
+export const revalidate = 60;
 
-export default function CalendarioPage() {
+export default async function CalendarioPage() {
+  const schedule = (await getCalendarEvents()).map((e) => ({
+    n: e.taller_n,
+    day: e.day,
+    date: e.date_text,
+    time: e.time,
+  }));
   return (
     <>
       <section className="bg-ink text-surface relative overflow-hidden">
@@ -71,7 +68,7 @@ export default function CalendarioPage() {
                   {s.date}
                 </div>
                 <div className="md:col-span-2 md:text-right font-mono text-sm">
-                  18:00
+                  {s.time}
                 </div>
               </div>
             ))}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { talleres } from "@/lib/talleres";
+import { getAllTalleres } from "@/lib/data";
 
 export const metadata = {
   title: "Talleres — Principios de Arduino",
@@ -13,7 +13,11 @@ const levelColor: Record<string, string> = {
   Avanzado: "text-rose-700",
 };
 
-export default function TalleresPage() {
+export const revalidate = 60;
+
+export default async function TalleresPage() {
+  const talleres = await getAllTalleres();
+
   return (
     <>
       {/* Hero */}

@@ -1,8 +1,11 @@
 import { notFound } from "next/navigation";
 import TallerPage from "@/components/TallerPage";
-import { talleres, getTaller } from "@/lib/talleres";
+import { getAllTalleres, getTallerBySlug } from "@/lib/data";
 
-export function generateStaticParams() {
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const talleres = await getAllTalleres();
   return talleres.map((t) => ({ slug: t.slug }));
 }
 
@@ -12,7 +15,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const t = talleres.find((t) => t.slug === slug);
+  const t = await getTallerBySlug(slug);
   if (!t) return {};
   return {
     title: `Taller ${t.n} · ${t.title} — Principios de Arduino`,
@@ -26,11 +29,12 @@ export default async function Page({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const t = talleres.find((t) => t.slug === slug);
+  const t = await getTallerBySlug(slug);
   if (!t) notFound();
 
-  const prev = getTaller(t.n - 1);
-  const next = getTaller(t.n + 1);
+  const all = await getAllTalleres();
+  const prev = all.find((x) => x.n === t.n - 1);
+  const next = all.find((x) => x.n === t.n + 1);
 
   return <TallerPage taller={t} prev={prev} next={next} />;
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 type Body = {
   equipoNombre: string;
@@ -35,32 +36,36 @@ export async function POST(req: Request) {
     );
   }
 
-  const url = process.env.RETO_ENTREGA_URL;
-
-  if (!url) {
-    console.log("[reto:entrega] (sin RETO_ENTREGA_URL configurada):", body);
+  if (!isSupabaseConfigured()) {
+    console.log("[reto:entrega] Supabase no configurado, registrando en consola:", body);
     return NextResponse.json({ ok: true, configured: false });
   }
 
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ form: "entrega", ...(body as Body) }),
+    const supabase = await createClient();
+    const b = body as Body;
+    const { error } = await supabase.from("reto_entregas").insert({
+      equipo_nombre: b.equipoNombre,
+      proyecto_nombre: b.proyectoNombre,
+      tinkercad_url: b.tinkercadUrl,
+      video_url: b.videoUrl,
+      descripcion: b.descripcion,
     });
-    if (!res.ok) {
-      console.error("[reto:entrega] upstream error", res.status);
+
+    if (error) {
+      console.error("[reto:entrega] DB error", error);
       return NextResponse.json(
-        { error: "El servidor de registro no respondió. Intenta de nuevo." },
-        { status: 502 }
+        { error: "No se pudo guardar la entrega. Intenta de nuevo." },
+        { status: 500 }
       );
     }
+
     return NextResponse.json({ ok: true, configured: true });
   } catch (err) {
-    console.error("[reto:entrega] fetch failed", err);
+    console.error("[reto:entrega] failed", err);
     return NextResponse.json(
-      { error: "No se pudo conectar al servidor de registro." },
-      { status: 502 }
+      { error: "Error al procesar la entrega." },
+      { status: 500 }
     );
   }
 }
