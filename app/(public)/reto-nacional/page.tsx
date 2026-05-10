@@ -54,7 +54,7 @@ export default function RetoNacionalPage() {
             width={470}
             height={531}
             priority
-            className="h-24 w-auto mb-8 drop-shadow-[0_0_30px_rgba(245,200,66,0.25)]"
+            className="h-32 w-auto mb-8 drop-shadow-[0_0_40px_rgba(245,200,66,0.35)]"
           />
           <div className="text-xs font-mono text-muted-2 mb-4">
             Reto Nacional CSI · {RETO_YEAR}
