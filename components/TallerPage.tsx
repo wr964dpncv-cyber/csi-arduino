@@ -1,16 +1,15 @@
 import Link from "next/link";
+import type { Taller } from "@/lib/talleres";
 
-export const metadata = {
-  title: "Taller 0 · Introducción a Arduino — Principios de Arduino",
-  description:
-    "Aquí conocerás de qué trata el programa y el concepto más importante de todo el curso: el microcontrolador.",
+type Props = {
+  taller: Taller;
+  prev?: Taller;
+  next?: Taller;
 };
 
-const VIDEO_ID = "EVlnXu1Qbqg";
-const QUIZ_URL =
-  "https://forms.office.com/Pages/ResponsePage.aspx?id=905Ba8IGHEa7c8GQDRIqIvhy58CPb9ZGtmWNmAz5u1BURU9CMloxSFVaSDhURktLQktQR0Y5WFpRSS4u";
+export default function TallerPage({ taller, prev, next }: Props) {
+  const num = String(taller.n).padStart(2, "0");
 
-export default function Taller0Page() {
   return (
     <>
       {/* Header */}
@@ -29,39 +28,38 @@ export default function Taller0Page() {
           <div className="grid lg:grid-cols-12 gap-8 items-end">
             <div className="lg:col-span-8">
               <div className="flex items-center gap-3 text-xs font-mono uppercase tracking-[0.18em] text-muted-2 mb-4">
-                <span>MOD-00</span>
+                <span>MOD-{num}</span>
                 <span className="opacity-50">·</span>
-                <span>Inicio</span>
+                <span>{taller.level}</span>
+                <span className="opacity-50">·</span>
+                <span>{taller.topic}</span>
               </div>
-              <div className="font-mono text-sm text-accent-bright text-accent mb-2">
-                Taller 0
+              <div className="font-mono text-sm text-accent mb-2">
+                Taller {taller.n}
               </div>
               <h1 className="font-display text-5xl md:text-7xl tracking-tight leading-[1.02]">
-                Introducción a Arduino
+                {taller.title}
               </h1>
               <p className="mt-8 text-lg text-muted-2 max-w-2xl leading-relaxed">
-                Aquí conocerás de qué trata el programa y el{" "}
-                <strong className="text-surface">concepto más importante</strong>{" "}
-                de todo el curso: el <strong className="text-surface">microcontrolador</strong>.
+                {taller.description}
               </p>
             </div>
 
             <div className="lg:col-span-4">
               <div className="border border-white/15 bg-ink-soft/50">
-                <div className="border-b border-white/10 px-5 py-3 flex items-center justify-between">
+                <div className="border-b border-white/10 px-5 py-3">
                   <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
                     Datos del taller
                   </span>
                 </div>
                 <dl className="divide-y divide-white/10">
                   {[
-                    ["Módulo", "00"],
-                    ["Nivel", "Inicio"],
-                    ["Tipo", "Setup"],
-                    ["Duración", "Ver video"],
+                    ["Módulo", num],
+                    ["Nivel", taller.level],
+                    ["Tipo", taller.topic],
                   ].map(([k, v]) => (
                     <div
-                      key={k as string}
+                      key={k}
                       className="px-5 py-3 flex items-center justify-between text-sm"
                     >
                       <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-2">
@@ -77,26 +75,63 @@ export default function Taller0Page() {
         </div>
       </section>
 
+      {/* Objetivos */}
+      <section className="border-b border-border bg-surface-2">
+        <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
+            <div className="lg:col-span-5">
+              <div className="text-sm text-accent-dark mb-3 font-mono">
+                01 · Objetivos
+              </div>
+              <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
+                Lo que aprenderás.
+              </h2>
+              <p className="mt-4 text-muted leading-relaxed max-w-md">
+                Cada objetivo está diseñado para construir sobre el anterior.
+                Asegúrate de entender cada uno antes de pasar al quiz.
+              </p>
+            </div>
+            <div className="lg:col-span-7">
+              <ul className="divide-y divide-border border-y border-border">
+                {taller.objectives.map((obj, i) => (
+                  <li key={i} className="flex gap-5 py-4 items-baseline">
+                    <span className="font-mono text-sm text-accent w-8 flex-shrink-0">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-muted leading-relaxed">{obj}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-8 bg-ink text-surface border-l-2 border-accent p-6">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent mb-2">
+                  ▸ Al final del taller
+                </div>
+                <p className="text-muted-2 leading-relaxed">{taller.outcome}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Video */}
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="max-w-3xl mb-10">
             <div className="text-sm text-accent-dark mb-3 font-mono">
-              01 · Video del taller
+              02 · Video del taller
             </div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
               Mira el video completo.
             </h2>
             <p className="mt-3 text-muted leading-relaxed">
-              El video introduce los conceptos fundamentales del programa.
               Asegúrate de verlo completo antes de pasar al quiz.
             </p>
           </div>
 
           <div className="aspect-video w-full bg-ink border border-border">
             <iframe
-              src={`https://www.youtube.com/embed/${VIDEO_ID}`}
-              title="Video del Taller 0 · Introducción a Arduino"
+              src={`https://www.youtube.com/embed/${taller.videoId}`}
+              title={`Video del Taller ${taller.n} · ${taller.title}`}
               className="w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
@@ -110,7 +145,7 @@ export default function Taller0Page() {
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="max-w-3xl mb-12">
             <div className="text-sm text-accent-dark mb-3 font-mono">
-              02 · Quiz · Evaluación
+              03 · Quiz · Evaluación
             </div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
               Cuando termines, completa el quiz.
@@ -129,7 +164,7 @@ export default function Taller0Page() {
                   ▸ Microsoft Forms · MEDUCA
                 </div>
                 <h3 className="font-display text-2xl tracking-tight">
-                  Quiz del Taller 0
+                  Quiz del Taller {taller.n}
                 </h3>
                 <p className="mt-3 text-muted leading-relaxed">
                   Inicia sesión con tu correo institucional MEDUCA y completa
@@ -138,7 +173,7 @@ export default function Taller0Page() {
               </div>
               <div className="md:col-span-5">
                 <a
-                  href={QUIZ_URL}
+                  href={taller.quizUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-between bg-ink text-surface px-6 py-4 text-sm hover:bg-accent transition"
@@ -169,21 +204,49 @@ export default function Taller0Page() {
       {/* Navegación */}
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-6 py-10 grid md:grid-cols-2 gap-px bg-border border border-border">
-          <div className="bg-surface p-6 md:p-8 opacity-50">
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-2">
-              ← Anterior
+          {prev ? (
+            <Link
+              href={`/talleres/${prev.slug}`}
+              className="bg-surface p-6 md:p-8 hover:bg-ink hover:text-surface transition group"
+            >
+              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-2 group-hover:text-accent">
+                ← Anterior · Taller {prev.n}
+              </div>
+              <div className="mt-2 font-display text-lg">{prev.title}</div>
+            </Link>
+          ) : (
+            <div className="bg-surface p-6 md:p-8 opacity-50">
+              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-2">
+                ← Anterior
+              </div>
+              <div className="mt-2 font-display text-lg text-muted">
+                Inicio del programa
+              </div>
             </div>
-            <div className="mt-2 font-display text-lg text-muted">—</div>
-          </div>
-          <Link
-            href="/talleres"
-            className="bg-surface p-6 md:p-8 md:text-right hover:bg-ink hover:text-surface transition group"
-          >
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-dark group-hover:text-accent-bright">
-              Siguiente →
-            </div>
-            <div className="mt-2 font-display text-lg">Ver todos los talleres</div>
-          </Link>
+          )}
+          {next ? (
+            <Link
+              href={`/talleres/${next.slug}`}
+              className="bg-surface p-6 md:p-8 md:text-right hover:bg-ink hover:text-surface transition group"
+            >
+              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-dark group-hover:text-accent">
+                Siguiente · Taller {next.n} →
+              </div>
+              <div className="mt-2 font-display text-lg">{next.title}</div>
+            </Link>
+          ) : (
+            <Link
+              href="/talleres"
+              className="bg-surface p-6 md:p-8 md:text-right hover:bg-ink hover:text-surface transition group"
+            >
+              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-dark group-hover:text-accent">
+                Siguiente →
+              </div>
+              <div className="mt-2 font-display text-lg">
+                Ver todos los talleres
+              </div>
+            </Link>
+          )}
         </div>
       </section>
 

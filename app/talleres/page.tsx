@@ -1,83 +1,10 @@
 import Link from "next/link";
+import { talleres } from "@/lib/talleres";
 
 export const metadata = {
   title: "Talleres — Principios de Arduino",
-  description: "Los talleres del programa Principios de Arduino.",
+  description: "Los 10 talleres del programa Principios de Arduino.",
 };
-
-const talleres = [
-  {
-    n: 0,
-    title: "Introducción a Arduino",
-    desc: "Qué es Arduino, la placa y el entorno de desarrollo. Tu primer programa.",
-    level: "Inicio",
-    topic: "Setup",
-    slug: "taller-0",
-  },
-  {
-    n: 1,
-    title: "Tu primer circuito",
-    desc: "LEDs, voltaje, corriente y resistencias. El primer paso de todo arduinero.",
-    level: "Básico",
-    topic: "Hardware",
-  },
-  {
-    n: 2,
-    title: "Variables y datos",
-    desc: "Tipos de datos, variables y operadores. La lógica que da vida a tu programa.",
-    level: "Básico",
-    topic: "Software",
-  },
-  {
-    n: 3,
-    title: "Estructuras de control",
-    desc: "If, else, while y for. Cómo tomar decisiones y repetir acciones.",
-    level: "Básico",
-    topic: "Software",
-  },
-  {
-    n: 4,
-    title: "Entradas digitales",
-    desc: "Botones e interruptores. Cómo leer el mundo exterior con tu Arduino.",
-    level: "Intermedio",
-    topic: "I/O",
-  },
-  {
-    n: 5,
-    title: "Salidas analógicas (PWM)",
-    desc: "Controla brillo, velocidad y tono con modulación por ancho de pulso.",
-    level: "Intermedio",
-    topic: "I/O",
-  },
-  {
-    n: 6,
-    title: "Sensores",
-    desc: "Mide luz, temperatura, distancia y movimiento del entorno.",
-    level: "Intermedio",
-    topic: "Hardware",
-  },
-  {
-    n: 7,
-    title: "Funciones",
-    desc: "Organiza tu código en funciones reutilizables y modulares.",
-    level: "Intermedio",
-    topic: "Software",
-  },
-  {
-    n: 8,
-    title: "Comunicación serial",
-    desc: "Habla con tu Arduino desde la computadora y depura tus proyectos.",
-    level: "Avanzado",
-    topic: "Comms",
-  },
-  {
-    n: 9,
-    title: "Proyecto final",
-    desc: "Integra todo lo aprendido en un proyecto propio con aplicación real.",
-    level: "Avanzado",
-    topic: "Proyecto",
-  },
-];
 
 const levelColor: Record<string, string> = {
   Inicio: "text-muted",
@@ -105,7 +32,7 @@ export default function TalleresPage() {
       <section className="bg-ink text-surface">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="text-xs font-mono uppercase tracking-[0.18em] text-muted-2 mb-4">
-            Currículo · 12 Módulos
+            Currículo · 10 Módulos
           </div>
           <h1 className="font-display text-5xl md:text-7xl tracking-tight leading-[1.02] max-w-3xl">
             Los talleres.<br />
@@ -132,7 +59,7 @@ export default function TalleresPage() {
         </div>
       </section>
 
-      {/* CÓMO FUNCIONAN */}
+      {/* Cómo funcionan */}
       <section className="bg-surface-2 border-b border-border">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-28">
           <div className="max-w-2xl mb-14">
@@ -184,18 +111,16 @@ export default function TalleresPage() {
             </div>
           </div>
 
-          {/* Nota importante */}
           <div className="mt-8 bg-ink text-surface border-l-2 border-accent p-6 md:p-7">
             <div className="grid md:grid-cols-12 gap-4 md:gap-6 items-start">
               <div className="md:col-span-2 font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
                 ! Nota importante
               </div>
               <p className="md:col-span-10 text-muted-2 leading-relaxed">
-                Si utilizas{" "}
-                <strong className="text-surface">correo institucional</strong> y
-                tienes dificultades para acceder al formulario, puedes utilizar un{" "}
-                <strong className="text-surface">correo personal</strong> para
-                completar el quiz.
+                Si tienes dificultades para acceder al formulario con tu correo
+                institucional, contacta directamente a{" "}
+                <strong className="text-surface">Daniel</strong> por WhatsApp o
+                correo electrónico para coordinar tu envío.
               </p>
             </div>
           </div>
@@ -219,8 +144,12 @@ export default function TalleresPage() {
           </div>
 
           <div className="divide-y divide-border border-y border-border">
-            {talleres.map((t) => {
-              const Row = (
+            {talleres.map((t) => (
+              <Link
+                key={t.n}
+                href={`/talleres/${t.slug}`}
+                className="block group hover:bg-surface-2 transition"
+              >
                 <div className="grid md:grid-cols-12 gap-4 md:gap-8 py-8 items-start px-2 md:px-4 -mx-2 md:-mx-4">
                   <div className="md:col-span-2 flex md:flex-col items-baseline md:items-start gap-3">
                     <div className="font-mono text-4xl text-accent leading-none">
@@ -234,7 +163,7 @@ export default function TalleresPage() {
                     <h3 className="font-display text-xl md:text-2xl tracking-tight">
                       {t.title}
                     </h3>
-                    <p className="mt-2 text-muted leading-relaxed">{t.desc}</p>
+                    <p className="mt-2 text-muted leading-relaxed">{t.tagline}</p>
                   </div>
                   <div className="md:col-span-2">
                     <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-2 mb-1">
@@ -244,33 +173,20 @@ export default function TalleresPage() {
                   </div>
                   <div className="md:col-span-2">
                     <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-2 mb-1">
-                      {"slug" in t ? "Estado" : "Nivel"}
+                      Nivel
                     </div>
-                    {"slug" in t ? (
-                      <span className="text-sm text-accent-dark">Disponible →</span>
-                    ) : (
+                    <div className="flex items-center justify-between">
                       <span className={`text-sm ${levelColor[t.level]}`}>
                         {t.level}
                       </span>
-                    )}
+                      <span className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-accent-dark">
+                        →
+                      </span>
+                    </div>
                   </div>
                 </div>
-              );
-
-              return "slug" in t ? (
-                <Link
-                  key={t.n}
-                  href={`/talleres/${t.slug}`}
-                  className="block hover:bg-surface-2 transition"
-                >
-                  {Row}
-                </Link>
-              ) : (
-                <article key={t.n} className="opacity-70">
-                  {Row}
-                </article>
-              );
-            })}
+              </Link>
+            ))}
           </div>
         </div>
       </section>
