@@ -38,6 +38,7 @@ type TallerRow = {
   quiz_url: string;
   level: Taller["level"];
   topic: string;
+  published?: boolean;
 };
 
 function rowToTaller(row: TallerRow): Taller {
@@ -54,6 +55,7 @@ function rowToTaller(row: TallerRow): Taller {
     quizUrl: row.quiz_url,
     level: row.level,
     topic: row.topic,
+    published: row.published ?? true,
   };
 }
 

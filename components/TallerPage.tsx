@@ -29,8 +29,12 @@ export default function TallerPage({
     ? parseEventDate(calendarEvent.dateText)
     : null;
   const eventStatus = getEventStatus(eventDate, today);
+  const isUnpublished = taller.published === false;
   const isUpcoming =
-    eventStatus === "future" && (!taller.videoId || !taller.quizUrl);
+    isUnpublished ||
+    (eventStatus === "future" && (!taller.videoId || !taller.quizUrl));
+  const showVideo = !isUnpublished && Boolean(taller.videoId);
+  const showQuiz = !isUnpublished && Boolean(taller.quizUrl);
 
   return (
     <>
@@ -61,7 +65,28 @@ export default function TallerPage({
             {taller.description}
           </p>
 
-          {isUpcoming && calendarEvent && (
+          {isUnpublished && (
+            <div className="mt-10 inline-flex flex-col gap-1.5 border border-rose-500/40 bg-rose-500/10 px-5 py-4">
+              <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.18em] text-rose-300">
+                <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+                No disponible
+              </div>
+              <div className="text-base text-surface">
+                {calendarEvent ? (
+                  <>
+                    Este taller estará disponible el{" "}
+                    <span className="font-medium text-rose-300">
+                      {calendarEvent.day} {calendarEvent.dateText}
+                    </span>
+                    .
+                  </>
+                ) : (
+                  <>Este taller aún no se ha publicado.</>
+                )}
+              </div>
+            </div>
+          )}
+          {!isUnpublished && isUpcoming && calendarEvent && (
             <div className="mt-10 inline-flex flex-col gap-1.5 border border-accent/30 bg-accent/10 px-5 py-4">
               <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.18em] text-accent">
                 <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
@@ -118,11 +143,11 @@ export default function TallerPage({
           <div className="max-w-3xl mb-10">
             <div className="text-sm text-muted mb-3">Video</div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
-              {taller.videoId ? "Mira el video completo." : "Video por publicar."}
+              {showVideo ? "Mira el video completo." : "Video por publicar."}
             </h2>
           </div>
 
-          {taller.videoId ? (
+          {showVideo ? (
             <div className="aspect-video w-full bg-ink">
               <iframe
                 src={`https://www.youtube.com/embed/${taller.videoId}`}
@@ -174,18 +199,18 @@ export default function TallerPage({
           <div className="max-w-3xl mb-10">
             <div className="text-sm text-muted mb-3">Quiz</div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
-              {taller.quizUrl
+              {showQuiz
                 ? "Cuando termines, completa el quiz."
                 : "Quiz por publicar."}
             </h2>
             <p className="mt-4 text-muted leading-relaxed">
-              {taller.quizUrl
+              {showQuiz
                 ? "Usa tu correo institucional MEDUCA para enviar tus respuestas."
                 : "El quiz de este taller se habilitará junto con el video."}
             </p>
           </div>
 
-          {taller.quizUrl ? (
+          {showQuiz ? (
             <a
               href={taller.quizUrl}
               target="_blank"

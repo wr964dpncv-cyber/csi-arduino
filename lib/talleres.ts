@@ -11,6 +11,7 @@ export type Taller = {
   quizUrl: string;
   level: "Inicio" | "Básico" | "Intermedio" | "Avanzado";
   topic: string;
+  published?: boolean;
 };
 
 export const talleres: Taller[] = [

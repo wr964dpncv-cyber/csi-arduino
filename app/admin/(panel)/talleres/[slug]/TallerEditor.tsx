@@ -11,7 +11,10 @@ type Props = { taller: Taller };
 
 export default function TallerEditor({ taller }: Props) {
   const router = useRouter();
-  const [data, setData] = useState({ ...taller });
+  const [data, setData] = useState<Taller>({
+    ...taller,
+    published: taller.published ?? true,
+  });
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +34,13 @@ export default function TallerEditor({ taller }: Props) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error ?? "No se pudo guardar.");
       }
+      const result = await res.json();
       setStatus("success");
+      // If slug changed (because n changed), navigate to new slug
+      if (result.slug && result.slug !== taller.slug) {
+        router.push(`/admin/talleres/${result.slug}`);
+        return;
+      }
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
@@ -77,6 +86,52 @@ export default function TallerEditor({ taller }: Props) {
       </div>
 
       <div className="space-y-6 bg-surface-2 border border-border p-6 md:p-8">
+        {/* Estado y número */}
+        <div className="grid md:grid-cols-12 gap-4 items-start">
+          <label className="block md:col-span-2">
+            <div className="text-sm text-muted mb-1.5">Número (n)</div>
+            <input
+              type="number"
+              min="0"
+              className={inputCls + " font-mono"}
+              value={data.n}
+              onChange={(e) =>
+                setData({ ...data, n: parseInt(e.target.value) || 0 })
+              }
+            />
+            <div className="mt-1 text-[10px] font-mono text-muted-2">
+              URL: /talleres/taller-{data.n}
+            </div>
+          </label>
+
+          <div className="block md:col-span-4">
+            <div className="text-sm text-muted mb-1.5">Disponibilidad</div>
+            <button
+              type="button"
+              onClick={() =>
+                setData({ ...data, published: !data.published })
+              }
+              className={`w-full px-4 py-2.5 text-sm font-medium border transition flex items-center justify-between ${
+                data.published
+                  ? "border-emerald-500 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                  : "border-rose-500 bg-rose-50 text-rose-700 hover:bg-rose-100"
+              }`}
+            >
+              <span className="inline-flex items-center gap-2">
+                <span
+                  className={`h-2 w-2 rounded-full ${
+                    data.published ? "bg-emerald-500" : "bg-rose-500"
+                  }`}
+                />
+                {data.published ? "Disponible" : "No disponible"}
+              </span>
+              <span className="text-xs text-muted-2">
+                Click para cambiar
+              </span>
+            </button>
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-12 gap-4">
           <label className="block md:col-span-8">
             <div className="text-sm text-muted mb-1.5">Título</div>

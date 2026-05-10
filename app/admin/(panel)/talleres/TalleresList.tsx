@@ -16,6 +16,7 @@ export default function TalleresList({
   const [overIdx, setOverIdx] = useState<number | null>(null);
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [status, setStatus] = useState<{ ok?: boolean; msg?: string } | null>(
     null
   );
@@ -55,12 +56,16 @@ export default function TalleresList({
     setOverIdx(null);
   }
 
+  // Detect if any taller's display position differs from its current n
+  const positionMismatch = talleres.some((t, i) => t.n !== i + 1);
+  const canSave = dirty || positionMismatch;
+
   async function saveOrder() {
     const ids = talleres.map((t) => t.id).filter(Boolean) as string[];
     if (ids.length !== talleres.length) {
       setStatus({
         ok: false,
-        msg: "Algunos talleres no tienen ID — Supabase no configurado o datos desactualizados.",
+        msg: "Algunos talleres no tienen ID — ¿corriste la migración SQL?",
       });
       return;
     }
@@ -75,9 +80,12 @@ export default function TalleresList({
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.error ?? "No se pudo guardar el orden.");
+        throw new Error(err.error ?? "No se pudo guardar.");
       }
-      setStatus({ ok: true, msg: "✓ Talleres renumerados según el nuevo orden." });
+      setStatus({
+        ok: true,
+        msg: "✓ Talleres renumerados según el orden actual.",
+      });
       setDirty(false);
       router.refresh();
     } catch (err) {
@@ -90,25 +98,80 @@ export default function TalleresList({
     }
   }
 
+  async function createTaller() {
+    setCreating(true);
+    setStatus(null);
+    try {
+      const res = await fetch("/api/admin/talleres", { method: "POST" });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error ?? "No se pudo crear.");
+      }
+      const data = await res.json();
+      router.push(`/admin/talleres/${data.slug}`);
+    } catch (err) {
+      setStatus({
+        ok: false,
+        msg: err instanceof Error ? err.message : "Error desconocido",
+      });
+      setCreating(false);
+    }
+  }
+
+  async function deleteTaller(slug: string, title: string) {
+    if (
+      !confirm(
+        `¿Eliminar el taller "${title}"? Esta acción no se puede deshacer.`
+      )
+    )
+      return;
+    try {
+      const res = await fetch(`/api/admin/talleres/${slug}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error ?? "No se pudo eliminar.");
+      }
+      setTalleres((prev) => prev.filter((t) => t.slug !== slug));
+      router.refresh();
+      setStatus({ ok: true, msg: "✓ Taller eliminado." });
+    } catch (err) {
+      setStatus({
+        ok: false,
+        msg: err instanceof Error ? err.message : "Error",
+      });
+    }
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl tracking-tight">Talleres</h1>
           <p className="mt-2 text-muted">
-            Click en una fila para editar contenido. Arrastra el ícono{" "}
-            <span className="font-mono">⋮⋮</span> para reordenar — los números
-            se reasignan automáticamente.
+            Click en una fila para editar. Arrastra <span className="font-mono">⋮⋮</span>{" "}
+            para reordenar.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={saveOrder}
-          disabled={!dirty || saving}
-          className="bg-accent text-ink px-5 py-2 text-sm font-semibold hover:bg-accent-bright glow-gold transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {saving ? "Guardando..." : "Guardar orden"}
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={createTaller}
+            disabled={creating}
+            className="border border-ink px-4 py-2 text-sm hover:bg-ink hover:text-surface transition disabled:opacity-50"
+          >
+            {creating ? "Creando..." : "+ Agregar taller"}
+          </button>
+          <button
+            type="button"
+            onClick={saveOrder}
+            disabled={!canSave || saving}
+            className="bg-accent text-ink px-5 py-2 text-sm font-semibold hover:bg-accent-bright glow-gold transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {saving ? "Guardando..." : "Guardar orden"}
+          </button>
+        </div>
       </div>
 
       {status && (
@@ -126,10 +189,10 @@ export default function TalleresList({
       <div className="border border-border divide-y divide-border bg-surface-2">
         {talleres.map((t, i) => {
           const isDragging = draggedIdx === i;
-          const isOver =
-            overIdx === i && draggedIdx !== null && draggedIdx !== i;
+          const isOver = overIdx === i && draggedIdx !== null && draggedIdx !== i;
           const newN = i + 1;
           const numberChanged = t.n !== newN;
+          const isUnpublished = t.published === false;
 
           return (
             <div
@@ -138,7 +201,9 @@ export default function TalleresList({
               onDrop={(e) => onDrop(e, i)}
               className={`grid md:grid-cols-12 gap-4 p-5 items-baseline transition ${
                 isDragging ? "opacity-30" : ""
-              } ${isOver ? "bg-accent-soft" : ""}`}
+              } ${isOver ? "bg-accent-soft" : ""} ${
+                isUnpublished ? "opacity-60 hover:opacity-100" : ""
+              }`}
             >
               <div
                 draggable
@@ -174,25 +239,45 @@ export default function TalleresList({
               </div>
               <Link
                 href={`/admin/talleres/${t.slug}`}
-                className="md:col-span-7 group block"
+                className="md:col-span-6 group block"
               >
                 <h3 className="font-display text-lg group-hover:text-accent-dark transition">
                   {t.title}
                 </h3>
                 <p className="mt-1 text-sm text-muted line-clamp-1">
-                  {t.tagline}
+                  {t.tagline || (
+                    <span className="italic text-muted-2">Sin descripción</span>
+                  )}
                 </p>
               </Link>
-              <div className="md:col-span-2 text-sm text-muted">{t.topic}</div>
-              <div className="md:col-span-1 flex items-center justify-between text-sm">
-                <span className="text-muted">{t.level}</span>
+              <div className="md:col-span-2">
+                {isUnpublished ? (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-rose-700 border border-rose-200 bg-rose-50 px-2 py-1">
+                    No disponible
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-emerald-700">
+                    <span>✓</span>
+                    <span>Disponible</span>
+                  </span>
+                )}
+              </div>
+              <div className="md:col-span-2 flex items-center justify-end gap-3 text-sm">
                 <Link
                   href={`/admin/talleres/${t.slug}`}
                   className="text-accent-dark hover:text-ink transition"
-                  aria-label="Editar"
                 >
                   Editar →
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => deleteTaller(t.slug, t.title)}
+                  className="text-muted hover:text-rose-700 transition"
+                  aria-label="Eliminar"
+                  title="Eliminar"
+                >
+                  ✕
+                </button>
               </div>
             </div>
           );
@@ -200,9 +285,9 @@ export default function TalleresList({
       </div>
 
       <p className="text-xs text-muted">
-        Al guardar, los números <span className="font-mono">n</span> y los slugs
-        de URL (<span className="font-mono">/talleres/taller-X</span>) se
-        actualizan según el nuevo orden.
+        Al guardar el orden, los números <span className="font-mono">n</span> y
+        slugs (<span className="font-mono">/talleres/taller-X</span>) se
+        reasignan según la posición visual.
       </p>
     </div>
   );

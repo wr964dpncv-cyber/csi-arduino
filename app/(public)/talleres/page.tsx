@@ -123,11 +123,14 @@ export default async function TalleresPage() {
             {talleres.map((t) => {
               const cal = calendarByN.get(t.n);
               const status = getEventStatus(cal?.date ?? null, today);
+              const isUnpublished = t.published === false;
               return (
                 <Link
                   key={t.n}
                   href={`/talleres/${t.slug}`}
-                  className="block group hover:bg-surface-2 transition"
+                  className={`block group hover:bg-surface-2 transition ${
+                    isUnpublished ? "opacity-60 hover:opacity-100" : ""
+                  }`}
                 >
                   <div className="grid md:grid-cols-12 gap-4 md:gap-8 py-8 items-baseline px-2 md:px-4 -mx-2 md:-mx-4">
                     <div className="md:col-span-1 font-mono text-2xl text-accent-dark">
@@ -145,7 +148,19 @@ export default async function TalleresPage() {
                       {t.topic}
                     </div>
                     <div className="md:col-span-2">
-                      {cal ? (
+                      {isUnpublished ? (
+                        <div className="text-xs">
+                          <div className="font-mono uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
+                            <span>○</span>
+                            <span>No disponible</span>
+                          </div>
+                          {cal && (
+                            <div className="text-muted-2 mt-0.5 font-mono">
+                              {cal.day} {cal.date_text}
+                            </div>
+                          )}
+                        </div>
+                      ) : cal ? (
                         status === "past" || status === "today" ? (
                           <div className="text-xs">
                             <div className="font-mono uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
