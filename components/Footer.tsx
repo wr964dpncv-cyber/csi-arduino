@@ -26,8 +26,8 @@ export default function Footer() {
               {[
                 { href: "/", label: "Inicio" },
                 { href: "/sobre-el-programa", label: "Programa" },
-                { href: "/talleres", label: "Talleres" },
                 { href: "/calendario", label: "Calendario" },
+                { href: "/talleres", label: "Talleres" },
                 { href: "/reto-nacional", label: "Reto Nacional" },
               ].map((l) => (
                 <li key={l.href}>
