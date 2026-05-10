@@ -103,8 +103,8 @@ export async function getQuestionsForTaller(
   try {
     const supabase = await createClient();
     const cols = includeCorrect
-      ? "id, taller_id, sort_order, question, options, correct_index"
-      : "id, taller_id, sort_order, question, options";
+      ? "id, taller_id, sort_order, question, options, correct_index, question_type"
+      : "id, taller_id, sort_order, question, options, question_type";
     const { data, error } = await supabase
       .from("quiz_questions")
       .select(cols)

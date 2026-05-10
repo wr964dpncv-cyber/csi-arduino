@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 import { adminClient } from "@/lib/supabase/admin";
 
-type Body = {
-  studentName: string;
-  studentEmail: string;
-  studentSchool?: string;
-  answers: Array<{ question_id: string; selected_index: number }>;
-};
+const ALLOWED_MIME = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "application/pdf",
+]);
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 export async function POST(
   req: Request,
@@ -21,26 +23,48 @@ export async function POST(
 
   const { slug } = await params;
 
-  let body: Body;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
+  const contentType = req.headers.get("content-type") ?? "";
+  const isMultipart = contentType.startsWith("multipart/form-data");
+
+  let studentName = "";
+  let studentEmail = "";
+  let studentSchool = "";
+  let answers: Array<{ question_id: string; selected_index: number }> = [];
+  const filesByQuestion = new Map<string, File>();
+
+  if (isMultipart) {
+    const form = await req.formData();
+    studentName = String(form.get("studentName") ?? "");
+    studentEmail = String(form.get("studentEmail") ?? "");
+    studentSchool = String(form.get("studentSchool") ?? "");
+    try {
+      answers = JSON.parse(String(form.get("answers") ?? "[]"));
+    } catch {
+      return NextResponse.json({ error: "answers inválido" }, { status: 400 });
+    }
+    for (const [key, value] of form.entries()) {
+      if (key.startsWith("file:") && value instanceof File) {
+        filesByQuestion.set(key.slice(5), value);
+      }
+    }
+  } else {
+    try {
+      const body = await req.json();
+      studentName = body.studentName ?? "";
+      studentEmail = body.studentEmail ?? "";
+      studentSchool = body.studentSchool ?? "";
+      answers = body.answers ?? [];
+    } catch {
+      return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
+    }
   }
 
-  if (
-    !body.studentName?.trim() ||
-    !body.studentEmail?.trim() ||
-    !Array.isArray(body.answers)
-  ) {
-    return NextResponse.json(
-      { error: "Datos incompletos." },
-      { status: 400 }
-    );
+  if (!studentName.trim() || !studentEmail.trim() || !Array.isArray(answers)) {
+    return NextResponse.json({ error: "Datos incompletos." }, { status: 400 });
   }
 
   const admin = adminClient();
-  const studentEmail = body.studentEmail.trim().toLowerCase();
+  const emailLower = studentEmail.trim().toLowerCase();
 
   // Find taller
   const { data: taller, error: tallerErr } = await admin
@@ -50,18 +74,15 @@ export async function POST(
     .single();
 
   if (tallerErr || !taller) {
-    return NextResponse.json(
-      { error: "Taller no encontrado" },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: "Taller no encontrado" }, { status: 404 });
   }
 
-  // Reject duplicate submission for this email + taller
+  // Reject duplicate submission
   const { data: existing } = await admin
     .from("quiz_responses")
     .select("id, score, total, created_at")
     .eq("taller_id", taller.id)
-    .eq("student_email", studentEmail)
+    .eq("student_email", emailLower)
     .maybeSingle();
 
   if (existing) {
@@ -79,10 +100,10 @@ export async function POST(
     );
   }
 
-  // Get questions with correct answers
+  // Get questions with correct answers + type
   const { data: questions, error: qErr } = await admin
     .from("quiz_questions")
-    .select("id, correct_index")
+    .select("id, correct_index, question_type")
     .eq("taller_id", taller.id);
 
   if (qErr || !questions || questions.length === 0) {
@@ -92,38 +113,106 @@ export async function POST(
     );
   }
 
-  // Score the answers
+  type QuestionRow = {
+    id: string;
+    correct_index: number;
+    question_type: string | null;
+  };
+  const qList = questions as QuestionRow[];
+
   const correctMap = new Map<string, number>(
-    questions.map((q) => [q.id, q.correct_index])
+    qList.map((q) => [q.id, q.correct_index])
+  );
+  const fileQuestionIds = new Set(
+    qList.filter((q) => q.question_type === "file_upload").map((q) => q.id)
   );
 
-  const scoredAnswers = body.answers.map((a) => {
-    const correctIdx = correctMap.get(a.question_id);
-    return {
-      question_id: a.question_id,
-      selected_index: a.selected_index,
-      correct: correctIdx === a.selected_index,
-    };
-  });
+  // Validate all file_upload questions have an uploaded file
+  for (const fid of fileQuestionIds) {
+    if (!filesByQuestion.has(fid)) {
+      return NextResponse.json(
+        { error: "Falta subir el archivo requerido." },
+        { status: 400 }
+      );
+    }
+  }
+
+  // Upload files to Storage
+  const fileUploads: Record<string, string> = {};
+  for (const [questionId, file] of filesByQuestion.entries()) {
+    if (!fileQuestionIds.has(questionId)) continue;
+    if (!ALLOWED_MIME.has(file.type)) {
+      return NextResponse.json(
+        { error: `Tipo de archivo no permitido: ${file.type}` },
+        { status: 400 }
+      );
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: `Archivo demasiado grande (máx 10 MB).` },
+        { status: 400 }
+      );
+    }
+
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "bin";
+    const safeExt = ext.replace(/[^a-z0-9]/g, "").slice(0, 8) || "bin";
+    const path = `${taller.id}/${questionId}/${crypto.randomUUID()}.${safeExt}`;
+    const buf = new Uint8Array(await file.arrayBuffer());
+
+    const { error: upErr } = await admin.storage
+      .from("quiz-uploads")
+      .upload(path, buf, {
+        contentType: file.type,
+        upsert: false,
+      });
+
+    if (upErr) {
+      console.error("[quiz:submit] upload error", upErr);
+      return NextResponse.json(
+        { error: "No se pudo subir el archivo. Intenta de nuevo." },
+        { status: 500 }
+      );
+    }
+
+    const { data: pub } = admin.storage
+      .from("quiz-uploads")
+      .getPublicUrl(path);
+    fileUploads[questionId] = pub.publicUrl;
+  }
+
+  // Score multiple-choice answers (file_upload questions don't count)
+  const mcQuestions = qList.filter((q) => q.question_type !== "file_upload");
+  const mcQuestionIds = new Set(mcQuestions.map((q) => q.id));
+
+  const scoredAnswers = answers
+    .filter((a) => mcQuestionIds.has(a.question_id))
+    .map((a) => {
+      const correctIdx = correctMap.get(a.question_id);
+      return {
+        question_id: a.question_id,
+        selected_index: a.selected_index,
+        correct: correctIdx === a.selected_index,
+      };
+    });
 
   const score = scoredAnswers.filter((a) => a.correct).length;
-  const total = questions.length;
+  const total = mcQuestions.length;
 
   // Save response
   const { error } = await admin.from("quiz_responses").insert({
     taller_id: taller.id,
     taller_n: taller.n,
     taller_title: taller.title,
-    student_name: body.studentName.trim(),
-    student_email: studentEmail,
-    student_school: body.studentSchool?.trim() ?? null,
+    student_name: studentName.trim(),
+    student_email: emailLower,
+    student_school: studentSchool.trim() || null,
     answers: scoredAnswers,
+    file_uploads: fileUploads,
     score,
     total,
   });
 
   if (error) {
-    // Unique violation: ya respondió este quiz con el mismo email
     if ((error as { code?: string }).code === "23505") {
       return NextResponse.json(
         {
@@ -141,5 +230,6 @@ export async function POST(
     score,
     total,
     answers: scoredAnswers,
+    file_uploads: fileUploads,
   });
 }

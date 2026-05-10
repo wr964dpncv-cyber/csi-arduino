@@ -13,6 +13,7 @@ export type Row = {
   student_school: string | null;
   score: number;
   total: number;
+  file_uploads?: Record<string, string> | null;
 };
 
 type SortKey =
@@ -232,6 +233,7 @@ export default function ResponsesTable({ rows }: { rows: Row[] }) {
                 <Th>Email</Th>
                 <Th>Escuela</Th>
                 <Th align="right">Score</Th>
+                <Th>Archivos</Th>
                 <Th align="right">Acciones</Th>
               </tr>
             </thead>
@@ -275,6 +277,25 @@ export default function ResponsesTable({ rows }: { rows: Row[] }) {
                         {r.score}/{r.total}
                       </div>
                       <div className="text-xs text-muted">{pct}%</div>
+                    </td>
+                    <td className="px-4 py-3 align-top text-xs">
+                      {r.file_uploads && Object.keys(r.file_uploads).length > 0 ? (
+                        <div className="flex flex-col gap-1">
+                          {Object.values(r.file_uploads).map((url, idx) => (
+                            <a
+                              key={idx}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-accent-dark hover:underline whitespace-nowrap"
+                            >
+                              ↓ Archivo {idx + 1}
+                            </a>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 align-top text-right">
                       <DeleteButton

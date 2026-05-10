@@ -1,10 +1,13 @@
+export type QuestionType = "multiple_choice" | "file_upload";
+
 export type QuizQuestion = {
   id: string;
   taller_id: string;
   sort_order: number;
   question: string;
   options: string[];
-  correct_index?: number; // omit on public side
+  correct_index?: number;
+  question_type?: QuestionType;
 };
 
 export type QuizAnswer = {

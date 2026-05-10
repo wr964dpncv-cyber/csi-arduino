@@ -8,6 +8,7 @@ type Question = {
   sort_order: number;
   question: string;
   options: string[];
+  question_type?: "multiple_choice" | "file_upload";
 };
 
 type Props = {
@@ -37,6 +38,7 @@ export default function QuizForm({
   const [studentEmail, setStudentEmail] = useState("");
   const [studentSchool, setStudentSchool] = useState("");
   const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [files, setFiles] = useState<Record<string, File>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -46,12 +48,23 @@ export default function QuizForm({
     created_at?: string;
   } | null>(null);
 
-  const allAnswered = questions.every((q) => answers[q.id] !== undefined);
+  const mcQuestions = questions.filter(
+    (q) => (q.question_type ?? "multiple_choice") === "multiple_choice"
+  );
+  const fileQuestions = questions.filter((q) => q.question_type === "file_upload");
+
+  const allMcAnswered = mcQuestions.every((q) => answers[q.id] !== undefined);
+  const allFilesUploaded = fileQuestions.every((q) => files[q.id] !== undefined);
+  const allAnswered = allMcAnswered && allFilesUploaded;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!allAnswered) {
+    if (!allMcAnswered) {
       setError("Responde todas las preguntas antes de enviar.");
+      return;
+    }
+    if (!allFilesUploaded) {
+      setError("Sube todos los archivos requeridos antes de enviar.");
       return;
     }
 
@@ -59,18 +72,26 @@ export default function QuizForm({
     setError(null);
 
     try {
-      const res = await fetch(`/api/quiz/${tallerSlug}/submit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentName,
-          studentEmail,
-          studentSchool,
-          answers: Object.entries(answers).map(([question_id, selected_index]) => ({
+      const form = new FormData();
+      form.append("studentName", studentName);
+      form.append("studentEmail", studentEmail);
+      form.append("studentSchool", studentSchool);
+      form.append(
+        "answers",
+        JSON.stringify(
+          Object.entries(answers).map(([question_id, selected_index]) => ({
             question_id,
             selected_index,
-          })),
-        }),
+          }))
+        )
+      );
+      for (const [questionId, file] of Object.entries(files)) {
+        form.append(`file:${questionId}`, file);
+      }
+
+      const res = await fetch(`/api/quiz/${tallerSlug}/submit`, {
+        method: "POST",
+        body: form,
       });
 
       if (res.status === 409) {
@@ -301,14 +322,40 @@ export default function QuizForm({
 
       {/* Preguntas */}
       <div className="space-y-6">
-        {questions.map((q, i) => (
+        {questions.map((q, i) => {
+          const isFile = q.question_type === "file_upload";
+          return (
           <div key={q.id} className="border border-border bg-surface-2 p-6">
             <div className="flex items-baseline gap-3 mb-4">
               <span className="font-mono text-sm text-accent-dark">
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <div className="font-display text-lg flex-1">{q.question}</div>
+              <div className="font-display text-lg flex-1 whitespace-pre-line">{q.question}</div>
             </div>
+            {isFile ? (
+              <div className="ml-9 space-y-3">
+                <label className="block">
+                  <span className="sr-only">Subir archivo</span>
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) setFiles((prev) => ({ ...prev, [q.id]: f }));
+                    }}
+                    className="block w-full text-sm text-ink file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-ink file:text-surface file:cursor-pointer hover:file:bg-accent hover:file:text-ink file:transition"
+                  />
+                </label>
+                {files[q.id] && (
+                  <div className="text-xs text-muted font-mono break-all">
+                    ✓ {files[q.id].name} ({Math.round(files[q.id].size / 1024)} KB)
+                  </div>
+                )}
+                <div className="text-xs text-muted">
+                  PDF o imagen. Máx 10 MB.
+                </div>
+              </div>
+            ) : (
             <div className="space-y-2 ml-9">
               {q.options.map((opt, oi) => {
                 const selected = answers[q.id] === oi;
@@ -346,8 +393,10 @@ export default function QuizForm({
                 );
               })}
             </div>
+            )}
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {error && (
@@ -358,7 +407,7 @@ export default function QuizForm({
 
       <div className="flex items-center justify-between pt-4 border-t border-border">
         <div className="text-sm text-muted">
-          {Object.keys(answers).length} / {questions.length} respondidas
+          {Object.keys(answers).length + Object.keys(files).length} / {questions.length} completadas
         </div>
         <button
           type="submit"
