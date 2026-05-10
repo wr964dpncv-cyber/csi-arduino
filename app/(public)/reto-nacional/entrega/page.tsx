@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import FormField from "@/components/FormField";
 import { RETO_DATES } from "@/lib/reto";
+import CircuitBackdrop from "@/components/CircuitBackdrop";
 
 const MAX_WORDS = 200;
 
@@ -97,7 +98,7 @@ export default function EntregaPage() {
     <>
       {/* Header */}
       <section className="bg-ink text-surface relative overflow-hidden">
-        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <CircuitBackdrop variant="sparse" />
         <div className="relative mx-auto max-w-4xl px-6 pt-12">
           <Link
             href="/reto-nacional"

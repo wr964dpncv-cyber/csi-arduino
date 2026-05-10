@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
+import CircuitBackdrop from "@/components/CircuitBackdrop";
 
 export const metadata = {
   title: "Sobre el Programa — Principios de Arduino",
@@ -11,7 +12,7 @@ export default function AboutPage() {
   return (
     <>
       <section className="bg-ink text-surface relative overflow-hidden">
-        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <CircuitBackdrop variant="angles" />
         <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="text-xs font-mono text-muted-2 mb-4">
             Sobre el programa

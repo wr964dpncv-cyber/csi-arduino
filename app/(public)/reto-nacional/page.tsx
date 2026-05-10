@@ -23,6 +23,7 @@ import {
   MedalIcon,
 } from "@/components/RetoIcons";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
+import CircuitBackdrop from "@/components/CircuitBackdrop";
 
 export const metadata = {
   title: `Reto Nacional CSI ${RETO_YEAR} — Competencia Nacional de Arduino`,
@@ -45,7 +46,7 @@ export default function RetoNacionalPage() {
     <>
       {/* HERO */}
       <section className="bg-ink text-surface relative overflow-hidden">
-        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <CircuitBackdrop variant="stack" />
         <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-28">
           <TrophyIcon className="h-12 w-12 text-accent mb-8" />
           <div className="text-xs font-mono text-muted-2 mb-4">
@@ -288,7 +289,7 @@ export default function RetoNacionalPage() {
 
       {/* FINAL PRESENCIAL */}
       <section className="bg-ink text-surface relative overflow-hidden">
-        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <CircuitBackdrop variant="angles" />
         <div className="relative mx-auto max-w-6xl px-6 py-24">
           <div className="max-w-2xl mb-14">
             <div className="text-xs font-mono text-accent mb-3">
@@ -430,7 +431,7 @@ export default function RetoNacionalPage() {
 
       {/* CTA FINAL */}
       <section className="bg-ink text-surface relative overflow-hidden">
-        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <CircuitBackdrop variant="sparse" />
         <div className="relative mx-auto max-w-6xl px-6 py-24 grid md:grid-cols-12 gap-10 items-center">
           <div className="md:col-span-7">
             <h2 className="font-display text-3xl md:text-5xl tracking-tight leading-tight">

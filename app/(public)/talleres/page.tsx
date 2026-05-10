@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getAllTalleres, getCalendarEvents } from "@/lib/data";
 import { parseEventDate, getEventStatus } from "@/lib/dateHelpers";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import CircuitBackdrop from "@/components/CircuitBackdrop";
 
 export const metadata = {
   title: "Talleres — Principios de Arduino",
@@ -40,7 +41,7 @@ export default async function TalleresPage() {
     <>
       {/* Hero */}
       <section className="bg-ink text-surface relative overflow-hidden">
-        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <CircuitBackdrop variant="flow-left" />
         <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="text-xs font-mono text-muted-2 mb-4">
             12 módulos · de cero a ingeniero

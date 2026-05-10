@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Taller } from "@/lib/talleres";
 import { parseEventDate, getEventStatus } from "@/lib/dateHelpers";
 import { WhatsAppButton } from "./WhatsAppButton";
+import CircuitBackdrop from "./CircuitBackdrop";
 
 type CalendarEventInfo = {
   day: string;
@@ -41,7 +42,7 @@ export default function TallerPage({
     <>
       {/* Header */}
       <section className="bg-ink text-surface relative overflow-hidden">
-        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <CircuitBackdrop variant="stack" />
         <div className="relative mx-auto max-w-6xl px-6 pt-12">
           <Link
             href="/talleres"
@@ -160,7 +161,7 @@ export default function TallerPage({
             </div>
           ) : (
             <div className="aspect-video w-full bg-ink text-surface flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+              <CircuitBackdrop variant="sparse" mask={false} />
               <div className="relative text-center px-6">
                 <div className="inline-flex items-center gap-2 text-xs font-mono text-accent mb-4">
                   <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />

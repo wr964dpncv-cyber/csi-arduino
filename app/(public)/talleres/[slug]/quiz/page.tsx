@@ -4,6 +4,7 @@ import { getTallerBySlug } from "@/lib/data";
 import { adminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 import QuizForm from "./QuizForm";
+import CircuitBackdrop from "@/components/CircuitBackdrop";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +51,7 @@ export default async function QuizPage({
   return (
     <>
       <section className="bg-ink text-surface relative overflow-hidden">
-        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <CircuitBackdrop variant="angles" />
         <div className="relative mx-auto max-w-3xl px-6 pt-12">
           <Link
             href={`/talleres/${taller.slug}`}
