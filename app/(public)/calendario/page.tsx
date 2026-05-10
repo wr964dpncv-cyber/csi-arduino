@@ -236,9 +236,9 @@ export default async function CalendarioPage() {
               href="https://wa.me/50768641929"
               target="_blank"
               rel="noopener noreferrer"
-              className="group bg-accent text-ink px-6 py-4 text-sm font-semibold hover:bg-accent-bright glow-gold transition flex items-center gap-3"
+              className="group bg-[#25D366] text-white px-6 py-4 text-sm font-semibold hover:bg-[#1ebe5d] shadow-[0_0_24px_rgba(37,211,102,0.35)] hover:shadow-[0_0_32px_rgba(37,211,102,0.5)] transition flex items-center gap-3"
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-sm transition-transform group-hover:scale-110">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#25D366] transition-transform group-hover:scale-110">
                 <WhatsAppIcon className="h-5 w-5" />
               </span>
               <span className="flex-1">WhatsApp +507 6864-1929</span>
