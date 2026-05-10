@@ -50,7 +50,16 @@ export default async function CalendarioPage() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const enriched = events.map((e) => {
+  type Enriched = {
+    n: number;
+    day: string;
+    date: string;
+    time: string;
+    dateObj: Date | null;
+    status: Status;
+  };
+
+  const enriched: Enriched[] = events.map((e) => {
     const dateObj = parseEventDate(e.date_text);
     let status: Status = "future";
     if (dateObj) {
