@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import PanamaFlag from "@/components/PanamaFlag";
 
 const navItems = [
   { href: "/sobre-el-programa", label: "Programa" },
@@ -47,8 +48,14 @@ export default function Header() {
               priority
               className="h-9 w-auto"
             />
-            <div className="text-[15px] font-medium tracking-tight">
-              Principios de Arduino
+            <div className="leading-tight">
+              <div className="text-[15px] font-medium tracking-tight">
+                Principios de Arduino
+              </div>
+              <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-muted tracking-widest uppercase mt-0.5">
+                <PanamaFlag className="h-2.5 w-2.5" />
+                <span>Programa Nacional · MEDUCA Panamá</span>
+              </div>
             </div>
           </Link>
 
@@ -126,8 +133,14 @@ export default function Header() {
               height={531}
               className="h-9 w-auto"
             />
-            <div className="text-[15px] font-medium tracking-tight">
-              Principios de Arduino
+            <div className="leading-tight">
+              <div className="text-[15px] font-medium tracking-tight">
+                Principios de Arduino
+              </div>
+              <div className="flex items-center gap-1.5 text-[10px] font-mono text-muted tracking-widest uppercase mt-0.5">
+                <PanamaFlag className="h-2.5 w-2.5" />
+                <span>MEDUCA Panamá</span>
+              </div>
             </div>
           </Link>
           <button

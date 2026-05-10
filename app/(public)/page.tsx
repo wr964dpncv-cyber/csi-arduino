@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ArduinoSchematic from "@/components/ArduinoSchematic";
 import CodeBlock from "@/components/CodeBlock";
+import PanamaCircuit from "@/components/PanamaCircuit";
 import {
   LogicIcon,
   ResistorIcon,
@@ -36,6 +37,11 @@ export default function HomePage() {
 
       {/* HERO */}
       <section className="bg-ink text-surface relative overflow-hidden">
+        {/* Mapa de Panamá al fondo (watermark) */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.09]">
+          <PanamaCircuit className="w-[120%] max-w-none -translate-y-2" />
+        </div>
+        {/* PCB traces overlay */}
         <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
         <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
