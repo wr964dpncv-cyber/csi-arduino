@@ -7,14 +7,16 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-3">
-              <div className="h-8 w-8 bg-surface text-ink flex items-center justify-center font-semibold text-xs">
-                CSI
+              <div className="h-7 w-7 bg-surface text-ink flex items-center justify-center font-mono text-[10px] font-semibold">
+                csi
               </div>
-              <div className="font-display">Principios de Arduino</div>
+              <div className="text-[15px] font-medium tracking-tight">
+                Principios de Arduino
+              </div>
             </div>
             <p className="mt-5 text-sm text-muted-2 max-w-xs leading-relaxed">
-              Programa educativo gratuito del Cuerpo de Solidaridad Informática del
-              MEDUCA, Panamá.
+              Programa educativo gratuito del Cuerpo de Solidaridad Informática
+              del MEDUCA, Panamá.
             </p>
           </div>
 
@@ -63,8 +65,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-white/10 text-xs text-muted-2">
-          © {new Date().getFullYear()} CSI · MEDUCA · Panamá
+        <div className="mt-12 pt-6 border-t border-white/10 text-xs text-muted-2 font-mono">
+          © {new Date().getFullYear()} · CSI · MEDUCA · Panamá
         </div>
       </div>
     </footer>

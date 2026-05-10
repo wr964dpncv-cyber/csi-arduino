@@ -13,13 +13,12 @@ export default function HomePage() {
     <>
       {/* HERO */}
       <section className="bg-ink text-surface relative overflow-hidden">
-        <div className="absolute inset-0 bp-grid opacity-50 pointer-events-none" />
+        <div className="absolute inset-0 bp-grid opacity-40 pointer-events-none" />
         <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.18em] text-muted-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
-                Programa CSI · MEDUCA Panamá
+              <div className="text-xs font-mono text-muted-2">
+                v1.0 · Programa CSI · MEDUCA Panamá
               </div>
               <h1 className="mt-6 font-display text-5xl md:text-7xl tracking-tight leading-[1.02]">
                 Aprende ingeniería con{" "}
@@ -27,19 +26,19 @@ export default function HomePage() {
               </h1>
               <p className="mt-8 text-lg text-muted-2 max-w-xl leading-relaxed">
                 Un programa gratuito de 12 talleres para estudiantes de escuelas
-                públicas de Panamá. Aprende electrónica, programación y a construir
-                tus propios circuitos desde cero.
+                públicas de Panamá. Aprende electrónica, programación y a
+                construir tus propios circuitos desde cero.
               </p>
               <div className="mt-10 flex flex-wrap gap-3">
                 <Link
                   href="/talleres"
                   className="inline-flex items-center bg-surface text-ink px-7 py-3.5 text-base font-medium hover:bg-accent hover:text-surface transition"
                 >
-                  Comenzar talleres
+                  Comenzar talleres →
                 </Link>
                 <Link
                   href="/sobre-el-programa"
-                  className="inline-flex items-center border border-white/20 px-7 py-3.5 text-base text-surface hover:border-surface transition"
+                  className="inline-flex items-center px-7 py-3.5 text-base text-muted-2 hover:text-surface transition"
                 >
                   Conocer el programa
                 </Link>
@@ -51,35 +50,13 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-
-        {/* spec strip */}
-        <div className="border-t border-white/10">
-          <div className="mx-auto max-w-6xl px-6 py-5 grid grid-cols-2 md:grid-cols-4 gap-4 md:divide-x divide-white/10 text-center">
-            {[
-              ["12", "Talleres"],
-              ["100%", "Gratuito"],
-              ["A tu ritmo", "Modalidad"],
-              ["Nacional", "Cobertura"],
-            ].map(([n, l]) => (
-              <div key={l} className="md:px-4">
-                <div className="font-mono text-base md:text-lg">{n}</div>
-                <div className="mt-0.5 text-xs text-muted-2 uppercase tracking-[0.14em]">
-                  {l}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
-      {/* SOBRE EL PROGRAMA */}
+      {/* SOBRE */}
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
             <div className="lg:col-span-4">
-              <div className="text-sm text-accent-dark mb-3 font-mono">
-                01 · Sobre el programa
-              </div>
               <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
                 Tecnología en cada escuela de Panamá.
               </h2>
@@ -87,24 +64,22 @@ export default function HomePage() {
             <div className="lg:col-span-7 lg:col-start-6 space-y-6 text-lg text-muted leading-relaxed">
               <p>
                 Bienvenidos al programa{" "}
-                <strong className="text-ink">Principios de Arduino</strong>, una
-                iniciativa de <strong className="text-ink">Daniel Abadi</strong>{" "}
-                creada en el marco del{" "}
-                <strong className="text-ink">
-                  Cuerpo de Solidaridad Informática (CSI)
-                </strong>{" "}
-                de MEDUCA.
+                <span className="text-ink font-medium">Principios de Arduino</span>,
+                una iniciativa de{" "}
+                <span className="text-ink font-medium">Daniel Abadi</span> creada
+                en el marco del Cuerpo de Solidaridad Informática (CSI) de
+                MEDUCA.
               </p>
               <p>
-                Este programa ha sido diseñado e impartido para introducir a
-                estudiantes de todo el país en el mundo de la tecnología, la
-                electrónica y la programación.
+                Diseñado e impartido para introducir a estudiantes de todo el
+                país en el mundo de la tecnología, la electrónica y la
+                programación.
               </p>
               <p>
-                A lo largo de <strong className="text-ink">12 talleres</strong>,
+                A lo largo de{" "}
+                <span className="text-ink font-medium">12 talleres</span>{" "}
                 aprenderás desde los conceptos más básicos hasta la creación de
-                tus propios proyectos con Arduino, desarrollando habilidades que
-                podrás aplicar en el mundo real.
+                tus propios proyectos con Arduino.
               </p>
             </div>
           </div>
@@ -116,37 +91,25 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <div className="grid lg:grid-cols-12 gap-12 items-start">
             <div className="lg:col-span-5">
-              <div className="text-sm text-accent-dark mb-3 font-mono">
-                02 · Tu primer programa
-              </div>
               <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
                 Esto vas a escribir.
               </h2>
               <p className="mt-6 text-muted leading-relaxed">
-                Esto es <span className="font-mono text-ink">Blink</span>: el
-                programa que hace parpadear un LED cada segundo. Es lo primero que
-                vas a escribir en el Taller 1 — y lo entenderás línea por línea.
+                <span className="font-mono text-ink">Blink</span> es el programa
+                que hace parpadear un LED cada segundo. Es lo primero que vas
+                a escribir — y lo entenderás línea por línea.
               </p>
-              <div className="mt-8 space-y-4">
+              <div className="mt-8 space-y-3 text-sm">
                 {[
-                  {
-                    k: "setup()",
-                    v: "Se ejecuta una sola vez al encender el Arduino.",
-                  },
-                  {
-                    k: "loop()",
-                    v: "Se repite indefinidamente — el corazón de tu programa.",
-                  },
-                  {
-                    k: "digitalWrite()",
-                    v: "Enciende o apaga un pin (HIGH = 5V, LOW = 0V).",
-                  },
-                ].map((it) => (
-                  <div key={it.k} className="flex gap-4 text-sm">
+                  ["setup()", "Se ejecuta una sola vez al encender."],
+                  ["loop()", "Se repite indefinidamente."],
+                  ["digitalWrite()", "Enciende o apaga un pin."],
+                ].map(([k, v]) => (
+                  <div key={k} className="flex gap-4">
                     <span className="font-mono text-accent-dark w-32 flex-shrink-0">
-                      {it.k}
+                      {k}
                     </span>
-                    <span className="text-muted">{it.v}</span>
+                    <span className="text-muted">{v}</span>
                   </div>
                 ))}
               </div>
@@ -162,15 +125,12 @@ export default function HomePage() {
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <div className="max-w-2xl mb-16">
-            <div className="text-sm text-accent-dark mb-3 font-mono">
-              03 · Competencias
-            </div>
             <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
               Cuatro habilidades de un ingeniero.
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border border-y border-border">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-12">
             {[
               {
                 Icon: LogicIcon,
@@ -193,9 +153,9 @@ export default function HomePage() {
                 d: "Enfrenta retos reales con creatividad y método.",
               },
             ].map(({ Icon, t, d }) => (
-              <div key={t} className="p-8">
-                <Icon className="h-10 w-10 text-accent" />
-                <h3 className="mt-6 font-display text-lg">{t}</h3>
+              <div key={t}>
+                <Icon className="h-8 w-8 text-accent" />
+                <h3 className="mt-6 text-lg font-medium">{t}</h3>
                 <p className="mt-2 text-sm text-muted leading-relaxed">{d}</p>
               </div>
             ))}
@@ -207,9 +167,6 @@ export default function HomePage() {
       <section className="bg-surface-2 border-b border-border">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <div className="max-w-2xl mb-16">
-            <div className="text-sm text-accent-dark mb-3 font-mono">
-              04 · Para comenzar
-            </div>
             <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
               Tres pasos para empezar.
             </h2>
@@ -230,13 +187,13 @@ export default function HomePage() {
               {
                 n: "03",
                 t: "Completa cada quiz",
-                d: "Al final de cada taller, valida lo aprendido con la evaluación correspondiente.",
+                d: "Al final de cada taller, valida lo aprendido con la evaluación.",
               },
             ].map((s) => (
               <div key={s.n}>
-                <div className="font-mono text-3xl text-accent">{s.n}</div>
-                <h3 className="mt-6 font-display text-xl">{s.t}</h3>
-                <p className="mt-2 text-muted leading-relaxed">{s.d}</p>
+                <div className="font-mono text-2xl text-accent">{s.n}</div>
+                <h3 className="mt-5 text-lg font-medium">{s.t}</h3>
+                <p className="mt-2 text-sm text-muted leading-relaxed">{s.d}</p>
               </div>
             ))}
           </div>
@@ -246,52 +203,35 @@ export default function HomePage() {
       {/* INSTRUCTOR */}
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
-          <div className="grid md:grid-cols-12 gap-12 items-center">
-            <div className="md:col-span-7">
-              <div className="text-sm text-accent-dark mb-3 font-mono">
-                05 · Instructor
-              </div>
-              <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
-                Daniel Abadi
-              </h2>
-              <p className="mt-6 text-lg text-muted leading-relaxed max-w-xl">
-                Creador del programa Principios de Arduino y miembro del Cuerpo
-                de Solidaridad Informática del MEDUCA. Diseñó este currículo para
-                que cualquier estudiante panameño pueda construir sus propios
-                proyectos con Arduino.
-              </p>
-              <p className="mt-4 text-muted leading-relaxed max-w-xl">
-                Para consultas sobre el programa, talleres o quizzes, puedes
-                contactar al instructor directamente.
-              </p>
+          <div className="max-w-3xl">
+            <div className="text-sm text-muted mb-3">El instructor</div>
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              Daniel Abadi
+            </h2>
+            <p className="mt-6 text-lg text-muted leading-relaxed">
+              Creador del programa Principios de Arduino y miembro del Cuerpo
+              de Solidaridad Informática del MEDUCA. Diseñó este currículo para
+              que cualquier estudiante panameño pueda construir sus propios
+              proyectos con Arduino.
+            </p>
+            <p className="mt-4 text-muted leading-relaxed">
+              Para consultas sobre el programa, talleres o quizzes, contáctalo
+              directamente.
+            </p>
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                <a
-                  href="mailto:daniel10abadi@gmail.com"
-                  className="inline-flex items-center border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
-                >
-                  daniel10abadi@gmail.com
-                </a>
-                <a
-                  href="https://wa.me/50768641929"
-                  className="inline-flex items-center border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
-                >
-                  +507 6864-1929
-                </a>
-              </div>
-            </div>
-
-            <div className="md:col-span-5">
-              <div className="aspect-square bg-surface-2 border border-border flex items-center justify-center relative">
-                <div className="absolute inset-0 bp-grid opacity-30" />
-                <div className="relative text-center">
-                  <div className="text-7xl">⚙</div>
-                  <div className="mt-6 font-display text-xl">Daniel Abadi</div>
-                  <div className="text-sm text-muted mt-1 font-mono">
-                    Instructor · CSI
-                  </div>
-                </div>
-              </div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a
+                href="mailto:daniel10abadi@gmail.com"
+                className="inline-flex items-center border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
+              >
+                daniel10abadi@gmail.com
+              </a>
+              <a
+                href="https://wa.me/50768641929"
+                className="inline-flex items-center border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
+              >
+                +507 6864-1929
+              </a>
             </div>
           </div>
         </div>

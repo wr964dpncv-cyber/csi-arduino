@@ -2,39 +2,39 @@ import Link from "next/link";
 
 export const metadata = {
   title: "Sobre el Programa — Principios de Arduino",
-  description: "Misión y estructura del programa Principios de Arduino del CSI/MEDUCA.",
+  description:
+    "Misión y estructura del programa Principios de Arduino del CSI/MEDUCA.",
 };
 
 export default function AboutPage() {
   return (
     <>
-      {/* Hero */}
       <section className="bg-ink text-surface">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
-          <div className="text-sm text-muted-2 mb-4">Sobre el programa</div>
+          <div className="text-xs font-mono text-muted-2 mb-4">
+            Sobre el programa
+          </div>
           <h1 className="font-display text-5xl md:text-7xl tracking-tight leading-[1.02] max-w-3xl">
             Tecnología al alcance de cada estudiante.
           </h1>
           <p className="mt-8 text-lg text-muted-2 max-w-2xl leading-relaxed">
-            <strong className="text-surface">Principios de Arduino</strong> es una
-            iniciativa educativa de Daniel Abadi dentro del Cuerpo de Solidaridad
-            Informática del Ministerio de Educación de Panamá. Introduce a
-            estudiantes de escuelas públicas en electrónica y programación.
+            Una iniciativa educativa de Daniel Abadi dentro del Cuerpo de
+            Solidaridad Informática del Ministerio de Educación de Panamá.
           </p>
         </div>
       </section>
 
       {/* Stats */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-6 grid grid-cols-2 md:grid-cols-4 divide-x divide-border">
+        <div className="mx-auto max-w-6xl px-6 grid grid-cols-2 md:grid-cols-4">
           {[
-            ["12", "Talleres"],
+            ["10", "Talleres"],
             ["100%", "Gratuito"],
             ["A tu ritmo", "Modalidad"],
             ["Nacional", "Cobertura"],
           ].map(([n, l]) => (
-            <div key={l} className="px-6 py-10">
-              <div className="font-display text-3xl md:text-4xl tracking-tight">{n}</div>
+            <div key={l} className="px-6 py-12">
+              <div className="font-mono text-3xl tracking-tight">{n}</div>
               <div className="mt-2 text-sm text-muted">{l}</div>
             </div>
           ))}
@@ -52,7 +52,7 @@ export default function AboutPage() {
               },
               {
                 t: "Modalidad",
-                d: "12 talleres asincrónicos accesibles desde cualquier escuela del país, sin horarios fijos ni costos.",
+                d: "10 talleres asincrónicos accesibles desde cualquier escuela del país, sin horarios fijos ni costos.",
               },
               {
                 t: "Metodología",
@@ -60,6 +60,7 @@ export default function AboutPage() {
               },
             ].map((c) => (
               <div key={c.t}>
+                <div className="font-mono text-sm text-accent mb-3">→</div>
                 <h2 className="font-display text-2xl tracking-tight">{c.t}</h2>
                 <p className="mt-3 text-muted leading-relaxed">{c.d}</p>
               </div>
@@ -69,10 +70,10 @@ export default function AboutPage() {
       </section>
 
       {/* Competencias */}
-      <section className="border-b border-border">
+      <section className="border-b border-border bg-surface-2">
         <div className="mx-auto max-w-6xl px-6 py-24">
-          <div className="max-w-2xl mb-16">
-            <div className="text-sm text-accent-dark mb-3">Competencias</div>
+          <div className="max-w-2xl mb-12">
+            <div className="text-sm text-muted mb-3">Competencias</div>
             <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
               Lo que el estudiante domina al terminar.
             </h2>
@@ -99,12 +100,12 @@ export default function AboutPage() {
             ].map((c, i) => (
               <div
                 key={c.t}
-                className="grid md:grid-cols-12 gap-4 md:gap-8 py-8 items-baseline"
+                className="grid md:grid-cols-12 gap-4 md:gap-8 py-6 items-baseline"
               >
-                <div className="md:col-span-1 font-display text-2xl text-accent">
+                <div className="md:col-span-1 font-mono text-sm text-accent">
                   {String(i + 1).padStart(2, "0")}
                 </div>
-                <div className="md:col-span-4 font-display text-xl">{c.t}</div>
+                <div className="md:col-span-4 font-display text-lg">{c.t}</div>
                 <div className="md:col-span-7 text-muted leading-relaxed">{c.d}</div>
               </div>
             ))}
@@ -128,7 +129,7 @@ export default function AboutPage() {
               href="mailto:daniel10abadi@gmail.com"
               className="bg-ink text-surface px-6 py-4 text-sm hover:bg-accent transition flex justify-between items-center"
             >
-              <span>Enviar email</span>
+              <span>daniel10abadi@gmail.com</span>
               <span>→</span>
             </a>
             <a
