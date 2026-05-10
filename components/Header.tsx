@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navItems = [
   { href: "/sobre-el-programa", label: "Programa" },
@@ -9,6 +12,9 @@ const navItems = [
 ];
 
 export default function Header() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 h-16">
@@ -38,13 +44,17 @@ export default function Header() {
           ))}
         </nav>
 
-        <Link
-          href="/reto-nacional/inscripcion"
-          className="hidden md:inline-flex items-center gap-1.5 bg-accent text-ink px-5 py-2.5 text-sm font-semibold hover:bg-accent-bright glow-gold transition"
-        >
-          <span>Inscribirme</span>
-          <span aria-hidden>→</span>
-        </Link>
+        {!isHome ? (
+          <Link
+            href="/reto-nacional/inscripcion"
+            className="hidden md:inline-flex items-center gap-1.5 bg-accent text-ink px-5 py-2.5 text-sm font-semibold hover:bg-accent-bright glow-gold transition"
+          >
+            <span>Inscribirme</span>
+            <span aria-hidden>→</span>
+          </Link>
+        ) : (
+          <span className="hidden md:inline-block w-[140px]" aria-hidden />
+        )}
       </div>
     </header>
   );
