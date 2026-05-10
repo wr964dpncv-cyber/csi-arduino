@@ -2,6 +2,22 @@ type Props = {
   className?: string;
 };
 
+const PADS: Array<[number, number]> = [
+  [180, 120], [360, 160], [520, 140], [760, 80], [940, 80],
+  [260, 220], [540, 300], [940, 300],
+  [180, 420], [540, 420], [800, 420], [1040, 460],
+];
+
+const VIAS: Array<[number, number]> = [
+  [90, 260], [220, 160], [380, 140], [680, 300],
+  [900, 260], [320, 460], [1100, 120],
+];
+
+const CYAN_PADS: Array<[number, number, number]> = [
+  [320, 480, 2.6],
+  [1100, 240, 3.2],
+];
+
 export default function CircuitBackdrop({ className = "" }: Props) {
   return (
     <svg
@@ -15,20 +31,6 @@ export default function CircuitBackdrop({ className = "" }: Props) {
         <pattern id="pcb-grid" width="48" height="48" patternUnits="userSpaceOnUse">
           <path d="M 48 0 L 0 0 0 48" fill="none" stroke="rgba(245,184,12,0.05)" strokeWidth="1" />
         </pattern>
-
-        <symbol id="pad" viewBox="-8 -8 16 16">
-          <circle r="6" fill="none" stroke="rgba(245,184,12,0.55)" strokeWidth="1.5" />
-          <circle r="2" fill="#0b1a35" />
-        </symbol>
-
-        <symbol id="via" viewBox="-4 -4 8 8">
-          <circle r="2.5" fill="rgba(245,184,12,0.45)" />
-        </symbol>
-
-        <symbol id="pad-cyan" viewBox="-8 -8 16 16">
-          <circle r="6" fill="none" stroke="rgba(98,225,240,0.5)" strokeWidth="1.5" />
-          <circle r="2" fill="#0b1a35" />
-        </symbol>
       </defs>
 
       <rect width="1200" height="600" fill="url(#pcb-grid)" />
@@ -52,7 +54,7 @@ export default function CircuitBackdrop({ className = "" }: Props) {
         <path d="M 540 420 L 580 460 L 760 460 L 800 420 L 1000 420 L 1040 460 L 1200 460" />
 
         <path d="M 180 0 L 180 120" />
-        <path d="M 360 0 L 360 160 L 360 220" />
+        <path d="M 360 0 L 360 160" />
         <path d="M 540 140 L 540 420" />
         <path d="M 760 80 L 760 260" />
         <path d="M 940 300 L 940 460" />
@@ -69,57 +71,33 @@ export default function CircuitBackdrop({ className = "" }: Props) {
       </g>
 
       <g>
-        <use href="#pad" x="180" y="120" />
-        <use href="#pad" x="360" y="160" />
-        <use href="#pad" x="520" y="140" />
-        <use href="#pad" x="760" y="80" />
-        <use href="#pad" x="940" y="80" />
-        <use href="#pad" x="260" y="220" />
-        <use href="#pad" x="540" y="300" />
-        <use href="#pad" x="940" y="300" />
-        <use href="#pad" x="180" y="420" />
-        <use href="#pad" x="540" y="420" />
-        <use href="#pad" x="800" y="420" />
-        <use href="#pad" x="1040" y="460" />
-
-        <use href="#via" x="90" y="260" />
-        <use href="#via" x="220" y="160" />
-        <use href="#via" x="380" y="140" />
-        <use href="#via" x="680" y="300" />
-        <use href="#via" x="900" y="260" />
-        <use href="#via" x="320" y="460" />
-        <use href="#via" x="1100" y="120" />
-
-        <use href="#pad-cyan" x="320" y="480">
-          <animate attributeName="opacity" values="1;0.35;1" dur="2.6s" repeatCount="indefinite" />
-        </use>
-        <use href="#pad-cyan" x="1100" y="240">
-          <animate attributeName="opacity" values="1;0.35;1" dur="3.2s" repeatCount="indefinite" />
-        </use>
+        {PADS.map(([cx, cy]) => (
+          <g key={`pad-${cx}-${cy}`}>
+            <circle cx={cx} cy={cy} r="6" fill="none" stroke="rgba(245,184,12,0.55)" strokeWidth="1.5" />
+            <circle cx={cx} cy={cy} r="2" fill="#0b1a35" />
+          </g>
+        ))}
+        {VIAS.map(([cx, cy]) => (
+          <circle key={`via-${cx}-${cy}`} cx={cx} cy={cy} r="2.5" fill="rgba(245,184,12,0.45)" />
+        ))}
+        {CYAN_PADS.map(([cx, cy, dur]) => (
+          <g key={`cyan-${cx}-${cy}`}>
+            <circle cx={cx} cy={cy} r="6" fill="none" stroke="rgba(98,225,240,0.5)" strokeWidth="1.5">
+              <animate attributeName="opacity" values="1;0.35;1" dur={`${dur}s`} repeatCount="indefinite" />
+            </circle>
+            <circle cx={cx} cy={cy} r="2" fill="#0b1a35" />
+          </g>
+        ))}
       </g>
 
       <g stroke="rgba(245,184,12,0.35)" fill="rgba(245,184,12,0.04)" strokeWidth="1">
         <rect x="600" y="180" width="120" height="80" rx="2" />
-        <line x1="612" y1="180" x2="612" y2="172" />
-        <line x1="624" y1="180" x2="624" y2="172" />
-        <line x1="636" y1="180" x2="636" y2="172" />
-        <line x1="648" y1="180" x2="648" y2="172" />
-        <line x1="660" y1="180" x2="660" y2="172" />
-        <line x1="672" y1="180" x2="672" y2="172" />
-        <line x1="684" y1="180" x2="684" y2="172" />
-        <line x1="696" y1="180" x2="696" y2="172" />
-        <line x1="708" y1="180" x2="708" y2="172" />
-
-        <line x1="612" y1="260" x2="612" y2="268" />
-        <line x1="624" y1="260" x2="624" y2="268" />
-        <line x1="636" y1="260" x2="636" y2="268" />
-        <line x1="648" y1="260" x2="648" y2="268" />
-        <line x1="660" y1="260" x2="660" y2="268" />
-        <line x1="672" y1="260" x2="672" y2="268" />
-        <line x1="684" y1="260" x2="684" y2="268" />
-        <line x1="696" y1="260" x2="696" y2="268" />
-        <line x1="708" y1="260" x2="708" y2="268" />
-
+        {[612, 624, 636, 648, 660, 672, 684, 696, 708].map((x) => (
+          <line key={`pin-top-${x}`} x1={x} y1="180" x2={x} y2="172" />
+        ))}
+        {[612, 624, 636, 648, 660, 672, 684, 696, 708].map((x) => (
+          <line key={`pin-bot-${x}`} x1={x} y1="260" x2={x} y2="268" />
+        ))}
         <circle cx="612" cy="192" r="2" fill="rgba(245,184,12,0.5)" stroke="none" />
       </g>
     </svg>
