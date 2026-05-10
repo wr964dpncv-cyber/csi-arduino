@@ -15,12 +15,28 @@ export type Row = {
   total: number;
 };
 
+type SortKey =
+  | "date_desc"
+  | "date_asc"
+  | "score_desc"
+  | "score_asc"
+  | "name_asc"
+  | "taller_asc";
+
+const initialState = {
+  search: "",
+  tallerFilter: "all",
+  scoreFilter: "all" as "all" | "pass" | "fail",
+  schoolFilter: "all",
+  dateFrom: "",
+  dateTo: "",
+  sortKey: "date_desc" as SortKey,
+};
+
 export default function ResponsesTable({ rows }: { rows: Row[] }) {
-  const [search, setSearch] = useState("");
-  const [tallerFilter, setTallerFilter] = useState<string>("all");
-  const [scoreFilter, setScoreFilter] = useState<"all" | "pass" | "fail">(
-    "all"
-  );
+  const [state, setState] = useState(initialState);
+  const set = <K extends keyof typeof state>(k: K, v: (typeof state)[K]) =>
+    setState((s) => ({ ...s, [k]: v }));
 
   const talleres = useMemo(() => {
     const map = new Map<number, string>();
@@ -28,72 +44,174 @@ export default function ResponsesTable({ rows }: { rows: Row[] }) {
     return Array.from(map.entries()).sort((a, b) => a[0] - b[0]);
   }, [rows]);
 
+  const schools = useMemo(() => {
+    const set = new Set<string>();
+    rows.forEach((r) => {
+      if (r.student_school) set.add(r.student_school);
+    });
+    return Array.from(set).sort();
+  }, [rows]);
+
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return rows.filter((r) => {
-      if (tallerFilter !== "all" && String(r.taller_n) !== tallerFilter)
+    const q = state.search.trim().toLowerCase();
+    const from = state.dateFrom ? new Date(state.dateFrom) : null;
+    const to = state.dateTo ? new Date(state.dateTo) : null;
+    if (to) to.setHours(23, 59, 59, 999);
+
+    const list = rows.filter((r) => {
+      if (state.tallerFilter !== "all" && String(r.taller_n) !== state.tallerFilter)
         return false;
       const pct = (r.score / r.total) * 100;
-      if (scoreFilter === "pass" && pct < 60) return false;
-      if (scoreFilter === "fail" && pct >= 60) return false;
+      if (state.scoreFilter === "pass" && pct < 60) return false;
+      if (state.scoreFilter === "fail" && pct >= 60) return false;
+      if (
+        state.schoolFilter !== "all" &&
+        (r.student_school ?? "") !== state.schoolFilter
+      )
+        return false;
+      const date = new Date(r.created_at);
+      if (from && date < from) return false;
+      if (to && date > to) return false;
       if (!q) return true;
       const haystack =
         `${r.student_name} ${r.student_email} ${r.student_school ?? ""} ${r.taller_title}`.toLowerCase();
       return haystack.includes(q);
     });
-  }, [rows, search, tallerFilter, scoreFilter]);
+
+    list.sort((a, b) => {
+      switch (state.sortKey) {
+        case "date_asc":
+          return +new Date(a.created_at) - +new Date(b.created_at);
+        case "score_desc":
+          return b.score / b.total - a.score / a.total;
+        case "score_asc":
+          return a.score / a.total - b.score / b.total;
+        case "name_asc":
+          return a.student_name.localeCompare(b.student_name, "es");
+        case "taller_asc":
+          return a.taller_n - b.taller_n;
+        case "date_desc":
+        default:
+          return +new Date(b.created_at) - +new Date(a.created_at);
+      }
+    });
+    return list;
+  }, [rows, state]);
+
+  const activeCount =
+    Number(state.search.trim() !== "") +
+    Number(state.tallerFilter !== "all") +
+    Number(state.scoreFilter !== "all") +
+    Number(state.schoolFilter !== "all") +
+    Number(state.dateFrom !== "") +
+    Number(state.dateTo !== "");
 
   return (
     <>
       {/* Filters */}
-      <div className="border border-border bg-surface-2 p-4 grid sm:grid-cols-[1fr_auto_auto_auto] gap-3 items-end">
-        <label className="block">
-          <div className="text-xs text-muted mb-1.5 font-mono uppercase tracking-wider">
-            Buscar
+      <div className="border border-border bg-surface-2 p-4 space-y-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <FilterField label="Buscar">
+            <input
+              type="search"
+              value={state.search}
+              onChange={(e) => set("search", e.target.value)}
+              placeholder="Nombre, email, escuela…"
+              className="w-full border border-border bg-surface px-3 py-2 text-sm"
+            />
+          </FilterField>
+          <FilterField label="Taller">
+            <select
+              value={state.tallerFilter}
+              onChange={(e) => set("tallerFilter", e.target.value)}
+              className="w-full border border-border bg-surface px-3 py-2 text-sm"
+            >
+              <option value="all">Todos</option>
+              {talleres.map(([n, title]) => (
+                <option key={n} value={String(n)}>
+                  T{String(n).padStart(2, "0")} · {title}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+          <FilterField label="Escuela">
+            <select
+              value={state.schoolFilter}
+              onChange={(e) => set("schoolFilter", e.target.value)}
+              className="w-full border border-border bg-surface px-3 py-2 text-sm"
+            >
+              <option value="all">Todas</option>
+              {schools.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+          <FilterField label="Score">
+            <select
+              value={state.scoreFilter}
+              onChange={(e) =>
+                set("scoreFilter", e.target.value as typeof state.scoreFilter)
+              }
+              className="w-full border border-border bg-surface px-3 py-2 text-sm"
+            >
+              <option value="all">Todos</option>
+              <option value="pass">Aprobado (≥60%)</option>
+              <option value="fail">Reprobado (&lt;60%)</option>
+            </select>
+          </FilterField>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
+          <FilterField label="Desde">
+            <input
+              type="date"
+              value={state.dateFrom}
+              onChange={(e) => set("dateFrom", e.target.value)}
+              className="w-full border border-border bg-surface px-3 py-2 text-sm"
+            />
+          </FilterField>
+          <FilterField label="Hasta">
+            <input
+              type="date"
+              value={state.dateTo}
+              onChange={(e) => set("dateTo", e.target.value)}
+              className="w-full border border-border bg-surface px-3 py-2 text-sm"
+            />
+          </FilterField>
+          <FilterField label="Ordenar">
+            <select
+              value={state.sortKey}
+              onChange={(e) => set("sortKey", e.target.value as SortKey)}
+              className="w-full border border-border bg-surface px-3 py-2 text-sm"
+            >
+              <option value="date_desc">Más reciente primero</option>
+              <option value="date_asc">Más antiguo primero</option>
+              <option value="score_desc">Score más alto</option>
+              <option value="score_asc">Score más bajo</option>
+              <option value="name_asc">Nombre A–Z</option>
+              <option value="taller_asc">Taller 0 → 11</option>
+            </select>
+          </FilterField>
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-xs text-muted font-mono whitespace-nowrap">
+              {filtered.length} / {rows.length}
+              {activeCount > 0 && (
+                <span className="ml-2 text-accent-dark">
+                  · {activeCount} filtro{activeCount === 1 ? "" : "s"}
+                </span>
+              )}
+            </div>
+            {activeCount > 0 && (
+              <button
+                onClick={() => setState(initialState)}
+                className="text-xs text-rose-700 hover:underline whitespace-nowrap"
+              >
+                Limpiar filtros
+              </button>
+            )}
           </div>
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Nombre, email, escuela…"
-            className="w-full border border-border bg-surface px-3 py-2 text-sm"
-          />
-        </label>
-        <label className="block">
-          <div className="text-xs text-muted mb-1.5 font-mono uppercase tracking-wider">
-            Taller
-          </div>
-          <select
-            value={tallerFilter}
-            onChange={(e) => setTallerFilter(e.target.value)}
-            className="border border-border bg-surface px-3 py-2 text-sm"
-          >
-            <option value="all">Todos</option>
-            {talleres.map(([n, title]) => (
-              <option key={n} value={String(n)}>
-                T{String(n).padStart(2, "0")} · {title}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block">
-          <div className="text-xs text-muted mb-1.5 font-mono uppercase tracking-wider">
-            Score
-          </div>
-          <select
-            value={scoreFilter}
-            onChange={(e) =>
-              setScoreFilter(e.target.value as "all" | "pass" | "fail")
-            }
-            className="border border-border bg-surface px-3 py-2 text-sm"
-          >
-            <option value="all">Todos</option>
-            <option value="pass">Aprobado (≥60%)</option>
-            <option value="fail">Reprobado (&lt;60%)</option>
-          </select>
-        </label>
-        <div className="text-xs text-muted font-mono whitespace-nowrap">
-          {filtered.length} / {rows.length}
         </div>
       </div>
 
@@ -108,27 +226,13 @@ export default function ResponsesTable({ rows }: { rows: Row[] }) {
           <table className="w-full text-sm">
             <thead className="border-b border-border bg-surface">
               <tr className="text-left">
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted">
-                  Fecha
-                </th>
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted">
-                  Taller
-                </th>
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted">
-                  Estudiante
-                </th>
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted">
-                  Email
-                </th>
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted">
-                  Escuela
-                </th>
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted text-right">
-                  Score
-                </th>
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted text-right">
-                  Acciones
-                </th>
+                <Th>Fecha</Th>
+                <Th>Taller</Th>
+                <Th>Estudiante</Th>
+                <Th>Email</Th>
+                <Th>Escuela</Th>
+                <Th align="right">Score</Th>
+                <Th align="right">Acciones</Th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -186,5 +290,40 @@ export default function ResponsesTable({ rows }: { rows: Row[] }) {
         </div>
       )}
     </>
+  );
+}
+
+function FilterField({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block">
+      <div className="text-xs text-muted mb-1.5 font-mono uppercase tracking-wider">
+        {label}
+      </div>
+      {children}
+    </label>
+  );
+}
+
+function Th({
+  children,
+  align = "left",
+}: {
+  children: React.ReactNode;
+  align?: "left" | "right";
+}) {
+  return (
+    <th
+      className={`px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted ${
+        align === "right" ? "text-right" : ""
+      }`}
+    >
+      {children}
+    </th>
   );
 }
