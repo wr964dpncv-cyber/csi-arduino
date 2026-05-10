@@ -1,25 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
-import DeleteButton from "@/components/DeleteButton";
+import InscripcionesTable, { type Row } from "./InscripcionesTable";
 
 export const metadata = { title: "Inscripciones · Admin" };
 export const dynamic = "force-dynamic";
-
-type Member = {
-  nombre?: string;
-  apellido?: string;
-  emailInstitucional?: string;
-  emailPersonal?: string;
-  telefono?: string;
-};
-
-type Row = {
-  id: string;
-  created_at: string;
-  equipo_nombre: string;
-  escuela: string;
-  region: string;
-  integrantes: Member[];
-};
 
 async function getInscripciones(): Promise<Row[]> {
   try {
@@ -45,7 +28,8 @@ export default async function InscripcionesPage() {
             Inscripciones del Reto
           </h1>
           <p className="mt-2 text-muted">
-            {rows.length} {rows.length === 1 ? "equipo inscrito" : "equipos inscritos"}.
+            {rows.length}{" "}
+            {rows.length === 1 ? "equipo inscrito" : "equipos inscritos"}.
           </p>
         </div>
         <a
@@ -56,78 +40,7 @@ export default async function InscripcionesPage() {
         </a>
       </div>
 
-      {rows.length === 0 ? (
-        <div className="border border-dashed border-border bg-surface-2 p-12 text-center text-muted">
-          Aún no hay inscripciones. Las nuevas inscripciones aparecerán aquí
-          automáticamente.
-        </div>
-      ) : (
-        <div className="border border-border overflow-x-auto bg-surface-2">
-          <table className="w-full text-sm">
-            <thead className="border-b border-border bg-surface">
-              <tr className="text-left">
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted">
-                  Fecha
-                </th>
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted">
-                  Equipo
-                </th>
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted">
-                  Escuela
-                </th>
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted">
-                  Región
-                </th>
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted">
-                  Integrantes
-                </th>
-                <th className="px-4 py-3 font-mono text-xs uppercase tracking-wider text-muted text-right">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {rows.map((r) => (
-                <tr key={r.id} className="hover:bg-surface transition">
-                  <td className="px-4 py-3 align-top font-mono text-xs text-muted whitespace-nowrap">
-                    {new Date(r.created_at).toLocaleString("es-PA", {
-                      day: "2-digit",
-                      month: "short",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </td>
-                  <td className="px-4 py-3 align-top font-medium">
-                    {r.equipo_nombre}
-                  </td>
-                  <td className="px-4 py-3 align-top text-muted">{r.escuela}</td>
-                  <td className="px-4 py-3 align-top text-muted">{r.region}</td>
-                  <td className="px-4 py-3 align-top">
-                    <ul className="space-y-1">
-                      {r.integrantes?.map((m, i) => (
-                        <li key={i} className="text-xs">
-                          <span className="font-medium">
-                            {m.nombre} {m.apellido}
-                          </span>
-                          <span className="text-muted ml-2">
-                            {m.emailInstitucional} · {m.telefono}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </td>
-                  <td className="px-4 py-3 align-top text-right whitespace-nowrap">
-                    <DeleteButton
-                      url={`/api/admin/inscripciones/${r.id}`}
-                      confirmMessage={`¿Eliminar la inscripción del equipo "${r.equipo_nombre}"? Esta acción no se puede deshacer.`}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <InscripcionesTable rows={rows} />
     </div>
   );
 }
