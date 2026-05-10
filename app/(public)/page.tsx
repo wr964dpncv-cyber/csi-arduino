@@ -7,6 +7,7 @@ import {
   CodeIcon,
   GearIcon,
 } from "@/components/SkillIcons";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 export default function HomePage() {
   return (
@@ -228,9 +229,12 @@ export default function HomePage() {
               </a>
               <a
                 href="https://wa.me/50768641929"
-                className="inline-flex items-center border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
               >
-                +507 6864-1929
+                <WhatsAppIcon className="h-4 w-4 text-[#25D366] transition-transform group-hover:scale-110" />
+                <span>+507 6864-1929</span>
               </a>
             </div>
           </div>

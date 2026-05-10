@@ -11,6 +11,7 @@ const navItems = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/inscripciones", label: "Inscripciones Reto" },
   { href: "/admin/entregas", label: "Entregas Reto" },
+  { href: "/admin/respuestas", label: "Respuestas Quiz" },
   { href: "/admin/talleres", label: "Talleres" },
   { href: "/admin/calendario", label: "Calendario" },
 ];

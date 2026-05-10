@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getCalendarEvents } from "@/lib/data";
 import { parseEventDate } from "@/lib/dateHelpers";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
+import CircuitBackdrop from "@/components/CircuitBackdrop";
 
 export const metadata = {
   title: "Calendario — Principios de Arduino",
@@ -59,7 +61,8 @@ export default async function CalendarioPage() {
   return (
     <>
       <section className="bg-ink text-surface relative overflow-hidden">
-        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <CircuitBackdrop />
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-ink/80" />
         <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="inline-flex items-center gap-2 text-xs font-mono text-muted-2 mb-4">
             <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
@@ -231,10 +234,15 @@ export default async function CalendarioPage() {
           <div className="md:col-span-5 flex flex-col gap-3">
             <a
               href="https://wa.me/50768641929"
-              className="bg-accent text-ink px-6 py-4 text-sm font-semibold hover:bg-accent-bright glow-gold transition flex justify-between items-center"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-accent text-ink px-6 py-4 text-sm font-semibold hover:bg-accent-bright glow-gold transition flex items-center gap-3"
             >
-              <span>WhatsApp +507 6864-1929</span>
-              <span>→</span>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-sm transition-transform group-hover:scale-110">
+                <WhatsAppIcon className="h-5 w-5" />
+              </span>
+              <span className="flex-1">WhatsApp +507 6864-1929</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
             </a>
             <Link
               href="/talleres"

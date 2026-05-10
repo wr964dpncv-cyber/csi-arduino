@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Taller } from "@/lib/talleres";
 import { parseEventDate, getEventStatus } from "@/lib/dateHelpers";
+import { WhatsAppIcon } from "./WhatsAppIcon";
 
 type CalendarEventInfo = {
   day: string;
@@ -199,35 +200,86 @@ export default function TallerPage({
           <div className="max-w-3xl mb-10">
             <div className="text-sm text-muted mb-3">Quiz</div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
-              {showQuiz
-                ? "Cuando termines, completa el quiz."
-                : "Quiz por publicar."}
+              {isUnpublished
+                ? "Quiz no disponible."
+                : "Cuando termines, completa el quiz."}
             </h2>
             <p className="mt-4 text-muted leading-relaxed">
-              {showQuiz
-                ? "Usa tu correo institucional MEDUCA para enviar tus respuestas."
-                : "El quiz de este taller se habilitará junto con el video."}
+              {isUnpublished
+                ? "El quiz se habilitará cuando se publique el taller."
+                : "Elige una de las dos opciones según el correo que vayas a usar."}
             </p>
           </div>
 
-          {showQuiz ? (
-            <a
-              href={taller.quizUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-between gap-12 bg-ink text-surface px-7 py-5 hover:bg-accent hover:text-ink glow-gold transition group"
-            >
-              <span className="text-base font-medium">
-                Abrir quiz del Taller {taller.n}
-              </span>
-              <span className="font-mono text-sm text-muted-2 group-hover:text-ink">
-                forms.office.com →
-              </span>
-            </a>
+          {!isUnpublished ? (
+            <div className="grid md:grid-cols-2 gap-px bg-border border border-border">
+              {/* Opción A: Quiz nativo */}
+              <div className="bg-surface p-7 flex flex-col">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-dark mb-4">
+                  ▸ Opción A · Cualquier correo
+                </div>
+                <h3 className="font-display text-xl tracking-tight">
+                  Quiz en el sitio
+                </h3>
+                <p className="mt-2 text-sm text-muted leading-relaxed flex-1">
+                  Completa el quiz aquí mismo con cualquier correo. Recibe tu
+                  resultado al instante.
+                </p>
+                <Link
+                  href={`/talleres/${taller.slug}/quiz`}
+                  className="mt-6 inline-flex items-center justify-between bg-ink text-surface px-5 py-4 text-sm hover:bg-accent hover:text-ink glow-gold transition group"
+                >
+                  <span className="font-medium">Empezar quiz</span>
+                  <span className="font-mono text-muted-2 group-hover:text-ink text-xs">
+                    →
+                  </span>
+                </Link>
+              </div>
+
+              {/* Opción B: Microsoft Forms */}
+              <div className="bg-surface p-7 flex flex-col">
+                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-dark mb-4">
+                  ▸ Opción B · MEDUCA
+                </div>
+                <h3 className="font-display text-xl tracking-tight">
+                  Microsoft Forms
+                </h3>
+                <p className="mt-2 text-sm text-muted leading-relaxed flex-1">
+                  Si tienes correo institucional MEDUCA, completa el quiz a
+                  través de Microsoft Forms.
+                </p>
+                {showQuiz ? (
+                  <a
+                    href={taller.quizUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-6 inline-flex items-center justify-between border border-ink px-5 py-4 text-sm hover:bg-ink hover:text-surface transition"
+                  >
+                    <span className="font-medium">Abrir formulario</span>
+                    <span className="font-mono text-muted-2 text-xs">
+                      forms.office.com →
+                    </span>
+                  </a>
+                ) : (
+                  <div className="mt-6 border border-dashed border-border px-5 py-4 text-sm text-muted">
+                    {calendarEvent ? (
+                      <>
+                        Disponible el{" "}
+                        <span className="font-medium text-accent-dark">
+                          {calendarEvent.day} {calendarEvent.dateText}
+                        </span>
+                      </>
+                    ) : (
+                      <>Disponible en la fecha del taller</>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           ) : (
             <div className="inline-flex flex-col gap-1.5 border border-dashed border-border px-7 py-5">
-              <div className="font-mono text-xs uppercase tracking-wider text-accent-dark">
-                ▸ Próximamente
+              <div className="font-mono text-xs uppercase tracking-wider text-rose-700">
+                ○ No disponible
               </div>
               <div className="text-sm text-ink">
                 {calendarEvent ? (
@@ -235,9 +287,7 @@ export default function TallerPage({
                     Quiz disponible el{" "}
                     <span className="font-medium text-accent-dark">
                       {calendarEvent.day} {calendarEvent.dateText}
-                    </span>{" "}
-                    a las{" "}
-                    <span className="font-mono">{calendarEvent.time}</span>
+                    </span>
                   </>
                 ) : (
                   <>Quiz disponible en la fecha del taller</>
@@ -247,9 +297,9 @@ export default function TallerPage({
           )}
 
           <p className="mt-8 text-sm text-muted leading-relaxed max-w-2xl">
-            <span className="text-ink font-medium">Nota:</span> si tienes
-            dificultades para acceder al formulario con tu correo institucional,
-            contacta a Daniel directamente por WhatsApp o correo.
+            <span className="text-ink font-medium">Nota:</span> ambas opciones
+            evalúan el mismo contenido. Si tienes dificultades, contacta a
+            Daniel directamente por WhatsApp o correo.
           </p>
         </div>
       </section>
@@ -317,10 +367,15 @@ export default function TallerPage({
           <div className="md:col-span-5 flex flex-col gap-3">
             <a
               href="https://wa.me/50768641929"
-              className="bg-accent text-ink px-6 py-4 text-sm font-semibold hover:bg-accent-bright glow-gold transition flex justify-between items-center"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-accent text-ink px-6 py-4 text-sm font-semibold hover:bg-accent-bright glow-gold transition flex items-center gap-3"
             >
-              <span>WhatsApp +507 6864-1929</span>
-              <span>→</span>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-sm transition-transform group-hover:scale-110">
+                <WhatsAppIcon className="h-5 w-5" />
+              </span>
+              <span className="flex-1">WhatsApp +507 6864-1929</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
             </a>
             <a
               href="mailto:daniel10abadi@gmail.com"

@@ -1,5 +1,6 @@
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { talleres as seedTalleres, type Taller } from "@/lib/talleres";
+import type { QuizQuestion } from "@/lib/quiz";
 
 export type CalendarEvent = {
   id?: string;
@@ -91,6 +92,28 @@ export async function getTallerBySlug(slug: string): Promise<Taller | null> {
     return rowToTaller(data as TallerRow);
   } catch {
     return seedTalleres.find((t) => t.slug === slug) ?? null;
+  }
+}
+
+export async function getQuestionsForTaller(
+  tallerId: string,
+  includeCorrect = false
+): Promise<QuizQuestion[]> {
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const supabase = await createClient();
+    const cols = includeCorrect
+      ? "id, taller_id, sort_order, question, options, correct_index"
+      : "id, taller_id, sort_order, question, options";
+    const { data, error } = await supabase
+      .from("quiz_questions")
+      .select(cols)
+      .eq("taller_id", tallerId)
+      .order("sort_order");
+    if (error || !data) return [];
+    return data as unknown as QuizQuestion[];
+  } catch {
+    return [];
   }
 }
 

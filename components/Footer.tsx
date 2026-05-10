@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { WhatsAppIcon } from "./WhatsAppIcon";
 
 export default function Footer() {
   return (
@@ -57,9 +58,12 @@ export default function Footer() {
               </a>
               <a
                 href="https://wa.me/50768641929"
-                className="block text-muted-2 hover:text-surface transition"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 text-muted-2 hover:text-surface transition"
               >
-                +507 6864-1929
+                <WhatsAppIcon className="h-4 w-4 text-[#25D366] transition-transform group-hover:scale-110" />
+                <span>+507 6864-1929</span>
               </a>
             </div>
           </div>

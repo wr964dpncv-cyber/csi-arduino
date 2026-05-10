@@ -22,6 +22,7 @@ import {
   LinkIcon,
   MedalIcon,
 } from "@/components/RetoIcons";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 export const metadata = {
   title: `Reto Nacional CSI ${RETO_YEAR} — Competencia Nacional de Arduino`,
@@ -453,10 +454,15 @@ export default function RetoNacionalPage() {
             </Link>
             <a
               href="https://wa.me/50768641929"
-              className="border border-white/20 px-6 py-4 text-sm hover:border-surface transition flex justify-between items-center"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group border border-white/20 px-6 py-4 text-sm hover:border-surface transition flex items-center gap-3"
             >
-              <span>WhatsApp +507 6864-1929</span>
-              <span>→</span>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-sm transition-transform group-hover:scale-110">
+                <WhatsAppIcon className="h-5 w-5" />
+              </span>
+              <span className="flex-1">WhatsApp +507 6864-1929</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
             </a>
           </div>
         </div>

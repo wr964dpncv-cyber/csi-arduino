@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 export const metadata = {
   title: "Sobre el Programa — Principios de Arduino",
@@ -135,10 +136,15 @@ export default function AboutPage() {
             </a>
             <a
               href="https://wa.me/50768641929"
-              className="border border-ink px-6 py-4 text-sm hover:bg-ink hover:text-surface transition flex justify-between items-center"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group border border-ink px-6 py-4 text-sm hover:bg-ink hover:text-surface transition flex items-center gap-3"
             >
-              <span>WhatsApp +507 6864-1929</span>
-              <span>→</span>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-sm transition-transform group-hover:scale-110">
+                <WhatsAppIcon className="h-5 w-5" />
+              </span>
+              <span className="flex-1">WhatsApp +507 6864-1929</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
             </a>
             <Link
               href="/talleres"
