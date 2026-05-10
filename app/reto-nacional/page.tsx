@@ -1,124 +1,461 @@
 import Link from "next/link";
+import {
+  RETO_YEAR,
+  RETO_DATES,
+  fases,
+  requisitos,
+  cronograma,
+  entregables,
+  criterios,
+  finalSegments,
+  premios,
+} from "@/lib/reto";
+import {
+  TrophyIcon,
+  TinkercadIcon,
+  ChipIcon,
+  CheckIcon,
+  TeamIcon,
+  SchoolIcon,
+  VideoIcon,
+  DocIcon,
+  LinkIcon,
+  MedalIcon,
+} from "@/components/RetoIcons";
 
 export const metadata = {
-  title: "Reto Nacional — Principios de Arduino",
-  description:
-    "Al finalizar el programa, los estudiantes destacados son seleccionados para participar en el Reto Nacional CSI.",
+  title: `Reto Nacional CSI ${RETO_YEAR} — Competencia Nacional de Arduino`,
+  description: `Competencia Nacional de Arduino organizada por Daniel Abadi para el Programa CSI de MEDUCA. Inscripciones del ${RETO_DATES.inscripcionFrom} al ${RETO_DATES.inscripcionTo}.`,
+};
+
+const requisitoIcons = [CheckIcon, TeamIcon, SchoolIcon];
+const entregableIcons = [LinkIcon, VideoIcon, DocIcon];
+const faseIcons = [TinkercadIcon, ChipIcon];
+const cronogramaTone: Record<string, string> = {
+  open: "bg-accent",
+  critical: "bg-rose-500",
+  highlight: "bg-emerald-500",
+  build: "bg-emerald-500",
+  final: "bg-cyan-400",
 };
 
 export default function RetoNacionalPage() {
   return (
     <>
+      {/* HERO */}
       <section className="bg-ink text-surface relative overflow-hidden">
         <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
-        <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
+        <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-28">
+          <TrophyIcon className="h-12 w-12 text-accent mb-8" />
           <div className="text-xs font-mono text-muted-2 mb-4">
-            Reto Nacional CSI
+            Reto Nacional CSI · {RETO_YEAR}
           </div>
-          <h1 className="font-display text-5xl md:text-7xl tracking-tight leading-[1.02] max-w-3xl">
-            El proyecto final del programa.
+          <h1 className="font-display text-5xl md:text-7xl tracking-tight leading-[1.02] max-w-4xl">
+            Competencia Nacional<br />de Arduino.
           </h1>
           <p className="mt-8 text-lg text-muted-2 max-w-2xl leading-relaxed">
-            Al finalizar el programa, se seleccionará a los estudiantes que
-            hayan demostrado un desempeño sobresaliente durante los talleres
-            para participar en el{" "}
-            <span className="text-surface font-medium">Reto Nacional CSI</span>.
+            Organizada por <span className="text-surface">Daniel Abadi</span> para
+            el Programa CSI de MEDUCA. Los equipos diseñan un proyecto en
+            Tinkercad y los <span className="text-surface">10 mejores</span>{" "}
+            reciben un kit Arduino real para competir en una final presencial en
+            Panamá.
+          </p>
+
+          {/* Key dates */}
+          <div className="mt-12 grid sm:grid-cols-3 gap-8 max-w-3xl pt-8 border-t border-white/10">
+            <div>
+              <div className="text-xs font-mono text-muted-2 mb-1.5">
+                Inscripciones
+              </div>
+              <div className="font-medium">
+                {RETO_DATES.inscripcionFrom} – {RETO_DATES.inscripcionTo}
+              </div>
+            </div>
+            <div>
+              <div className="text-xs font-mono text-muted-2 mb-1.5">
+                Entrega de proyectos
+              </div>
+              <div className="font-medium">{RETO_DATES.entregaProyecto}</div>
+            </div>
+            <div>
+              <div className="text-xs font-mono text-accent mb-1.5">
+                Final presencial
+              </div>
+              <div className="font-medium text-surface">
+                {RETO_DATES.finalDate} · Panamá
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Link
+              href="/reto-nacional/inscripcion"
+              className="inline-flex items-center bg-accent text-ink px-7 py-3.5 text-base font-semibold hover:bg-accent-bright glow-gold transition"
+            >
+              Inscribir mi equipo →
+            </Link>
+            <a
+              href="#reglas"
+              className="inline-flex items-center px-7 py-3.5 text-base text-muted-2 hover:text-surface transition"
+            >
+              Ver reglas y cronograma
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* QUÉ ES */}
+      <section id="reglas" className="border-b border-border">
+        <div className="mx-auto max-w-6xl px-6 py-24 md:py-28">
+          <div className="max-w-3xl mb-16">
+            <div className="text-sm text-muted mb-3">¿Qué es el Reto?</div>
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              Dos fases, una competencia nacional.
+            </h2>
+            <p className="mt-6 text-lg text-muted leading-relaxed">
+              Los equipos diseñan un proyecto en Tinkercad y los 10 mejores
+              reciben un kit Arduino real para competir en una final presencial
+              en Panamá.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-px bg-border border border-border">
+            {fases.map((f, i) => {
+              const Icon = faseIcons[i];
+              return (
+                <div key={f.n} className="bg-surface p-8 md:p-10">
+                  <div className="flex items-center gap-4 mb-6">
+                    <Icon className="h-9 w-9 text-accent-dark" />
+                    <div className="font-mono text-sm text-accent-dark">
+                      Fase {f.n}
+                    </div>
+                  </div>
+                  <h3 className="font-display text-2xl tracking-tight">
+                    {f.name}
+                  </h3>
+                  <div className="mt-1 text-sm text-muted font-mono">
+                    {f.venue}
+                  </div>
+                  <p className="mt-5 text-muted leading-relaxed">{f.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* QUIÉN PUEDE PARTICIPAR */}
+      <section className="bg-surface-2 border-b border-border">
+        <div className="mx-auto max-w-6xl px-6 py-24">
+          <div className="max-w-2xl mb-14">
+            <div className="text-sm text-muted mb-3">Requisitos</div>
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              ¿Quién puede participar?
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {requisitos.map((r, i) => {
+              const Icon = requisitoIcons[i];
+              return (
+                <div key={r.t} className="border border-border bg-surface p-7">
+                  <Icon className="h-8 w-8 text-accent-dark" />
+                  <h3 className="mt-6 font-display text-xl tracking-tight">
+                    {r.t}
+                  </h3>
+                  <p className="mt-2 text-muted leading-relaxed">{r.d}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <p className="mt-10 text-sm text-muted italic max-w-2xl">
+            Cada estudiante solo puede pertenecer a un equipo. El proyecto debe
+            ser original y creado por los integrantes.
           </p>
         </div>
       </section>
 
-      {/* En qué consiste */}
+      {/* CRONOGRAMA */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
-            <div className="lg:col-span-4">
-              <div className="text-sm text-muted mb-3">En qué consiste</div>
-              <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
-                Aplica todo lo aprendido en un proyecto real.
-              </h2>
-            </div>
-            <div className="lg:col-span-7 space-y-6 text-lg text-muted leading-relaxed">
-              <p>
-                El reto consistirá en el desarrollo de un proyecto utilizando
-                los conocimientos adquiridos a lo largo del curso, permitiendo
-                a los participantes aplicar de forma práctica lo aprendido.
-              </p>
-              <p>
-                Los proyectos serán evaluados para determinar los ganadores.
-              </p>
-            </div>
+        <div className="mx-auto max-w-6xl px-6 py-24">
+          <div className="max-w-2xl mb-14">
+            <div className="text-sm text-muted mb-3">Cronograma</div>
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              Las fechas clave.
+            </h2>
+          </div>
+
+          <ol className="relative max-w-3xl">
+            <span
+              aria-hidden
+              className="absolute left-[7px] top-3 bottom-3 w-px bg-border"
+            />
+            {cronograma.map((item) => (
+              <li
+                key={item.date}
+                className="relative grid grid-cols-12 gap-4 md:gap-8 py-5"
+              >
+                <span
+                  className={`absolute left-0 top-7 h-3.5 w-3.5 rounded-full ring-4 ring-surface ${cronogramaTone[item.tone] ?? "bg-ink"}`}
+                />
+                <div className="col-span-4 md:col-span-3 pl-8 font-mono text-sm text-ink">
+                  {item.date}
+                </div>
+                <div className="col-span-8 md:col-span-9 text-muted leading-relaxed">
+                  {item.event}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* QUÉ DEBEN ENTREGAR */}
+      <section className="bg-surface-2 border-b border-border">
+        <div className="mx-auto max-w-6xl px-6 py-24">
+          <div className="max-w-2xl mb-14">
+            <div className="text-sm text-muted mb-3">Entregables</div>
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              ¿Qué deben entregar?
+            </h2>
+            <p className="mt-4 text-muted">
+              Antes del{" "}
+              <span className="text-ink font-medium">
+                {RETO_DATES.entregaProyecto}
+              </span>
+              , cada equipo entrega 3 elementos:
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-px bg-border border border-border">
+            {entregables.map((e, i) => {
+              const Icon = entregableIcons[i];
+              return (
+                <div key={e.n} className="bg-surface p-8 md:p-10">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="h-10 w-10 bg-ink text-surface flex items-center justify-center font-mono text-sm">
+                      {e.n}
+                    </div>
+                    <Icon className="h-7 w-7 text-accent-dark" />
+                  </div>
+                  <h3 className="font-display text-xl tracking-tight">{e.t}</h3>
+                  <p className="mt-2 text-sm text-muted leading-relaxed">
+                    {e.d}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Oportunidades */}
-      <section className="bg-surface-2 border-b border-border">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
-          <div className="max-w-2xl mb-12">
-            <div className="text-sm text-muted mb-3">Oportunidades</div>
-            <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
-              Lo que los seleccionados podrán hacer.
+      {/* CRITERIOS */}
+      <section className="border-b border-border">
+        <div className="mx-auto max-w-6xl px-6 py-24">
+          <div className="max-w-2xl mb-14">
+            <div className="text-sm text-muted mb-3">Evaluación</div>
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              Criterios de evaluación.
             </h2>
+            <p className="mt-4 text-muted">
+              El jurado seleccionado por Daniel Abadi y MEDUCA evaluará cada
+              proyecto según:
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-10">
-            {[
-              {
-                n: "01",
-                t: "Aplicar conocimientos",
-                d: "Llevar todo lo aprendido en los talleres a un proyecto real con impacto.",
-              },
-              {
-                n: "02",
-                t: "Demostrar creatividad",
-                d: "Diseñar soluciones originales que resuelvan problemas concretos.",
-              },
-              {
-                n: "03",
-                t: "Experiencia nacional",
-                d: "Participar junto a estudiantes de toda la república en una competencia única.",
-              },
-            ].map((s) => (
-              <div key={s.n}>
-                <div className="font-mono text-2xl text-accent-dark">{s.n}</div>
-                <h3 className="mt-5 text-lg font-medium">{s.t}</h3>
-                <p className="mt-2 text-sm text-muted leading-relaxed">{s.d}</p>
+          <div className="space-y-4 max-w-3xl">
+            {criterios.map((c) => (
+              <div
+                key={c.t}
+                className="grid grid-cols-12 gap-4 md:gap-6 items-baseline border-b border-border pb-4"
+              >
+                <div className="col-span-3 md:col-span-2 font-mono text-3xl text-accent-dark">
+                  {c.pct}%
+                </div>
+                <div className="col-span-9 md:col-span-10">
+                  <div className="font-display text-xl tracking-tight">
+                    {c.t}
+                  </div>
+                  <div className="mt-1 text-muted">{c.d}</div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Próximos detalles */}
-      <section className="bg-ink text-surface">
-        <div className="mx-auto max-w-6xl px-6 py-20 grid md:grid-cols-12 gap-10 items-center">
-          <div className="md:col-span-7">
-            <div className="inline-flex items-center gap-2 text-xs font-mono text-muted-2 mb-4">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
-              por anunciar
+      {/* FINAL PRESENCIAL */}
+      <section className="bg-ink text-surface relative overflow-hidden">
+        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <div className="relative mx-auto max-w-6xl px-6 py-24">
+          <div className="max-w-2xl mb-14">
+            <div className="text-xs font-mono text-accent mb-3">
+              {RETO_DATES.finalDate} · Panamá
             </div>
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              Final presencial.
+            </h2>
+            <p className="mt-4 text-muted-2">
+              Cada equipo dispone de{" "}
+              <span className="text-surface font-medium">8 minutos</span> ante
+              el jurado.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-px bg-white/10">
+            {finalSegments.map((s) => (
+              <div key={s.t} className="bg-ink p-7">
+                <div className="font-mono text-3xl text-accent leading-none">
+                  {s.mins}
+                  <span className="text-base ml-1">min</span>
+                </div>
+                <div className="mt-6 font-display text-lg">{s.t}</div>
+                <p className="mt-2 text-sm text-muted-2 leading-relaxed">
+                  {s.d}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PREMIOS */}
+      <section className="border-b border-border bg-surface-2">
+        <div className="mx-auto max-w-6xl px-6 py-24">
+          <div className="max-w-2xl mb-14">
+            <div className="text-sm text-muted mb-3">Premios</div>
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              Lo que está en juego.
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {premios.map((p) => (
+              <div
+                key={p.lugar}
+                className={`p-8 ${p.featured ? "bg-accent-soft border-2 border-accent" : "bg-surface border border-border"}`}
+              >
+                <MedalIcon
+                  className={`h-9 w-9 ${p.featured ? "text-accent-dark" : "text-muted"}`}
+                />
+                <div className="mt-6 font-display text-2xl tracking-tight">
+                  {p.lugar}
+                </div>
+                <div
+                  className={`mt-3 ${p.featured ? "text-ink font-medium" : "text-muted italic"}`}
+                >
+                  {p.premio}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 bg-surface border border-border p-6 md:p-7 flex flex-col md:flex-row gap-4 md:items-center">
+            <div className="font-display text-lg flex-shrink-0">
+              Todos los participantes
+            </div>
+            <div className="text-muted">
+              Certificado Digital CSI · Carta de reconocimiento MEDUCA para
+              finalistas
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CÓMO INSCRIBIRSE */}
+      <section className="border-b border-border">
+        <div className="mx-auto max-w-6xl px-6 py-24">
+          <div className="max-w-2xl mb-14">
+            <div className="text-sm text-muted mb-3">Inscripción</div>
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              ¿Cómo inscribirse?
+            </h2>
+            <p className="mt-4 text-muted">Dos pasos en csi-arduino.com.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <Link
+              href="/reto-nacional/inscripcion"
+              className="group block border border-border bg-surface p-8 md:p-10 hover:border-ink transition"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-10 w-10 bg-ink text-surface flex items-center justify-center font-mono text-sm">
+                  1
+                </div>
+                <div className="text-sm text-muted font-mono">
+                  {RETO_DATES.inscripcionFrom} – {RETO_DATES.inscripcionTo}
+                </div>
+              </div>
+              <h3 className="font-display text-2xl tracking-tight">
+                Inscripción del equipo
+              </h3>
+              <p className="mt-3 text-muted leading-relaxed">
+                Un integrante registra al equipo completo con los datos de los
+                3 miembros: nombre, apellido, email institucional, email
+                personal, teléfono, escuela y región educativa.
+              </p>
+              <div className="mt-6 inline-flex items-center text-sm font-medium text-accent-dark group-hover:text-ink transition">
+                Inscribir equipo →
+              </div>
+            </Link>
+
+            <Link
+              href="/reto-nacional/entrega"
+              className="group block border border-border bg-surface p-8 md:p-10 hover:border-ink transition"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-10 w-10 bg-ink text-surface flex items-center justify-center font-mono text-sm">
+                  2
+                </div>
+                <div className="text-sm text-muted font-mono">
+                  Antes del {RETO_DATES.entregaProyecto}
+                </div>
+              </div>
+              <h3 className="font-display text-2xl tracking-tight">
+                Entrega del proyecto
+              </h3>
+              <p className="mt-3 text-muted leading-relaxed">
+                El equipo sube su proyecto: link de Tinkercad, video de 2
+                minutos y descripción escrita de máximo 200 palabras.
+              </p>
+              <div className="mt-6 inline-flex items-center text-sm font-medium text-accent-dark group-hover:text-ink transition">
+                Entregar proyecto →
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA FINAL */}
+      <section className="bg-ink text-surface relative overflow-hidden">
+        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <div className="relative mx-auto max-w-6xl px-6 py-24 grid md:grid-cols-12 gap-10 items-center">
+          <div className="md:col-span-7">
             <h2 className="font-display text-3xl md:text-5xl tracking-tight leading-tight">
-              Detalles próximos.
+              Inscribe a tu equipo.
             </h2>
             <p className="mt-4 text-muted-2 leading-relaxed max-w-md">
-              Las fechas, criterios de selección y requisitos serán comunicados
-              próximamente. Para estar al tanto, contacta directamente a
-              Daniel.
+              Las inscripciones cierran el{" "}
+              <span className="text-surface font-medium">
+                {RETO_DATES.inscripcionTo}
+              </span>
+              . Para preguntas, contacta directamente a Daniel.
             </p>
           </div>
           <div className="md:col-span-5 flex flex-col gap-3">
+            <Link
+              href="/reto-nacional/inscripcion"
+              className="bg-accent text-ink px-7 py-4 text-base font-semibold hover:bg-accent-bright glow-gold transition flex justify-between items-center"
+            >
+              <span>Inscribir mi equipo</span>
+              <span>→</span>
+            </Link>
             <a
               href="https://wa.me/50768641929"
-              className="bg-accent text-ink px-6 py-4 text-sm font-semibold hover:bg-accent-bright glow-gold transition flex justify-between items-center"
-            >
-              <span>WhatsApp +507 6864-1929</span>
-              <span>→</span>
-            </a>
-            <a
-              href="mailto:daniel10abadi@gmail.com"
               className="border border-white/20 px-6 py-4 text-sm hover:border-surface transition flex justify-between items-center"
             >
-              <span>daniel10abadi@gmail.com</span>
+              <span>WhatsApp +507 6864-1929</span>
               <span>→</span>
             </a>
           </div>
