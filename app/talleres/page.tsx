@@ -12,6 +12,7 @@ const talleres = [
     desc: "Qué es Arduino, la placa y el entorno de desarrollo. Tu primer programa.",
     level: "Inicio",
     topic: "Setup",
+    slug: "taller-0",
   },
   {
     n: 1,
@@ -218,39 +219,58 @@ export default function TalleresPage() {
           </div>
 
           <div className="divide-y divide-border border-y border-border">
-            {talleres.map((t) => (
-              <article
-                key={t.n}
-                className="grid md:grid-cols-12 gap-4 md:gap-8 py-8 items-start hover:bg-surface-2 transition px-2 md:px-4 -mx-2 md:-mx-4 cursor-pointer"
-              >
-                <div className="md:col-span-2 flex md:flex-col items-baseline md:items-start gap-3">
-                  <div className="font-mono text-4xl text-accent leading-none">
-                    {String(t.n).padStart(2, "0")}
+            {talleres.map((t) => {
+              const Row = (
+                <div className="grid md:grid-cols-12 gap-4 md:gap-8 py-8 items-start px-2 md:px-4 -mx-2 md:-mx-4">
+                  <div className="md:col-span-2 flex md:flex-col items-baseline md:items-start gap-3">
+                    <div className="font-mono text-4xl text-accent leading-none">
+                      {String(t.n).padStart(2, "0")}
+                    </div>
+                    <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-2">
+                      MOD-{String(t.n).padStart(2, "0")}
+                    </div>
                   </div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-2">
-                    MOD-{String(t.n).padStart(2, "0")}
+                  <div className="md:col-span-6">
+                    <h3 className="font-display text-xl md:text-2xl tracking-tight">
+                      {t.title}
+                    </h3>
+                    <p className="mt-2 text-muted leading-relaxed">{t.desc}</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-2 mb-1">
+                      Tipo
+                    </div>
+                    <span className="text-sm">{t.topic}</span>
+                  </div>
+                  <div className="md:col-span-2">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-2 mb-1">
+                      {"slug" in t ? "Estado" : "Nivel"}
+                    </div>
+                    {"slug" in t ? (
+                      <span className="text-sm text-accent-dark">Disponible →</span>
+                    ) : (
+                      <span className={`text-sm ${levelColor[t.level]}`}>
+                        {t.level}
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div className="md:col-span-6">
-                  <h3 className="font-display text-xl md:text-2xl tracking-tight">
-                    {t.title}
-                  </h3>
-                  <p className="mt-2 text-muted leading-relaxed">{t.desc}</p>
-                </div>
-                <div className="md:col-span-2">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-2 mb-1">
-                    Tipo
-                  </div>
-                  <span className="text-sm">{t.topic}</span>
-                </div>
-                <div className="md:col-span-2">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-2 mb-1">
-                    Nivel
-                  </div>
-                  <span className={`text-sm ${levelColor[t.level]}`}>{t.level}</span>
-                </div>
-              </article>
-            ))}
+              );
+
+              return "slug" in t ? (
+                <Link
+                  key={t.n}
+                  href={`/talleres/${t.slug}`}
+                  className="block hover:bg-surface-2 transition"
+                >
+                  {Row}
+                </Link>
+              ) : (
+                <article key={t.n} className="opacity-70">
+                  {Row}
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
