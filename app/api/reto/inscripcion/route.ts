@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { isInscripcionOpen } from "@/lib/reto";
 
 type Member = {
   nombre: string;
@@ -27,6 +28,13 @@ function validate(body: unknown): body is Body {
 }
 
 export async function POST(req: Request) {
+  if (!isInscripcionOpen()) {
+    return NextResponse.json(
+      { error: "Las inscripciones aún no están abiertas." },
+      { status: 403 }
+    );
+  }
+
   let body: unknown;
   try {
     body = await req.json();

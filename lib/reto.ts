@@ -9,6 +9,17 @@ export const RETO_DATES = {
   finalDate: "20 de julio",
 };
 
+// 00:00 hora Panamá (UTC-5) del 18 de mayo de 2026
+export const RETO_INSCRIPCION_OPEN_AT = "2026-05-18T05:00:00Z";
+export const RETO_INSCRIPCION_CLOSE_AT = "2026-06-01T05:00:00Z";
+
+export function isInscripcionOpen(now: Date = new Date()): boolean {
+  const open = new Date(RETO_INSCRIPCION_OPEN_AT).getTime();
+  const close = new Date(RETO_INSCRIPCION_CLOSE_AT).getTime();
+  const t = now.getTime();
+  return t >= open && t < close;
+}
+
 export const fases = [
   {
     n: 1,
