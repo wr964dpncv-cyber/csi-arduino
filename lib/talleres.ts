@@ -16,8 +16,8 @@ export type Taller = {
 
 export const talleres: Taller[] = [
   {
-    n: 1,
-    slug: "taller-1",
+    n: 0,
+    slug: "taller-0",
     title: "Introducción a Arduino",
     tagline:
       "Conocerás de qué trata el programa y el concepto más importante de todo el curso: el microcontrolador.",
@@ -37,8 +37,8 @@ export const talleres: Taller[] = [
     topic: "Setup",
   },
   {
-    n: 2,
-    slug: "taller-2",
+    n: 1,
+    slug: "taller-1",
     title: "Voltaje, corriente y resistencia",
     tagline: "Los conceptos fundamentales de electricidad. La base de todo sistema electrónico.",
     description:
@@ -58,8 +58,8 @@ export const talleres: Taller[] = [
     topic: "Electrónica",
   },
   {
-    n: 3,
-    slug: "taller-3",
+    n: 2,
+    slug: "taller-2",
     title: "¿Qué es Arduino?",
     tagline:
       "Una plataforma que combina hardware y software para crear sistemas que toman decisiones automáticamente.",
@@ -80,8 +80,8 @@ export const talleres: Taller[] = [
     topic: "Hardware",
   },
   {
-    n: 4,
-    slug: "taller-4",
+    n: 3,
+    slug: "taller-3",
     title: "Tu primer circuito",
     tagline:
       "Construye tu primer circuito con LED, aplica la Ley de Ohm y escribe tu primer programa con void setup() y void loop().",
@@ -102,8 +102,8 @@ export const talleres: Taller[] = [
     topic: "Software",
   },
   {
-    n: 5,
-    slug: "taller-5",
+    n: 4,
+    slug: "taller-4",
     title: "Entradas digitales y condicionales",
     tagline:
       "Botones, digitalRead() y estructuras if/else. Tu Arduino comienza a tomar decisiones.",
@@ -124,8 +124,8 @@ export const talleres: Taller[] = [
     topic: "I/O",
   },
   {
-    n: 6,
-    slug: "taller-6",
+    n: 5,
+    slug: "taller-5",
     title: "Entradas analógicas",
     tagline:
       "Potenciómetros, analogRead() y el rango 0–1023. Lee valores continuos del mundo real.",
@@ -147,8 +147,8 @@ export const talleres: Taller[] = [
     topic: "I/O",
   },
   {
-    n: 7,
-    slug: "taller-7",
+    n: 6,
+    slug: "taller-6",
     title: "Salidas analógicas (PWM)",
     tagline:
       "PWM, analogWrite() y rango 0–255. Controla intensidad, brillo y velocidad.",
@@ -170,8 +170,8 @@ export const talleres: Taller[] = [
     topic: "I/O",
   },
   {
-    n: 8,
-    slug: "taller-8",
+    n: 7,
+    slug: "taller-7",
     title: "Sensores",
     tagline:
       "Lee datos del entorno con sensores reales y visualízalos en tiempo real con tu Arduino.",
@@ -193,8 +193,8 @@ export const talleres: Taller[] = [
     topic: "Hardware",
   },
   {
-    n: 9,
-    slug: "taller-9",
+    n: 8,
+    slug: "taller-8",
     title: "Servomotores",
     tagline:
       "Controla movimiento físico con servomotores y la librería Servo.h. De código a acción real.",
@@ -216,8 +216,8 @@ export const talleres: Taller[] = [
     topic: "Hardware",
   },
   {
-    n: 10,
-    slug: "taller-10",
+    n: 9,
+    slug: "taller-9",
     title: "Proyecto integrador",
     tagline:
       "Integra todos los conceptos del programa en tu propio proyecto con Arduino.",
@@ -240,8 +240,8 @@ export const talleres: Taller[] = [
     topic: "Proyecto",
   },
   {
-    n: 11,
-    slug: "taller-11",
+    n: 10,
+    slug: "taller-10",
     title: "Comunicación serial",
     tagline:
       "Debug en tiempo real entre tu Arduino y la computadora con el monitor serial.",
@@ -262,8 +262,8 @@ export const talleres: Taller[] = [
     topic: "Software",
   },
   {
-    n: 12,
-    slug: "taller-12",
+    n: 11,
+    slug: "taller-11",
     title: "Preparación para el Reto Nacional",
     tagline:
       "El cierre del programa. Planifica tu proyecto del Reto Nacional CSI con todo lo aprendido.",

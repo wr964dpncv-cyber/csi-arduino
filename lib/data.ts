@@ -12,18 +12,18 @@ export type CalendarEvent = {
 };
 
 const seedCalendar: CalendarEvent[] = [
-  { taller_n: 1, day: "Sáb", date_text: "28 de marzo", time: "18:00", sort_order: 1 },
-  { taller_n: 2, day: "Jue", date_text: "2 de abril", time: "18:00", sort_order: 2 },
-  { taller_n: 3, day: "Sáb", date_text: "4 de abril", time: "18:00", sort_order: 3 },
-  { taller_n: 4, day: "Lun", date_text: "6 de abril", time: "18:00", sort_order: 4 },
-  { taller_n: 5, day: "Lun", date_text: "20 de abril", time: "18:00", sort_order: 5 },
-  { taller_n: 6, day: "Jue", date_text: "23 de abril", time: "18:00", sort_order: 6 },
-  { taller_n: 7, day: "Lun", date_text: "27 de abril", time: "18:00", sort_order: 7 },
-  { taller_n: 8, day: "Jue", date_text: "30 de abril", time: "18:00", sort_order: 8 },
-  { taller_n: 9, day: "Lun", date_text: "4 de mayo", time: "18:00", sort_order: 9 },
-  { taller_n: 10, day: "Jue", date_text: "7 de mayo", time: "18:00", sort_order: 10 },
-  { taller_n: 11, day: "Lun", date_text: "11 de mayo", time: "18:00", sort_order: 11 },
-  { taller_n: 12, day: "Jue", date_text: "14 de mayo", time: "18:00", sort_order: 12 },
+  { taller_n: 0, day: "Sáb", date_text: "28 de marzo", time: "18:00", sort_order: 1 },
+  { taller_n: 1, day: "Jue", date_text: "2 de abril", time: "18:00", sort_order: 2 },
+  { taller_n: 2, day: "Sáb", date_text: "4 de abril", time: "18:00", sort_order: 3 },
+  { taller_n: 3, day: "Lun", date_text: "6 de abril", time: "18:00", sort_order: 4 },
+  { taller_n: 4, day: "Lun", date_text: "20 de abril", time: "18:00", sort_order: 5 },
+  { taller_n: 5, day: "Jue", date_text: "23 de abril", time: "18:00", sort_order: 6 },
+  { taller_n: 6, day: "Lun", date_text: "27 de abril", time: "18:00", sort_order: 7 },
+  { taller_n: 7, day: "Jue", date_text: "30 de abril", time: "18:00", sort_order: 8 },
+  { taller_n: 8, day: "Lun", date_text: "4 de mayo", time: "18:00", sort_order: 9 },
+  { taller_n: 9, day: "Jue", date_text: "7 de mayo", time: "18:00", sort_order: 10 },
+  { taller_n: 10, day: "Lun", date_text: "11 de mayo", time: "18:00", sort_order: 11 },
+  { taller_n: 11, day: "Jue", date_text: "14 de mayo", time: "18:00", sort_order: 12 },
 ];
 
 type TallerRow = {
