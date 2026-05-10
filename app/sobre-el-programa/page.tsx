@@ -9,8 +9,9 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <>
-      <section className="bg-ink text-surface">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
+      <section className="bg-ink text-surface relative overflow-hidden">
+        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="text-xs font-mono text-muted-2 mb-4">
             Sobre el programa
           </div>
@@ -60,7 +61,7 @@ export default function AboutPage() {
               },
             ].map((c) => (
               <div key={c.t}>
-                <div className="font-mono text-sm text-accent mb-3">→</div>
+                <div className="font-mono text-sm text-accent-dark mb-3">→</div>
                 <h2 className="font-display text-2xl tracking-tight">{c.t}</h2>
                 <p className="mt-3 text-muted leading-relaxed">{c.d}</p>
               </div>
@@ -102,7 +103,7 @@ export default function AboutPage() {
                 key={c.t}
                 className="grid md:grid-cols-12 gap-4 md:gap-8 py-6 items-baseline"
               >
-                <div className="md:col-span-1 font-mono text-sm text-accent">
+                <div className="md:col-span-1 font-mono text-sm text-accent-dark">
                   {String(i + 1).padStart(2, "0")}
                 </div>
                 <div className="md:col-span-4 font-display text-lg">{c.t}</div>
@@ -127,7 +128,7 @@ export default function AboutPage() {
           <div className="md:col-span-5 flex flex-col gap-3">
             <a
               href="mailto:daniel10abadi@gmail.com"
-              className="bg-ink text-surface px-6 py-4 text-sm hover:bg-accent transition flex justify-between items-center"
+              className="bg-ink text-surface px-6 py-4 text-sm hover:bg-accent hover:text-ink transition flex justify-between items-center"
             >
               <span>daniel10abadi@gmail.com</span>
               <span>→</span>

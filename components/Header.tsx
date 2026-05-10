@@ -34,7 +34,7 @@ export default function Header() {
 
         <Link
           href="/talleres"
-          className="hidden md:inline-flex items-center bg-ink text-surface px-4 py-2 text-sm font-medium hover:bg-accent transition"
+          className="hidden md:inline-flex items-center bg-ink text-surface px-4 py-2 text-sm font-medium hover:bg-accent hover:text-ink transition"
         >
           Comenzar →
         </Link>

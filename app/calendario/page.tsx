@@ -21,8 +21,9 @@ const schedule = [
 export default function CalendarioPage() {
   return (
     <>
-      <section className="bg-ink text-surface">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
+      <section className="bg-ink text-surface relative overflow-hidden">
+        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="inline-flex items-center gap-2 text-xs font-mono text-muted-2 mb-4">
             <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
             cohorte activa
@@ -59,7 +60,7 @@ export default function CalendarioPage() {
                 key={s.n}
                 className="grid md:grid-cols-12 gap-4 py-5 items-baseline"
               >
-                <div className="md:col-span-1 font-mono text-2xl text-accent">
+                <div className="md:col-span-1 font-mono text-2xl text-accent-dark">
                   {String(s.n).padStart(2, "0")}
                 </div>
                 <div className="md:col-span-5 font-display text-lg">
@@ -107,7 +108,7 @@ export default function CalendarioPage() {
               },
             ].map((r) => (
               <div key={r.n}>
-                <div className="font-mono text-2xl text-accent">{r.n}</div>
+                <div className="font-mono text-2xl text-accent-dark">{r.n}</div>
                 <h3 className="mt-5 text-lg font-medium">{r.t}</h3>
                 <p className="mt-2 text-sm text-muted leading-relaxed">{r.d}</p>
               </div>
@@ -130,7 +131,7 @@ export default function CalendarioPage() {
           <div className="md:col-span-5 flex flex-col gap-3">
             <a
               href="https://wa.me/50768641929"
-              className="bg-accent px-6 py-4 text-sm hover:bg-surface hover:text-ink transition flex justify-between items-center"
+              className="bg-accent text-ink px-6 py-4 text-sm font-semibold hover:bg-accent-bright glow-gold transition flex justify-between items-center"
             >
               <span>WhatsApp +507 6864-1929</span>
               <span>→</span>

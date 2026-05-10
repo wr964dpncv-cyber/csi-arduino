@@ -13,7 +13,7 @@ export default function HomePage() {
     <>
       {/* HERO */}
       <section className="bg-ink text-surface relative overflow-hidden">
-        <div className="absolute inset-0 bp-grid opacity-40 pointer-events-none" />
+        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
         <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             <div className="lg:col-span-7">
@@ -32,7 +32,7 @@ export default function HomePage() {
               <div className="mt-10 flex flex-wrap gap-3">
                 <Link
                   href="/talleres"
-                  className="inline-flex items-center bg-surface text-ink px-7 py-3.5 text-base font-medium hover:bg-accent hover:text-surface transition"
+                  className="inline-flex items-center bg-accent text-ink px-7 py-3.5 text-base font-semibold hover:bg-accent-bright glow-gold transition"
                 >
                   Comenzar talleres →
                 </Link>
@@ -154,7 +154,7 @@ export default function HomePage() {
               },
             ].map(({ Icon, t, d }) => (
               <div key={t}>
-                <Icon className="h-8 w-8 text-accent" />
+                <Icon className="h-8 w-8 text-accent-dark" />
                 <h3 className="mt-6 text-lg font-medium">{t}</h3>
                 <p className="mt-2 text-sm text-muted leading-relaxed">{d}</p>
               </div>
@@ -191,7 +191,7 @@ export default function HomePage() {
               },
             ].map((s) => (
               <div key={s.n}>
-                <div className="font-mono text-2xl text-accent">{s.n}</div>
+                <div className="font-mono text-2xl text-accent-dark">{s.n}</div>
                 <h3 className="mt-5 text-lg font-medium">{s.t}</h3>
                 <p className="mt-2 text-sm text-muted leading-relaxed">{s.d}</p>
               </div>
@@ -248,7 +248,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/talleres"
-            className="mt-10 inline-flex items-center bg-accent text-surface px-8 py-4 text-base font-medium hover:bg-surface hover:text-ink transition"
+            className="mt-10 inline-flex items-center bg-accent text-ink px-8 py-4 text-base font-semibold hover:bg-accent-bright glow-gold transition"
           >
             Comenzar Taller 0 →
           </Link>

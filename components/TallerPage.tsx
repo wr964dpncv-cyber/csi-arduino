@@ -13,8 +13,9 @@ export default function TallerPage({ taller, prev, next }: Props) {
   return (
     <>
       {/* Header */}
-      <section className="bg-ink text-surface">
-        <div className="mx-auto max-w-6xl px-6 pt-12">
+      <section className="bg-ink text-surface relative overflow-hidden">
+        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <div className="relative mx-auto max-w-6xl px-6 pt-12">
           <Link
             href="/talleres"
             className="inline-flex items-center gap-2 text-sm text-muted-2 hover:text-surface transition"
@@ -24,7 +25,7 @@ export default function TallerPage({ taller, prev, next }: Props) {
           </Link>
         </div>
 
-        <div className="mx-auto max-w-6xl px-6 py-12 md:py-20">
+        <div className="relative mx-auto max-w-6xl px-6 py-12 md:py-20">
           <div className="text-xs font-mono text-muted-2 mb-4">
             mod-{num} · {taller.level.toLowerCase()} · {taller.topic.toLowerCase()}
           </div>
@@ -54,7 +55,7 @@ export default function TallerPage({ taller, prev, next }: Props) {
               <ul className="space-y-4">
                 {taller.objectives.map((obj, i) => (
                   <li key={i} className="flex gap-5 items-baseline">
-                    <span className="font-mono text-sm text-accent w-8 flex-shrink-0">
+                    <span className="font-mono text-sm text-accent-dark w-8 flex-shrink-0">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span className="text-muted leading-relaxed">{obj}</span>
@@ -109,12 +110,12 @@ export default function TallerPage({ taller, prev, next }: Props) {
             href={taller.quizUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-between gap-12 bg-ink text-surface px-7 py-5 hover:bg-accent transition group"
+            className="inline-flex items-center justify-between gap-12 bg-ink text-surface px-7 py-5 hover:bg-accent hover:text-ink glow-gold transition group"
           >
             <span className="text-base font-medium">
               Abrir quiz del Taller {taller.n}
             </span>
-            <span className="font-mono text-sm text-muted-2 group-hover:text-surface">
+            <span className="font-mono text-sm text-muted-2 group-hover:text-ink">
               forms.office.com →
             </span>
           </a>
@@ -190,7 +191,7 @@ export default function TallerPage({ taller, prev, next }: Props) {
           <div className="md:col-span-5 flex flex-col gap-3">
             <a
               href="https://wa.me/50768641929"
-              className="bg-accent px-6 py-4 text-sm hover:bg-surface hover:text-ink transition flex justify-between items-center"
+              className="bg-accent text-ink px-6 py-4 text-sm font-semibold hover:bg-accent-bright glow-gold transition flex justify-between items-center"
             >
               <span>WhatsApp +507 6864-1929</span>
               <span>→</span>

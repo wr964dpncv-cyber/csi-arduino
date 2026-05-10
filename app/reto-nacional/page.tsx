@@ -9,8 +9,9 @@ export const metadata = {
 export default function RetoNacionalPage() {
   return (
     <>
-      <section className="bg-ink text-surface">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
+      <section className="bg-ink text-surface relative overflow-hidden">
+        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="text-xs font-mono text-muted-2 mb-4">
             Reto Nacional CSI
           </div>
@@ -79,7 +80,7 @@ export default function RetoNacionalPage() {
               },
             ].map((s) => (
               <div key={s.n}>
-                <div className="font-mono text-2xl text-accent">{s.n}</div>
+                <div className="font-mono text-2xl text-accent-dark">{s.n}</div>
                 <h3 className="mt-5 text-lg font-medium">{s.t}</h3>
                 <p className="mt-2 text-sm text-muted leading-relaxed">{s.d}</p>
               </div>
@@ -108,7 +109,7 @@ export default function RetoNacionalPage() {
           <div className="md:col-span-5 flex flex-col gap-3">
             <a
               href="https://wa.me/50768641929"
-              className="bg-accent px-6 py-4 text-sm hover:bg-surface hover:text-ink transition flex justify-between items-center"
+              className="bg-accent text-ink px-6 py-4 text-sm font-semibold hover:bg-accent-bright glow-gold transition flex justify-between items-center"
             >
               <span>WhatsApp +507 6864-1929</span>
               <span>→</span>

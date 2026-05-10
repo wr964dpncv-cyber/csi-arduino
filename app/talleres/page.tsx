@@ -17,8 +17,9 @@ export default function TalleresPage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-ink text-surface">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
+      <section className="bg-ink text-surface relative overflow-hidden">
+        <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+        <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="text-xs font-mono text-muted-2 mb-4">
             10 módulos · de cero a ingeniero
           </div>
@@ -52,7 +53,7 @@ export default function TalleresPage() {
                   "Material complementario",
                 ].map((item, i) => (
                   <li key={item} className="flex gap-4 items-baseline">
-                    <span className="font-mono text-sm text-accent w-6 flex-shrink-0">
+                    <span className="font-mono text-sm text-accent-dark w-6 flex-shrink-0">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span className="text-ink">{item}</span>
@@ -69,7 +70,7 @@ export default function TalleresPage() {
                   "Completar el quiz correspondiente",
                 ].map((item, i) => (
                   <li key={item} className="flex gap-4 items-baseline">
-                    <span className="font-mono text-sm text-accent w-6 flex-shrink-0">
+                    <span className="font-mono text-sm text-accent-dark w-6 flex-shrink-0">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span className="text-ink">{item}</span>
@@ -105,7 +106,7 @@ export default function TalleresPage() {
                 className="block group hover:bg-surface-2 transition"
               >
                 <div className="grid md:grid-cols-12 gap-4 md:gap-8 py-8 items-baseline px-2 md:px-4 -mx-2 md:-mx-4">
-                  <div className="md:col-span-1 font-mono text-2xl text-accent">
+                  <div className="md:col-span-1 font-mono text-2xl text-accent-dark">
                     {String(t.n).padStart(2, "0")}
                   </div>
                   <div className="md:col-span-7">
@@ -144,7 +145,7 @@ export default function TalleresPage() {
           <div className="md:col-span-5 flex flex-col gap-3">
             <a
               href="https://wa.me/50768641929"
-              className="bg-accent px-6 py-4 text-sm hover:bg-surface hover:text-ink transition flex justify-between items-center"
+              className="bg-accent text-ink px-6 py-4 text-sm font-semibold hover:bg-accent-bright glow-gold transition flex justify-between items-center"
             >
               <span>WhatsApp +507 6864-1929</span>
               <span>→</span>
