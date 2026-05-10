@@ -11,9 +11,9 @@ export type CalendarEvent = {
 };
 
 const seedCalendar: CalendarEvent[] = [
-  { taller_n: 1, day: "Lun", date_text: "16 de marzo", time: "18:00", sort_order: 1 },
-  { taller_n: 2, day: "Lun", date_text: "23 de marzo", time: "18:00", sort_order: 2 },
-  { taller_n: 3, day: "Lun", date_text: "30 de marzo", time: "18:00", sort_order: 3 },
+  { taller_n: 1, day: "Sáb", date_text: "28 de marzo", time: "18:00", sort_order: 1 },
+  { taller_n: 2, day: "Jue", date_text: "2 de abril", time: "18:00", sort_order: 2 },
+  { taller_n: 3, day: "Sáb", date_text: "4 de abril", time: "18:00", sort_order: 3 },
   { taller_n: 4, day: "Lun", date_text: "6 de abril", time: "18:00", sort_order: 4 },
   { taller_n: 5, day: "Lun", date_text: "20 de abril", time: "18:00", sort_order: 5 },
   { taller_n: 6, day: "Jue", date_text: "23 de abril", time: "18:00", sort_order: 6 },

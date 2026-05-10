@@ -47,7 +47,7 @@ where sort_order between 1 and 9;
 
 -- Add calendar entries for talleres 1, 2, 3
 insert into public.calendar_events (taller_n, day, date_text, time, sort_order) values
-(1, 'Lun', '16 de marzo', '18:00', 1),
-(2, 'Lun', '23 de marzo', '18:00', 2),
-(3, 'Lun', '30 de marzo', '18:00', 3)
+(1, 'Sáb', '28 de marzo', '18:00', 1),
+(2, 'Jue', '2 de abril', '18:00', 2),
+(3, 'Sáb', '4 de abril', '18:00', 3)
 on conflict do nothing;
