@@ -2,22 +2,6 @@ type Props = {
   className?: string;
 };
 
-const PADS: Array<[number, number]> = [
-  [180, 120], [360, 160], [520, 140], [760, 80], [940, 80],
-  [260, 220], [540, 300], [940, 300],
-  [180, 420], [540, 420], [800, 420], [1040, 460],
-];
-
-const VIAS: Array<[number, number]> = [
-  [90, 260], [220, 160], [380, 140], [680, 300],
-  [900, 260], [320, 460], [1100, 120],
-];
-
-const CYAN_PADS: Array<[number, number, number]> = [
-  [320, 480, 2.6],
-  [1100, 240, 3.2],
-];
-
 export default function CircuitBackdrop({ className = "" }: Props) {
   return (
     <svg
@@ -70,26 +54,6 @@ export default function CircuitBackdrop({ className = "" }: Props) {
         <path d="M 1040 0 L 1040 60 L 1100 120 L 1100 240" />
       </g>
 
-      <g>
-        {PADS.map(([cx, cy]) => (
-          <g key={`pad-${cx}-${cy}`}>
-            <circle cx={cx} cy={cy} r="6" fill="none" stroke="rgba(245,184,12,0.55)" strokeWidth="1.5" />
-            <circle cx={cx} cy={cy} r="2" fill="#0b1a35" />
-          </g>
-        ))}
-        {VIAS.map(([cx, cy]) => (
-          <circle key={`via-${cx}-${cy}`} cx={cx} cy={cy} r="2.5" fill="rgba(245,184,12,0.45)" />
-        ))}
-        {CYAN_PADS.map(([cx, cy, dur]) => (
-          <g key={`cyan-${cx}-${cy}`}>
-            <circle cx={cx} cy={cy} r="6" fill="none" stroke="rgba(98,225,240,0.5)" strokeWidth="1.5">
-              <animate attributeName="opacity" values="1;0.35;1" dur={`${dur}s`} repeatCount="indefinite" />
-            </circle>
-            <circle cx={cx} cy={cy} r="2" fill="#0b1a35" />
-          </g>
-        ))}
-      </g>
-
       <g stroke="rgba(245,184,12,0.35)" fill="rgba(245,184,12,0.04)" strokeWidth="1">
         <rect x="600" y="180" width="120" height="80" rx="2" />
         {[612, 624, 636, 648, 660, 672, 684, 696, 708].map((x) => (
@@ -98,7 +62,6 @@ export default function CircuitBackdrop({ className = "" }: Props) {
         {[612, 624, 636, 648, 660, 672, 684, 696, 708].map((x) => (
           <line key={`pin-bot-${x}`} x1={x} y1="260" x2={x} y2="268" />
         ))}
-        <circle cx="612" cy="192" r="2" fill="rgba(245,184,12,0.5)" stroke="none" />
       </g>
     </svg>
   );
