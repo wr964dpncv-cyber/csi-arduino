@@ -27,6 +27,15 @@ export async function DELETE(
   }
 
   const admin = adminClient();
+
+  const { data: target } = await admin.auth.admin.getUserById(id);
+  if (isOwner(target?.user?.email)) {
+    return NextResponse.json(
+      { error: "El super admin no puede ser eliminado" },
+      { status: 400 }
+    );
+  }
+
   const { error } = await admin.auth.admin.deleteUser(id);
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });

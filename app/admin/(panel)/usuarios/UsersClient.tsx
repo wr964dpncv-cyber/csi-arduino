@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { isOwner } from "@/lib/adminAuth";
 
 type User = {
   id: string;
@@ -158,11 +159,17 @@ export default function UsersClient({
             <tbody className="divide-y divide-border">
               {initialUsers.map((u) => {
                 const isMe = u.id === currentUserId;
+                const isSuper = isOwner(u.email);
                 return (
                   <tr key={u.id} className="hover:bg-surface transition">
                     <td className="px-4 py-3 align-top font-medium">
                       {u.email}
-                      {isMe && (
+                      {isSuper && (
+                        <span className="ml-2 inline-block text-[10px] font-mono uppercase tracking-wider bg-ink text-surface px-1.5 py-0.5">
+                          super admin
+                        </span>
+                      )}
+                      {isMe && !isSuper && (
                         <span className="ml-2 inline-block text-[10px] font-mono uppercase tracking-wider bg-accent text-ink px-1.5 py-0.5">
                           tú
                         </span>
@@ -189,7 +196,7 @@ export default function UsersClient({
                         : "—"}
                     </td>
                     <td className="px-4 py-3 align-top text-right whitespace-nowrap">
-                      {!isMe && (
+                      {!isMe && !isSuper && (
                         <button
                           onClick={() => handleDelete(u.id, u.email)}
                           className="text-rose-700 hover:underline text-sm"
