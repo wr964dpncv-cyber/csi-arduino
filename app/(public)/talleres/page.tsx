@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { getAllTalleres } from "@/lib/data";
+import { getAllTalleres, getCalendarEvents } from "@/lib/data";
+import { parseEventDate, getEventStatus } from "@/lib/dateHelpers";
 
 export const metadata = {
   title: "Talleres — Principios de Arduino",
-  description: "Los 10 talleres del programa Principios de Arduino.",
+  description: "Los 12 talleres del programa Principios de Arduino.",
 };
 
 const levelColor: Record<string, string> = {
@@ -16,7 +17,23 @@ const levelColor: Record<string, string> = {
 export const revalidate = 60;
 
 export default async function TalleresPage() {
-  const talleres = await getAllTalleres();
+  const [talleres, calendar] = await Promise.all([
+    getAllTalleres(),
+    getCalendarEvents(),
+  ]);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const calendarByN = new Map(
+    calendar.map((e) => [
+      e.taller_n,
+      {
+        ...e,
+        date: parseEventDate(e.date_text),
+      },
+    ])
+  );
 
   return (
     <>
@@ -25,14 +42,14 @@ export default async function TalleresPage() {
         <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
         <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="text-xs font-mono text-muted-2 mb-4">
-            10 módulos · de cero a ingeniero
+            12 módulos · de cero a ingeniero
           </div>
           <h1 className="font-display text-5xl md:text-7xl tracking-tight leading-[1.02] max-w-3xl">
             Los talleres.
           </h1>
           <p className="mt-8 text-lg text-muted-2 max-w-2xl leading-relaxed">
             Sigue los talleres en orden — cada uno construye sobre el anterior.
-            Empieza por el Taller 0 aunque tengas experiencia previa.
+            Empieza por el Taller 1 aunque tengas experiencia previa.
           </p>
         </div>
       </section>
@@ -98,39 +115,74 @@ export default async function TalleresPage() {
           <div className="max-w-2xl mb-12">
             <div className="text-sm text-muted mb-3">Currículo</div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
-              10 talleres.
+              12 talleres.
             </h2>
           </div>
 
           <div className="divide-y divide-border border-y border-border">
-            {talleres.map((t) => (
-              <Link
-                key={t.n}
-                href={`/talleres/${t.slug}`}
-                className="block group hover:bg-surface-2 transition"
-              >
-                <div className="grid md:grid-cols-12 gap-4 md:gap-8 py-8 items-baseline px-2 md:px-4 -mx-2 md:-mx-4">
-                  <div className="md:col-span-1 font-mono text-2xl text-accent-dark">
-                    {String(t.n).padStart(2, "0")}
+            {talleres.map((t) => {
+              const cal = calendarByN.get(t.n);
+              const status = getEventStatus(cal?.date ?? null, today);
+              return (
+                <Link
+                  key={t.n}
+                  href={`/talleres/${t.slug}`}
+                  className="block group hover:bg-surface-2 transition"
+                >
+                  <div className="grid md:grid-cols-12 gap-4 md:gap-8 py-8 items-baseline px-2 md:px-4 -mx-2 md:-mx-4">
+                    <div className="md:col-span-1 font-mono text-2xl text-accent-dark">
+                      {String(t.n).padStart(2, "0")}
+                    </div>
+                    <div className="md:col-span-6">
+                      <h3 className="font-display text-xl md:text-2xl tracking-tight">
+                        {t.title}
+                      </h3>
+                      <p className="mt-2 text-muted leading-relaxed">
+                        {t.tagline}
+                      </p>
+                    </div>
+                    <div className="md:col-span-2 text-sm text-muted">
+                      {t.topic}
+                    </div>
+                    <div className="md:col-span-2">
+                      {cal ? (
+                        status === "past" || status === "today" ? (
+                          <div className="text-xs">
+                            <div className="font-mono uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+                              <span>✓</span>
+                              <span>Disponible</span>
+                            </div>
+                            <div className="text-muted-2 mt-0.5 font-mono">
+                              {cal.day} {cal.date_text}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-xs">
+                            <div className="font-mono uppercase tracking-wider text-accent-dark flex items-center gap-1.5">
+                              <span>▸</span>
+                              <span>Próximo</span>
+                            </div>
+                            <div className="text-muted-2 mt-0.5 font-mono">
+                              {cal.day} {cal.date_text}
+                            </div>
+                          </div>
+                        )
+                      ) : null}
+                    </div>
+                    <div className="md:col-span-1 flex items-center justify-end">
+                      <span
+                        className={`text-sm ${levelColor[t.level]} hidden lg:inline`}
+                      >
+                        {t.level}
+                      </span>
+                      <span className="opacity-0 group-hover:opacity-100 transition text-accent-dark ml-3">
+                        →
+                      </span>
+                    </div>
                   </div>
-                  <div className="md:col-span-7">
-                    <h3 className="font-display text-xl md:text-2xl tracking-tight">
-                      {t.title}
-                    </h3>
-                    <p className="mt-2 text-muted leading-relaxed">{t.tagline}</p>
-                  </div>
-                  <div className="md:col-span-2 text-sm text-muted">{t.topic}</div>
-                  <div className="md:col-span-2 flex items-center justify-between">
-                    <span className={`text-sm ${levelColor[t.level]}`}>
-                      {t.level}
-                    </span>
-                    <span className="opacity-0 group-hover:opacity-100 transition text-accent-dark">
-                      →
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

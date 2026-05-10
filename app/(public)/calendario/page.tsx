@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCalendarEvents } from "@/lib/data";
+import { parseEventDate } from "@/lib/dateHelpers";
 
 export const metadata = {
   title: "Calendario — Principios de Arduino",
@@ -8,39 +9,6 @@ export const metadata = {
 };
 
 export const revalidate = 60;
-
-const SPANISH_MONTHS: Record<string, number> = {
-  enero: 0,
-  febrero: 1,
-  marzo: 2,
-  abril: 3,
-  mayo: 4,
-  junio: 5,
-  julio: 6,
-  agosto: 7,
-  septiembre: 8,
-  octubre: 9,
-  noviembre: 10,
-  diciembre: 11,
-};
-
-function parseEventDate(text: string): Date | null {
-  const m = text.toLowerCase().match(/(\d+)\s*de\s*([a-záéíóúñ]+)/);
-  if (!m) return null;
-  const day = parseInt(m[1]);
-  const month = SPANISH_MONTHS[m[2]];
-  if (month === undefined) return null;
-  const now = new Date();
-  let year = now.getFullYear();
-  let date = new Date(year, month, day);
-  // If the date is more than 6 months in the past, assume next year
-  const monthsAgo = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24 * 30);
-  if (monthsAgo > 6) {
-    year += 1;
-    date = new Date(year, month, day);
-  }
-  return date;
-}
 
 type Status = "past" | "today" | "next" | "future";
 
@@ -145,10 +113,10 @@ export default async function CalendarioPage() {
           <div className="max-w-2xl mb-10">
             <div className="text-sm text-muted mb-3">Cronograma completo</div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
-              Talleres 4–{enriched[enriched.length - 1]?.n ?? 12}.
+              Los 12 talleres.
             </h2>
             <p className="mt-3 text-sm text-muted">
-              Talleres 0–3 ya están disponibles desde antes.
+              Cada taller se publica en la fecha indicada a las 6:00 PM.
             </p>
           </div>
 

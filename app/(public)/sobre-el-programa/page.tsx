@@ -29,7 +29,7 @@ export default function AboutPage() {
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-6 grid grid-cols-2 md:grid-cols-4">
           {[
-            ["10", "Talleres"],
+            ["12", "Talleres"],
             ["100%", "Gratuito"],
             ["A tu ritmo", "Modalidad"],
             ["Nacional", "Cobertura"],
@@ -53,7 +53,7 @@ export default function AboutPage() {
               },
               {
                 t: "Modalidad",
-                d: "10 talleres asincrónicos accesibles desde cualquier escuela del país, sin horarios fijos ni costos.",
+                d: "12 talleres asincrónicos accesibles desde cualquier escuela del país, sin horarios fijos ni costos.",
               },
               {
                 t: "Metodología",

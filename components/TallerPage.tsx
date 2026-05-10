@@ -77,19 +77,37 @@ export default function TallerPage({ taller, prev, next }: Props) {
           <div className="max-w-3xl mb-10">
             <div className="text-sm text-muted mb-3">Video</div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
-              Mira el video completo.
+              {taller.videoId ? "Mira el video completo." : "Video por publicar."}
             </h2>
           </div>
 
-          <div className="aspect-video w-full bg-ink">
-            <iframe
-              src={`https://www.youtube.com/embed/${taller.videoId}`}
-              title={`Video del Taller ${taller.n} · ${taller.title}`}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
-          </div>
+          {taller.videoId ? (
+            <div className="aspect-video w-full bg-ink">
+              <iframe
+                src={`https://www.youtube.com/embed/${taller.videoId}`}
+                title={`Video del Taller ${taller.n} · ${taller.title}`}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          ) : (
+            <div className="aspect-video w-full bg-ink text-surface flex items-center justify-center relative overflow-hidden">
+              <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
+              <div className="relative text-center px-6">
+                <div className="inline-flex items-center gap-2 text-xs font-mono text-accent mb-4">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
+                  PRÓXIMAMENTE
+                </div>
+                <div className="font-display text-2xl md:text-3xl tracking-tight">
+                  Este video se publicará en su fecha.
+                </div>
+                <div className="mt-3 text-sm text-muted-2">
+                  Revisa el calendario para saber cuándo estará disponible.
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -99,26 +117,42 @@ export default function TallerPage({ taller, prev, next }: Props) {
           <div className="max-w-3xl mb-10">
             <div className="text-sm text-muted mb-3">Quiz</div>
             <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight">
-              Cuando termines, completa el quiz.
+              {taller.quizUrl
+                ? "Cuando termines, completa el quiz."
+                : "Quiz por publicar."}
             </h2>
             <p className="mt-4 text-muted leading-relaxed">
-              Usa tu correo institucional MEDUCA para enviar tus respuestas.
+              {taller.quizUrl
+                ? "Usa tu correo institucional MEDUCA para enviar tus respuestas."
+                : "El quiz de este taller se habilitará junto con el video."}
             </p>
           </div>
 
-          <a
-            href={taller.quizUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-between gap-12 bg-ink text-surface px-7 py-5 hover:bg-accent hover:text-ink glow-gold transition group"
-          >
-            <span className="text-base font-medium">
-              Abrir quiz del Taller {taller.n}
-            </span>
-            <span className="font-mono text-sm text-muted-2 group-hover:text-ink">
-              forms.office.com →
-            </span>
-          </a>
+          {taller.quizUrl ? (
+            <a
+              href={taller.quizUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-between gap-12 bg-ink text-surface px-7 py-5 hover:bg-accent hover:text-ink glow-gold transition group"
+            >
+              <span className="text-base font-medium">
+                Abrir quiz del Taller {taller.n}
+              </span>
+              <span className="font-mono text-sm text-muted-2 group-hover:text-ink">
+                forms.office.com →
+              </span>
+            </a>
+          ) : (
+            <div className="inline-flex items-center gap-3 border border-dashed border-border px-7 py-5 text-muted">
+              <span className="font-mono text-xs uppercase tracking-wider text-accent-dark">
+                Próximamente
+              </span>
+              <span>·</span>
+              <span className="text-sm">
+                Quiz disponible en la fecha del taller
+              </span>
+            </div>
+          )}
 
           <p className="mt-8 text-sm text-muted leading-relaxed max-w-2xl">
             <span className="text-ink font-medium">Nota:</span> si tienes

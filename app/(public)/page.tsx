@@ -177,7 +177,7 @@ export default function HomePage() {
               {
                 n: "01",
                 t: "Accede a la sección de talleres",
-                d: "Entra a la sección de talleres y comienza con el Taller 0. No necesitas experiencia previa.",
+                d: "Entra a la sección de talleres y comienza con el Taller 1. No necesitas experiencia previa.",
               },
               {
                 n: "02",
@@ -250,7 +250,7 @@ export default function HomePage() {
             href="/talleres"
             className="mt-10 inline-flex items-center bg-accent text-ink px-8 py-4 text-base font-semibold hover:bg-accent-bright glow-gold transition"
           >
-            Comenzar Taller 0 →
+            Comenzar Taller 1 →
           </Link>
         </div>
       </section>
