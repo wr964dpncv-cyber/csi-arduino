@@ -28,7 +28,7 @@ export default function Footer() {
               href="https://www.meduca.gob.pa"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block mt-6 transition hover:opacity-80"
+              className="inline-block mt-6 bg-white px-4 py-3 transition hover:opacity-90"
               aria-label="MEDUCA · Ministerio de Educación de Panamá"
             >
               <Image
@@ -36,7 +36,7 @@ export default function Footer() {
                 alt="MEDUCA · Ministerio de Educación de Panamá"
                 width={950}
                 height={200}
-                className="h-12 w-auto"
+                className="h-10 w-auto"
               />
             </a>
           </div>
