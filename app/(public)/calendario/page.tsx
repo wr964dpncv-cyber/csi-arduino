@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getCalendarEvents } from "@/lib/data";
 import { parseEventDate } from "@/lib/dateHelpers";
-import { WhatsAppButton } from "@/components/WhatsAppButton";
+import ContactButtons from "@/components/ContactButtons";
 import CircuitBackdrop from "@/components/CircuitBackdrop";
 
 export const metadata = {
@@ -232,10 +232,10 @@ export default async function CalendarioPage() {
             </p>
           </div>
           <div className="md:col-span-5 flex flex-col gap-3">
-            <WhatsAppButton />
+            <ContactButtons variant="dark" />
             <Link
               href="/talleres"
-              className="border border-white/20 px-6 py-4 text-sm hover:border-surface transition flex justify-between items-center"
+              className="text-muted-2 hover:text-surface transition px-1 py-2 text-sm flex justify-between items-center"
             >
               <span>Ver talleres</span>
               <span>→</span>
