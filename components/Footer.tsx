@@ -89,8 +89,14 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-white/10 text-xs text-muted-2 font-mono">
-          © {new Date().getFullYear()} · CSI · MEDUCA · Panamá
+        <div className="mt-12 pt-6 border-t border-white/10 flex items-center justify-between gap-4 text-xs text-muted-2 font-mono">
+          <span>© {new Date().getFullYear()} · CSI · MEDUCA · Panamá</span>
+          <Link
+            href="/admin/login"
+            className="text-muted-2/60 hover:text-surface transition"
+          >
+            Admin
+          </Link>
         </div>
       </div>
     </footer>
