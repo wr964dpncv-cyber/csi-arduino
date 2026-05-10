@@ -20,6 +20,10 @@ export default function CalendarEditor({
     null
   );
 
+  // Drag and drop state
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
+  const [overIdx, setOverIdx] = useState<number | null>(null);
+
   function update(i: number, patch: Partial<Row>) {
     setRows((r) =>
       r.map((row, idx) => (idx === i ? { ...row, ...patch, _dirty: true } : row))
@@ -30,7 +34,7 @@ export default function CalendarEditor({
     setRows((r) => [
       ...r,
       {
-        taller_n: r.length + 4,
+        taller_n: r.length + 1,
         day: "Lun",
         date_text: "",
         time: "18:00",
@@ -58,6 +62,42 @@ export default function CalendarEditor({
     } else {
       setStatus({ ok: false, msg: "No se pudo eliminar." });
     }
+  }
+
+  // === DRAG & DROP ===
+  function onDragStart(e: React.DragEvent, idx: number) {
+    setDraggedIdx(idx);
+    e.dataTransfer.effectAllowed = "move";
+    // Required for Firefox
+    e.dataTransfer.setData("text/plain", String(idx));
+  }
+
+  function onDragOver(e: React.DragEvent, idx: number) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (overIdx !== idx) setOverIdx(idx);
+  }
+
+  function onDrop(e: React.DragEvent, idx: number) {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === idx) {
+      setDraggedIdx(null);
+      setOverIdx(null);
+      return;
+    }
+    setRows((prev) => {
+      const newRows = [...prev];
+      const [moved] = newRows.splice(draggedIdx, 1);
+      newRows.splice(idx, 0, moved);
+      return newRows.map((r) => ({ ...r, _dirty: true }));
+    });
+    setDraggedIdx(null);
+    setOverIdx(null);
+  }
+
+  function onDragEnd() {
+    setDraggedIdx(null);
+    setOverIdx(null);
   }
 
   async function saveAll() {
@@ -104,7 +144,7 @@ export default function CalendarEditor({
         <div>
           <h1 className="font-display text-3xl tracking-tight">Calendario</h1>
           <p className="mt-2 text-muted">
-            Edita las fechas en las que se publica cada taller.
+            Edita las fechas o arrástralas para reordenarlas.
           </p>
         </div>
         <div className="flex gap-3">
@@ -140,72 +180,104 @@ export default function CalendarEditor({
 
       <div className="border border-border bg-surface-2 divide-y divide-border">
         <div className="grid md:grid-cols-12 gap-3 p-4 bg-surface text-xs font-mono uppercase tracking-wider text-muted">
+          <div className="md:col-span-1"></div>
           <div className="md:col-span-2">Taller #</div>
           <div className="md:col-span-2">Día</div>
-          <div className="md:col-span-5">Fecha</div>
+          <div className="md:col-span-3">Fecha</div>
           <div className="md:col-span-2">Hora</div>
+          <div className="md:col-span-1 text-right">Orden</div>
           <div className="md:col-span-1"></div>
         </div>
-        {rows.map((row, i) => (
-          <div
-            key={row.id ?? `new-${i}`}
-            className="grid md:grid-cols-12 gap-3 p-4 items-center"
-          >
-            <div className="md:col-span-2">
-              <input
-                type="number"
-                className={inputCls + " w-full font-mono"}
-                value={row.taller_n}
-                onChange={(e) =>
-                  update(i, { taller_n: parseInt(e.target.value) || 0 })
-                }
-              />
-            </div>
-            <div className="md:col-span-2">
-              <select
-                className={inputCls + " w-full"}
-                value={row.day}
-                onChange={(e) => update(i, { day: e.target.value })}
+        {rows.map((row, i) => {
+          const isDragging = draggedIdx === i;
+          const isOver = overIdx === i && draggedIdx !== null && draggedIdx !== i;
+
+          return (
+            <div
+              key={row.id ?? `new-${i}`}
+              onDragOver={(e) => onDragOver(e, i)}
+              onDrop={(e) => onDrop(e, i)}
+              className={`grid md:grid-cols-12 gap-3 p-4 items-center transition ${
+                isDragging ? "opacity-30" : ""
+              } ${isOver ? "bg-accent-soft" : ""}`}
+            >
+              <div
+                draggable
+                onDragStart={(e) => onDragStart(e, i)}
+                onDragEnd={onDragEnd}
+                className="md:col-span-1 flex items-center justify-center text-muted hover:text-ink cursor-grab active:cursor-grabbing select-none"
+                aria-label="Arrastra para reordenar"
+                title="Arrastra para reordenar"
               >
-                {DAYS.map((d) => (
-                  <option key={d}>{d}</option>
-                ))}
-              </select>
+                <svg viewBox="0 0 16 16" className="h-5 w-5" fill="currentColor" aria-hidden>
+                  <circle cx="5" cy="3" r="1.3" />
+                  <circle cx="11" cy="3" r="1.3" />
+                  <circle cx="5" cy="8" r="1.3" />
+                  <circle cx="11" cy="8" r="1.3" />
+                  <circle cx="5" cy="13" r="1.3" />
+                  <circle cx="11" cy="13" r="1.3" />
+                </svg>
+              </div>
+              <div className="md:col-span-2">
+                <input
+                  type="number"
+                  className={inputCls + " w-full font-mono"}
+                  value={row.taller_n}
+                  onChange={(e) =>
+                    update(i, { taller_n: parseInt(e.target.value) || 0 })
+                  }
+                />
+              </div>
+              <div className="md:col-span-2">
+                <select
+                  className={inputCls + " w-full"}
+                  value={row.day}
+                  onChange={(e) => update(i, { day: e.target.value })}
+                >
+                  {DAYS.map((d) => (
+                    <option key={d}>{d}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="md:col-span-3">
+                <input
+                  type="text"
+                  className={inputCls + " w-full"}
+                  value={row.date_text}
+                  onChange={(e) => update(i, { date_text: e.target.value })}
+                  placeholder="6 de abril"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <input
+                  type="text"
+                  className={inputCls + " w-full font-mono"}
+                  value={row.time}
+                  onChange={(e) => update(i, { time: e.target.value })}
+                  placeholder="18:00"
+                />
+              </div>
+              <div className="md:col-span-1 text-right font-mono text-sm text-muted">
+                {String(i + 1).padStart(2, "0")}
+              </div>
+              <div className="md:col-span-1 text-right">
+                <button
+                  type="button"
+                  onClick={() => removeRow(i)}
+                  className="text-muted hover:text-rose-700 transition"
+                  aria-label="Eliminar"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
-            <div className="md:col-span-5">
-              <input
-                type="text"
-                className={inputCls + " w-full"}
-                value={row.date_text}
-                onChange={(e) => update(i, { date_text: e.target.value })}
-                placeholder="6 de abril"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <input
-                type="text"
-                className={inputCls + " w-full font-mono"}
-                value={row.time}
-                onChange={(e) => update(i, { time: e.target.value })}
-                placeholder="18:00"
-              />
-            </div>
-            <div className="md:col-span-1 text-right">
-              <button
-                type="button"
-                onClick={() => removeRow(i)}
-                className="text-muted hover:text-rose-700 transition"
-                aria-label="Eliminar"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <p className="text-xs text-muted">
-        Los cambios se guardan al hacer clic en{" "}
+        Arrastra el ícono <span className="font-mono">⋮⋮</span> a la izquierda
+        para reordenar. Los cambios se guardan al hacer clic en{" "}
         <span className="font-medium text-ink">Guardar cambios</span>.
       </p>
     </div>
