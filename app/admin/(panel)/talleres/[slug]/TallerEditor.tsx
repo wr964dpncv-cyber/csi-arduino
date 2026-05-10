@@ -80,9 +80,19 @@ export default function TallerEditor({ taller }: Props) {
         >
           ← Talleres
         </Link>
-        <h1 className="mt-3 font-display text-3xl tracking-tight">
-          Editar Taller {taller.n}
-        </h1>
+        <div className="mt-3 flex flex-wrap items-baseline justify-between gap-4">
+          <h1 className="font-display text-3xl tracking-tight">
+            Editar Taller {taller.n}
+          </h1>
+          <Link
+            href={`/admin/talleres/${taller.slug}/quiz`}
+            className="inline-flex items-center gap-2 border border-ink px-4 py-2 text-sm hover:bg-ink hover:text-surface transition"
+          >
+            <span>📝</span>
+            <span>Editar quiz</span>
+            <span className="text-muted-2">→</span>
+          </Link>
+        </div>
       </div>
 
       <div className="space-y-6 bg-surface-2 border border-border p-6 md:p-8">

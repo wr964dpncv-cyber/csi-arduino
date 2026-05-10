@@ -264,6 +264,13 @@ export default function TalleresList({
               </div>
               <div className="md:col-span-2 flex items-center justify-end gap-3 text-sm">
                 <Link
+                  href={`/admin/talleres/${t.slug}/quiz`}
+                  className="text-muted hover:text-ink transition"
+                  title="Editar quiz"
+                >
+                  Quiz
+                </Link>
+                <Link
                   href={`/admin/talleres/${t.slug}`}
                   className="text-accent-dark hover:text-ink transition"
                 >
