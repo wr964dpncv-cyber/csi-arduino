@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { isOwner } from "@/lib/adminAuth";
+import PageHeader from "@/components/admin/PageHeader";
 
 type User = {
   id: string;
@@ -67,12 +68,17 @@ export default function UsersClient({
 
   return (
     <div className="space-y-10">
-      <div>
-        <h1 className="font-display text-3xl tracking-tight">Usuarios</h1>
-        <p className="mt-2 text-muted">
-          Administra quiénes tienen acceso al panel.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Sistema · Accesos"
+        title="Usuarios"
+        description="Administra quiénes tienen acceso al panel admin."
+        meta={
+          <span>
+            {initialUsers.length}{" "}
+            {initialUsers.length === 1 ? "usuario" : "usuarios"}
+          </span>
+        }
+      />
 
       {/* Form */}
       <section className="border border-border bg-surface-2 p-6">
@@ -133,10 +139,8 @@ export default function UsersClient({
 
       {/* List */}
       <section>
-        <div className="mb-4 text-sm text-muted">
-          {initialUsers.length}{" "}
-          {initialUsers.length === 1 ? "usuario" : "usuarios"} con acceso al
-          panel.
+        <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-2 mb-3">
+          Usuarios con acceso
         </div>
         <div className="border border-border overflow-x-auto bg-surface-2">
           <table className="w-full text-sm">

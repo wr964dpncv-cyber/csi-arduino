@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { CalendarEvent } from "@/lib/data";
+import PageHeader from "@/components/admin/PageHeader";
 
 type Row = CalendarEvent & { _dirty?: boolean; _new?: boolean };
 
@@ -140,31 +141,31 @@ export default function CalendarEditor({
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl tracking-tight">Calendario</h1>
-          <p className="mt-2 text-muted">
-            Edita las fechas o arrástralas para reordenarlas.
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={addRow}
-            className="border border-ink px-4 py-2 text-sm hover:bg-ink hover:text-surface transition"
-          >
-            + Agregar fecha
-          </button>
-          <button
-            type="button"
-            onClick={saveAll}
-            disabled={!dirty || saving}
-            className="bg-accent text-ink px-5 py-2 text-sm font-semibold hover:bg-accent-bright glow-gold transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {saving ? "Guardando..." : "Guardar cambios"}
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Programa · Cronograma"
+        title="Calendario"
+        description="Edita las fechas o arrástralas para reordenarlas."
+        meta={<span>{rows.length} fechas</span>}
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={addRow}
+              className="border border-ink px-4 py-2 text-sm hover:bg-ink hover:text-surface transition"
+            >
+              + Agregar fecha
+            </button>
+            <button
+              type="button"
+              onClick={saveAll}
+              disabled={!dirty || saving}
+              className="bg-accent text-ink px-5 py-2 text-sm font-semibold hover:bg-accent-bright glow-gold transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? "Guardando..." : "Guardar cambios"}
+            </button>
+          </>
+        }
+      />
 
       {status && (
         <div

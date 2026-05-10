@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Taller } from "@/lib/talleres";
+import PageHeader from "@/components/admin/PageHeader";
 
 export default function TalleresList({
   initialTalleres,
@@ -144,35 +145,46 @@ export default function TalleresList({
     }
   }
 
+  const publishedCount = talleres.filter((t) => t.published !== false).length;
+
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl tracking-tight">Talleres</h1>
-          <p className="mt-2 text-muted">
-            Click en una fila para editar. Arrastra <span className="font-mono">⋮⋮</span>{" "}
-            para reordenar.
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={createTaller}
-            disabled={creating}
-            className="border border-ink px-4 py-2 text-sm hover:bg-ink hover:text-surface transition disabled:opacity-50"
-          >
-            {creating ? "Creando..." : "+ Agregar taller"}
-          </button>
-          <button
-            type="button"
-            onClick={saveOrder}
-            disabled={!canSave || saving}
-            className="bg-accent text-ink px-5 py-2 text-sm font-semibold hover:bg-accent-bright glow-gold transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {saving ? "Guardando..." : "Guardar orden"}
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Programa · Contenido"
+        title="Talleres"
+        description={
+          <>
+            Click en una fila para editar. Arrastra{" "}
+            <span className="font-mono">⋮⋮</span> para reordenar.
+          </>
+        }
+        meta={
+          <>
+            <span>{talleres.length} talleres</span>
+            <span>{publishedCount} publicados</span>
+          </>
+        }
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={createTaller}
+              disabled={creating}
+              className="border border-ink px-4 py-2 text-sm hover:bg-ink hover:text-surface transition disabled:opacity-50"
+            >
+              {creating ? "Creando..." : "+ Agregar taller"}
+            </button>
+            <button
+              type="button"
+              onClick={saveOrder}
+              disabled={!canSave || saving}
+              className="bg-accent text-ink px-5 py-2 text-sm font-semibold hover:bg-accent-bright glow-gold transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? "Guardando..." : "Guardar orden"}
+            </button>
+          </>
+        }
+      />
 
       {status && (
         <div

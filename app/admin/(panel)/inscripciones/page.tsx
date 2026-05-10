@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import PageHeader from "@/components/admin/PageHeader";
 import InscripcionesTable, { type Row } from "./InscripcionesTable";
 
 export const metadata = { title: "Inscripciones · Admin" };
@@ -19,26 +20,32 @@ async function getInscripciones(): Promise<Row[]> {
 
 export default async function InscripcionesPage() {
   const rows = await getInscripciones();
+  const totalIntegrantes = rows.reduce(
+    (acc, r) => acc + (r.integrantes?.length ?? 0),
+    0
+  );
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl tracking-tight">
-            Inscripciones del Reto
-          </h1>
-          <p className="mt-2 text-muted">
-            {rows.length}{" "}
-            {rows.length === 1 ? "equipo inscrito" : "equipos inscritos"}.
-          </p>
-        </div>
-        <a
-          href="/api/admin/export/inscripciones"
-          className="inline-flex items-center bg-accent text-ink px-5 py-3 text-sm font-semibold hover:bg-accent-bright glow-gold transition"
-        >
-          ↓ Descargar CSV
-        </a>
-      </div>
+      <PageHeader
+        eyebrow="Reto Nacional · Datos"
+        title="Inscripciones del Reto"
+        description="Equipos inscritos para la competencia. Filtra, busca y exporta."
+        meta={
+          <>
+            <span>{rows.length} equipos</span>
+            <span>{totalIntegrantes} integrantes</span>
+          </>
+        }
+        actions={
+          <a
+            href="/api/admin/export/inscripciones"
+            className="inline-flex items-center bg-accent text-ink px-4 py-2 text-sm font-semibold hover:bg-accent-bright glow-gold transition"
+          >
+            ↓ Descargar CSV
+          </a>
+        }
+      />
 
       <InscripcionesTable rows={rows} />
     </div>

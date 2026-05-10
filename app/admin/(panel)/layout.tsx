@@ -1,25 +1,47 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { isOwner } from "@/lib/adminAuth";
+import AdminNav from "./AdminNav";
 
 export const metadata = {
   title: "Admin · Principios de Arduino",
   robots: { index: false, follow: false },
 };
 
-const navItems = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/inscripciones", label: "Inscripciones Reto" },
-  { href: "/admin/entregas", label: "Entregas Reto" },
-  { href: "/admin/respuestas", label: "Respuestas Quiz" },
-  { href: "/admin/talleres", label: "Talleres" },
-  { href: "/admin/calendario", label: "Calendario" },
+const baseGroups = [
+  {
+    label: "Resumen",
+    items: [{ href: "/admin", label: "Dashboard" }],
+  },
+  {
+    label: "Reto Nacional",
+    items: [
+      { href: "/admin/inscripciones", label: "Inscripciones" },
+      { href: "/admin/entregas", label: "Entregas" },
+    ],
+  },
+  {
+    label: "Programa",
+    items: [
+      { href: "/admin/talleres", label: "Talleres" },
+      { href: "/admin/calendario", label: "Calendario" },
+      { href: "/admin/respuestas", label: "Respuestas Quiz" },
+    ],
+  },
 ];
 
-const ownerOnlyNavItems = [{ href: "/admin/usuarios", label: "Usuarios" }];
+const ownerGroup = {
+  label: "Sistema",
+  items: [{ href: "/admin/usuarios", label: "Usuarios" }],
+};
 
-export default async function AdminLayout({ children }: { children: ReactNode }) {
+export default async function AdminLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   let userEmail: string | null = null;
   if (isSupabaseConfigured()) {
     try {
@@ -31,27 +53,40 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     } catch {}
   }
 
-  const visibleNavItems = isOwner(userEmail)
-    ? [...navItems, ...ownerOnlyNavItems]
-    : navItems;
+  const groups = isOwner(userEmail) ? [...baseGroups, ownerGroup] : baseGroups;
 
   return (
     <div className="min-h-screen flex flex-col bg-surface">
-      <header className="border-b border-border bg-ink text-surface">
+      <header className="sticky top-0 z-30 border-b border-border bg-ink text-surface">
         <div className="mx-auto max-w-7xl px-6 h-14 flex items-center justify-between">
-          <Link href="/admin" className="flex items-center gap-3">
-            <div className="h-7 w-7 bg-accent text-ink flex items-center justify-center font-mono text-[10px] font-bold">
-              csi
-            </div>
-            <span className="font-medium tracking-tight">
+          <Link
+            href="/admin"
+            className="flex items-center gap-3 group min-w-0"
+          >
+            <Image
+              src="/csi-logo.png"
+              alt="Logo CSI"
+              width={470}
+              height={531}
+              priority
+              className="h-8 w-auto shrink-0"
+            />
+            <span className="font-medium tracking-tight truncate hidden sm:inline">
               Admin · Principios de Arduino
             </span>
           </Link>
-          <div className="flex items-center gap-5 text-sm">
+          <div className="flex items-center gap-4 text-sm">
             {userEmail && (
-              <span className="hidden md:inline text-muted-2 font-mono text-xs">
-                {userEmail}
-              </span>
+              <div className="hidden md:flex items-center gap-2">
+                <span className="text-muted-2 font-mono text-xs">
+                  {userEmail}
+                </span>
+                {isOwner(userEmail) && (
+                  <span className="inline-block text-[10px] font-mono uppercase tracking-wider bg-accent text-ink px-1.5 py-0.5">
+                    super admin
+                  </span>
+                )}
+              </div>
             )}
             <Link
               href="/"
@@ -74,22 +109,11 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       </header>
 
       <div className="flex-1 mx-auto max-w-7xl px-6 py-10 grid lg:grid-cols-12 gap-8 w-full">
-        <nav className="lg:col-span-3">
-          <ul className="space-y-1 sticky top-20">
-            {visibleNavItems.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="block px-4 py-2 text-sm text-ink/70 hover:bg-surface-2 hover:text-ink transition"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <aside className="lg:col-span-3">
+          <AdminNav groups={groups} />
+        </aside>
 
-        <main className="lg:col-span-9">{children}</main>
+        <main className="lg:col-span-9 min-w-0">{children}</main>
       </div>
     </div>
   );

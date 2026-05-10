@@ -1,5 +1,6 @@
 import { adminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
+import PageHeader from "@/components/admin/PageHeader";
 import ResponsesTable, { type Row } from "./ResponsesTable";
 
 export const metadata = { title: "Respuestas Quiz · Admin" };
@@ -23,26 +24,41 @@ async function getResponses(): Promise<Row[]> {
 
 export default async function RespuestasPage() {
   const rows = await getResponses();
+  const totals = rows.reduce(
+    (acc, r) => {
+      acc.score += r.score;
+      acc.total += r.total;
+      if (r.total > 0 && r.score / r.total >= 0.6) acc.passing++;
+      return acc;
+    },
+    { score: 0, total: 0, passing: 0 }
+  );
+  const avg = totals.total > 0 ? Math.round((totals.score / totals.total) * 100) : null;
+  const passRate =
+    rows.length > 0 ? Math.round((totals.passing / rows.length) * 100) : null;
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl tracking-tight">
-            Respuestas de Quiz
-          </h1>
-          <p className="mt-2 text-muted">
-            {rows.length}{" "}
-            {rows.length === 1 ? "respuesta enviada" : "respuestas enviadas"}.
-          </p>
-        </div>
-        <a
-          href="/api/admin/export/respuestas"
-          className="inline-flex items-center bg-accent text-ink px-5 py-3 text-sm font-semibold hover:bg-accent-bright glow-gold transition"
-        >
-          ↓ Descargar CSV
-        </a>
-      </div>
+      <PageHeader
+        eyebrow="Programa · Evaluación"
+        title="Respuestas de Quiz"
+        description="Cada respuesta de quiz de los estudiantes con su puntaje."
+        meta={
+          <>
+            <span>{rows.length} respuestas</span>
+            {avg !== null && <span>Promedio: {avg}%</span>}
+            {passRate !== null && <span>Aprobados: {passRate}%</span>}
+          </>
+        }
+        actions={
+          <a
+            href="/api/admin/export/respuestas"
+            className="inline-flex items-center bg-accent text-ink px-4 py-2 text-sm font-semibold hover:bg-accent-bright glow-gold transition"
+          >
+            ↓ Descargar CSV
+          </a>
+        }
+      />
 
       <ResponsesTable rows={rows} />
     </div>
