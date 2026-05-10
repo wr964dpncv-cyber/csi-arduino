@@ -40,6 +40,7 @@ export async function POST(
   }
 
   const admin = adminClient();
+  const studentEmail = body.studentEmail.trim().toLowerCase();
 
   // Find taller
   const { data: taller, error: tallerErr } = await admin
@@ -52,6 +53,29 @@ export async function POST(
     return NextResponse.json(
       { error: "Taller no encontrado" },
       { status: 404 }
+    );
+  }
+
+  // Reject duplicate submission for this email + taller
+  const { data: existing } = await admin
+    .from("quiz_responses")
+    .select("id, score, total, created_at")
+    .eq("taller_id", taller.id)
+    .eq("student_email", studentEmail)
+    .maybeSingle();
+
+  if (existing) {
+    return NextResponse.json(
+      {
+        error: "Ya enviaste este quiz con ese correo.",
+        alreadySubmitted: true,
+        previous: {
+          score: existing.score,
+          total: existing.total,
+          created_at: existing.created_at,
+        },
+      },
+      { status: 409 }
     );
   }
 
@@ -91,7 +115,7 @@ export async function POST(
     taller_n: taller.n,
     taller_title: taller.title,
     student_name: body.studentName.trim(),
-    student_email: body.studentEmail.trim().toLowerCase(),
+    student_email: studentEmail,
     student_school: body.studentSchool?.trim() ?? null,
     answers: scoredAnswers,
     score,
@@ -99,6 +123,16 @@ export async function POST(
   });
 
   if (error) {
+    // Unique violation: ya respondió este quiz con el mismo email
+    if ((error as { code?: string }).code === "23505") {
+      return NextResponse.json(
+        {
+          error: "Ya enviaste este quiz con ese correo.",
+          alreadySubmitted: true,
+        },
+        { status: 409 }
+      );
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 

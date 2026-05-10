@@ -40,6 +40,11 @@ export default function QuizForm({
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [alreadySubmitted, setAlreadySubmitted] = useState<{
+    score?: number;
+    total?: number;
+    created_at?: string;
+  } | null>(null);
 
   const allAnswered = questions.every((q) => answers[q.id] !== undefined);
 
@@ -68,6 +73,12 @@ export default function QuizForm({
         }),
       });
 
+      if (res.status === 409) {
+        const err = await res.json().catch(() => ({}));
+        setAlreadySubmitted(err.previous ?? {});
+        return;
+      }
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error ?? "No se pudo enviar el quiz.");
@@ -84,6 +95,63 @@ export default function QuizForm({
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (alreadySubmitted) {
+    const hasPrev =
+      typeof alreadySubmitted.score === "number" &&
+      typeof alreadySubmitted.total === "number" &&
+      alreadySubmitted.total > 0;
+    const pct = hasPrev
+      ? Math.round(
+          (alreadySubmitted.score! / alreadySubmitted.total!) * 100
+        )
+      : null;
+    return (
+      <div className="space-y-6">
+        <div className="border-l-4 border-amber-500 bg-amber-50 p-8">
+          <div className="font-mono text-xs uppercase tracking-wider text-amber-700 mb-3">
+            Quiz ya enviado · Taller {tallerNumber}
+          </div>
+          <h2 className="font-display text-2xl text-ink">
+            Solo puedes enviar este quiz una vez.
+          </h2>
+          <p className="mt-3 text-muted leading-relaxed">
+            Ya recibimos una respuesta tuya para{" "}
+            <span className="text-ink font-medium">{tallerTitle}</span> con el
+            correo <span className="font-mono">{studentEmail.toLowerCase()}</span>
+            .
+          </p>
+          {hasPrev && (
+            <div className="mt-5 inline-flex items-baseline gap-3 border border-amber-200 bg-amber-100/60 px-4 py-3">
+              <span className="text-xs font-mono uppercase tracking-wider text-amber-700">
+                Tu resultado:
+              </span>
+              <span className="font-mono text-2xl text-ink">
+                {alreadySubmitted.score}/{alreadySubmitted.total}
+              </span>
+              {pct !== null && (
+                <span className="text-sm text-muted">· {pct}%</span>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href={`/talleres/${tallerSlug}`}
+            className="inline-flex items-center border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
+          >
+            ← Volver al taller
+          </Link>
+          <Link
+            href="/talleres"
+            className="inline-flex items-center text-sm text-muted hover:text-ink transition px-5 py-3"
+          >
+            Ver todos los talleres
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   if (result) {
