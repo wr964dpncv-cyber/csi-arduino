@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { getAllTalleres, getCalendarEvents } from "@/lib/data";
 import { parseEventDate, getEventStatus } from "@/lib/dateHelpers";
-import { WhatsAppButton } from "@/components/WhatsAppButton";
 import CircuitBackdrop from "@/components/CircuitBackdrop";
+import ContactButtons from "@/components/ContactButtons";
 
 export const metadata = {
   title: "Talleres — Principios de Arduino",
@@ -215,15 +215,8 @@ export default async function TalleresPage() {
               Daniel responde directamente por correo o WhatsApp.
             </p>
           </div>
-          <div className="md:col-span-5 flex flex-col gap-3">
-            <WhatsAppButton />
-            <a
-              href="mailto:daniel10abadi@gmail.com"
-              className="border border-white/20 px-6 py-4 text-sm hover:border-surface transition flex justify-between items-center"
-            >
-              <span>daniel10abadi@gmail.com</span>
-              <span>→</span>
-            </a>
+          <div className="md:col-span-5">
+            <ContactButtons variant="dark" />
           </div>
         </div>
       </section>

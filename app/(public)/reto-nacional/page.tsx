@@ -9,7 +9,6 @@ import {
   entregables,
   criterios,
   finalSegments,
-  premios,
 } from "@/lib/reto";
 import {
   TinkercadIcon,
@@ -20,10 +19,13 @@ import {
   VideoIcon,
   DocIcon,
   LinkIcon,
-  MedalIcon,
+  LaptopIcon,
+  PhoneIcon,
+  GiftIcon,
+  SparkleIcon,
 } from "@/components/RetoIcons";
-import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import CircuitBackdrop from "@/components/CircuitBackdrop";
+import ContactButtons from "@/components/ContactButtons";
 import StickyInscriptionCTA from "@/components/StickyInscriptionCTA";
 
 export const metadata = {
@@ -330,44 +332,112 @@ export default function RetoNacionalPage() {
       </section>
 
       {/* PREMIOS */}
-      <section className="border-b border-border bg-surface-2">
-        <div className="mx-auto max-w-6xl px-6 py-24">
-          <div className="max-w-2xl mb-14">
-            <div className="text-sm text-muted mb-3">Premios</div>
-            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
-              Lo que está en juego.
+      <section className="relative overflow-hidden bg-ink text-surface border-b border-white/10">
+        <CircuitBackdrop variant="sparse" />
+        <div className="relative mx-auto max-w-6xl px-6 py-24 md:py-32">
+          {/* Heading */}
+          <div className="max-w-3xl mx-auto text-center mb-20">
+            <div className="inline-flex items-center gap-2 text-xs font-mono text-accent uppercase tracking-[0.2em] mb-6">
+              <SparkleIcon className="h-3 w-3" />
+              <span>Premios · Reto Nacional {RETO_YEAR}</span>
+              <SparkleIcon className="h-3 w-3" />
+            </div>
+            <h2 className="font-display text-5xl md:text-7xl tracking-tight leading-[1.02]">
+              Lo que está{" "}
+              <span className="text-accent">en juego</span>.
             </h2>
+            <p className="mt-6 text-lg text-muted-2 leading-relaxed max-w-2xl mx-auto">
+              Tres equipos se llevan los premios mayores. Diez finalistas
+              suben al escenario en la final presencial.
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {premios.map((p) => (
-              <div
-                key={p.lugar}
-                className={`p-8 ${p.featured ? "bg-accent-soft border-2 border-accent" : "bg-surface border border-border"}`}
-              >
-                <MedalIcon
-                  className={`h-9 w-9 ${p.featured ? "text-accent-dark" : "text-muted"}`}
-                />
-                <div className="mt-6 font-display text-2xl tracking-tight">
-                  {p.lugar}
+          {/* Podium */}
+          <div className="grid md:grid-cols-3 gap-5 md:gap-6 items-end max-w-5xl mx-auto">
+            {/* 2do — left */}
+            <div className="md:order-1 md:mb-0 relative bg-white/[0.03] border border-white/15 backdrop-blur-sm p-7 md:p-8 hover:border-white/30 transition group">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-300/60 to-transparent" />
+              <div className="font-mono text-[11px] text-slate-300/70 uppercase tracking-[0.25em]">
+                2do lugar
+              </div>
+              <div className="mt-8 flex items-center justify-start h-20">
+                <PhoneIcon className="h-16 w-16 text-slate-200 group-hover:scale-110 transition-transform duration-300" />
+              </div>
+              <div className="mt-8 font-display text-2xl leading-tight">
+                Celular Samsung
+              </div>
+              <div className="mt-2 text-sm text-muted-2">
+                Para cada integrante del equipo
+              </div>
+            </div>
+
+            {/* 1ER LUGAR — center, elevated */}
+            <div className="md:order-2 md:-mt-8 relative bg-gradient-to-b from-accent/[0.18] via-accent/[0.08] to-accent/[0.03] border-2 border-accent p-8 md:p-10 shadow-[0_0_60px_-12px_rgba(245,184,12,0.45)] z-10">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-ink px-4 py-1 text-[10px] font-mono uppercase tracking-[0.25em] font-bold whitespace-nowrap">
+                Premio mayor
+              </div>
+              <div className="text-center">
+                <div className="font-mono text-[11px] text-accent uppercase tracking-[0.25em]">
+                  1er lugar
                 </div>
-                <div
-                  className={`mt-3 ${p.featured ? "text-ink font-medium" : "text-muted italic"}`}
-                >
-                  {p.premio}
+                <div className="mt-8 flex items-center justify-center h-24">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-accent/30 blur-2xl" />
+                    <LaptopIcon className="relative h-24 w-24 text-accent" />
+                  </div>
+                </div>
+                <div className="mt-8 font-display text-3xl md:text-4xl leading-tight">
+                  Laptop
+                </div>
+                <div className="mt-3 text-sm text-muted-2">
+                  Para cada integrante del equipo
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* 3er — right */}
+            <div className="md:order-3 md:mb-0 relative bg-white/[0.03] border border-white/15 backdrop-blur-sm p-7 md:p-8 hover:border-white/30 transition group">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-600/60 to-transparent" />
+              <div className="font-mono text-[11px] text-amber-500/80 uppercase tracking-[0.25em]">
+                3er lugar
+              </div>
+              <div className="mt-8 flex items-center justify-start h-20">
+                <GiftIcon className="h-14 w-14 text-amber-500 group-hover:scale-110 transition-transform duration-300" />
+              </div>
+              <div className="mt-8 font-display text-2xl leading-tight">
+                $100 en gift card
+              </div>
+              <div className="mt-2 text-sm text-muted-2">
+                Para cada integrante del equipo
+              </div>
+            </div>
           </div>
 
-          <div className="mt-8 bg-surface border border-border p-6 md:p-7 flex flex-col md:flex-row gap-4 md:items-center">
-            <div className="font-display text-lg flex-shrink-0">
-              Todos los participantes
+          {/* Todos los participantes */}
+          <div className="mt-20 max-w-3xl mx-auto">
+            <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row gap-3 md:gap-6 md:items-baseline">
+              <div className="font-mono text-[11px] text-muted-2 uppercase tracking-[0.25em] flex-shrink-0">
+                Para todos los participantes
+              </div>
+              <div className="text-surface text-sm md:text-base">
+                Certificado Digital CSI · Carta de reconocimiento MEDUCA para
+                finalistas
+              </div>
             </div>
-            <div className="text-muted">
-              Certificado Digital CSI · Carta de reconocimiento MEDUCA para
-              finalistas
-            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="mt-14 text-center">
+            <Link
+              href="/reto-nacional/inscripcion"
+              className="inline-flex items-center gap-2 bg-accent text-ink px-9 py-5 text-lg font-semibold hover:bg-accent-bright glow-gold transition shadow-lg shadow-accent/20"
+            >
+              <span>Inscribir mi equipo</span>
+              <span aria-hidden>→</span>
+            </Link>
+            <p className="mt-4 text-sm text-muted-2">
+              Inscripciones abiertas {RETO_DATES.inscripcionFrom} – {RETO_DATES.inscripcionTo}
+            </p>
           </div>
         </div>
       </section>
@@ -460,18 +530,7 @@ export default function RetoNacionalPage() {
               <span>Inscribir mi equipo</span>
               <span>→</span>
             </Link>
-            <a
-              href="https://wa.me/50768641929"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group border border-white/20 px-6 py-4 text-sm hover:border-surface transition flex items-center gap-3"
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-sm transition-transform group-hover:scale-110">
-                <WhatsAppIcon className="h-5 w-5" />
-              </span>
-              <span className="flex-1">WhatsApp +507 6864-1929</span>
-              <span className="transition-transform group-hover:translate-x-1">→</span>
-            </a>
+            <ContactButtons variant="dark" />
           </div>
         </div>
       </section>

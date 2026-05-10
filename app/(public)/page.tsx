@@ -9,7 +9,7 @@ import {
   CodeIcon,
   GearIcon,
 } from "@/components/SkillIcons";
-import { WhatsAppIcon } from "@/components/WhatsAppIcon";
+import ContactButtons from "@/components/ContactButtons";
 
 export default function HomePage() {
   return (
@@ -260,22 +260,8 @@ export default function HomePage() {
                 contáctalo directamente.
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                <a
-                  href="mailto:daniel10abadi@gmail.com"
-                  className="inline-flex items-center border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
-                >
-                  daniel10abadi@gmail.com
-                </a>
-                <a
-                  href="https://wa.me/50768641929"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-2 border border-ink px-5 py-3 text-sm hover:bg-ink hover:text-surface transition"
-                >
-                  <WhatsAppIcon className="h-4 w-4 text-[#25D366] transition-transform group-hover:scale-110" />
-                  <span>+507 6864-1929</span>
-                </a>
+              <div className="mt-8">
+                <ContactButtons />
               </div>
             </div>
           </div>

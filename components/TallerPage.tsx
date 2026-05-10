@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { Taller } from "@/lib/talleres";
 import { parseEventDate, getEventStatus } from "@/lib/dateHelpers";
-import { WhatsAppButton } from "./WhatsAppButton";
 import CircuitBackdrop from "./CircuitBackdrop";
+import ContactButtons from "./ContactButtons";
 
 type CalendarEventInfo = {
   day: string;
@@ -365,15 +365,8 @@ export default function TallerPage({
               Daniel responde directamente. Sin formularios, sin filas.
             </p>
           </div>
-          <div className="md:col-span-5 flex flex-col gap-3">
-            <WhatsAppButton />
-            <a
-              href="mailto:daniel10abadi@gmail.com"
-              className="border border-white/20 px-6 py-4 text-sm hover:border-surface transition flex justify-between items-center"
-            >
-              <span>daniel10abadi@gmail.com</span>
-              <span>→</span>
-            </a>
+          <div className="md:col-span-5">
+            <ContactButtons variant="dark" />
           </div>
         </div>
       </section>
