@@ -131,21 +131,7 @@ export const finalSegments = [
   },
 ];
 
-export const premios = [
-  {
-    lugar: "1er lugar",
-    premio: "Laptop para cada integrante del equipo",
-    featured: true,
-  },
-  {
-    lugar: "2do lugar",
-    premio: "Celular Samsung para cada integrante del equipo",
-  },
-  {
-    lugar: "3er lugar",
-    premio: "Certificado de regalo de $100 para cada integrante",
-  },
-];
+export const premios: { lugar: string; premio: string; featured?: boolean }[] = [];
 
 export const REGIONES_EDUCATIVAS = [
   "Bocas del Toro",

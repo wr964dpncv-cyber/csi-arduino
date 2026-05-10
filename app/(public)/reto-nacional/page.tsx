@@ -19,8 +19,6 @@ import {
   VideoIcon,
   DocIcon,
   LinkIcon,
-  LaptopIcon,
-  PhoneIcon,
   GiftIcon,
   SparkleIcon,
 } from "@/components/RetoIcons";
@@ -347,68 +345,29 @@ export default function RetoNacionalPage() {
               <span className="text-accent">en juego</span>.
             </h2>
             <p className="mt-6 text-lg text-muted-2 leading-relaxed max-w-2xl mx-auto">
-              Tres equipos se llevan los premios mayores. Diez finalistas
-              suben al escenario en la final presencial.
+              Los premios del Reto Nacional CSI {RETO_YEAR} se anunciarán
+              próximamente.
             </p>
           </div>
 
-          {/* Podium */}
-          <div className="grid md:grid-cols-3 gap-5 md:gap-6 items-end max-w-5xl mx-auto">
-            {/* 2do — left */}
-            <div className="md:order-1 md:mb-0 relative bg-white/[0.03] border border-white/15 backdrop-blur-sm p-7 md:p-8 hover:border-white/30 transition group">
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-300/60 to-transparent" />
-              <div className="font-mono text-[11px] text-slate-300/70 uppercase tracking-[0.25em]">
-                2do lugar
-              </div>
-              <div className="mt-8 flex items-center justify-start h-20">
-                <PhoneIcon className="h-16 w-16 text-slate-200 group-hover:scale-110 transition-transform duration-300" />
-              </div>
-              <div className="mt-8 font-display text-2xl leading-tight">
-                Celular Samsung
-              </div>
-              <div className="mt-2 text-sm text-muted-2">
-                Para cada integrante del equipo
-              </div>
-            </div>
-
-            {/* 1ER LUGAR — center, elevated */}
-            <div className="md:order-2 md:-mt-8 relative bg-gradient-to-b from-accent/[0.18] via-accent/[0.08] to-accent/[0.03] border-2 border-accent p-8 md:p-10 shadow-[0_0_60px_-12px_rgba(245,184,12,0.45)] z-10">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-ink px-4 py-1 text-[10px] font-mono uppercase tracking-[0.25em] font-bold whitespace-nowrap">
-                Premio mayor
-              </div>
-              <div className="text-center">
-                <div className="font-mono text-[11px] text-accent uppercase tracking-[0.25em]">
-                  1er lugar
+          {/* Premios por anunciar */}
+          <div className="max-w-3xl mx-auto">
+            <div className="relative bg-gradient-to-b from-accent/[0.12] via-accent/[0.04] to-transparent border border-accent/40 p-10 md:p-16 text-center overflow-hidden">
+              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,rgba(245,184,12,0.18),transparent_60%)]" />
+              <div className="relative">
+                <div className="inline-flex items-center justify-center h-16 w-16 border border-accent/50 bg-ink/40 mb-8">
+                  <GiftIcon className="h-8 w-8 text-accent" />
                 </div>
-                <div className="mt-8 flex items-center justify-center h-24">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-accent/30 blur-2xl" />
-                    <LaptopIcon className="relative h-24 w-24 text-accent" />
-                  </div>
+                <div className="font-mono text-[11px] text-accent uppercase tracking-[0.3em] mb-4">
+                  Premios
                 </div>
-                <div className="mt-8 font-display text-3xl md:text-4xl leading-tight">
-                  Laptop
-                </div>
-                <div className="mt-3 text-sm text-muted-2">
-                  Para cada integrante del equipo
-                </div>
-              </div>
-            </div>
-
-            {/* 3er — right */}
-            <div className="md:order-3 md:mb-0 relative bg-white/[0.03] border border-white/15 backdrop-blur-sm p-7 md:p-8 hover:border-white/30 transition group">
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-600/60 to-transparent" />
-              <div className="font-mono text-[11px] text-amber-500/80 uppercase tracking-[0.25em]">
-                3er lugar
-              </div>
-              <div className="mt-8 flex items-center justify-start h-20">
-                <GiftIcon className="h-14 w-14 text-amber-500 group-hover:scale-110 transition-transform duration-300" />
-              </div>
-              <div className="mt-8 font-display text-2xl leading-tight">
-                $100 en gift card
-              </div>
-              <div className="mt-2 text-sm text-muted-2">
-                Para cada integrante del equipo
+                <h3 className="font-display text-3xl md:text-5xl tracking-tight leading-tight">
+                  Por anunciar.
+                </h3>
+                <p className="mt-6 text-muted-2 max-w-md mx-auto leading-relaxed">
+                  Mantente atento — los premios del Reto Nacional se revelarán
+                  en las próximas semanas.
+                </p>
               </div>
             </div>
           </div>
