@@ -66,7 +66,7 @@ export default async function CalendarioPage() {
         <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="inline-flex items-center gap-2 text-xs font-mono text-muted-2 mb-4">
             <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
-            cohorte activa
+            programa en curso
           </div>
           <h1 className="font-display text-5xl md:text-7xl tracking-tight leading-[1.02] max-w-3xl">
             Calendario de talleres.
