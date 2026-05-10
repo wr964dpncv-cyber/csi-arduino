@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 import { adminClient } from "@/lib/supabase/admin";
+import { notifyQuiz } from "@/lib/notify";
 
 const ALLOWED_MIME = new Set([
   "image/jpeg",
@@ -224,6 +225,16 @@ export async function POST(
     }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  await notifyQuiz({
+    tallerN: taller.n,
+    tallerTitle: taller.title,
+    studentName: studentName.trim(),
+    studentEmail: emailLower,
+    studentSchool: studentSchool.trim() || null,
+    score,
+    total,
+  });
 
   return NextResponse.json({
     ok: true,

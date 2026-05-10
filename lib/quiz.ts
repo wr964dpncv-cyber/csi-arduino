@@ -8,6 +8,7 @@ export type QuizQuestion = {
   options: string[];
   correct_index?: number;
   question_type?: QuestionType;
+  image_url?: string | null;
 };
 
 export type QuizAnswer = {

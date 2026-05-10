@@ -9,6 +9,7 @@ type Question = {
   question: string;
   options: string[];
   question_type?: "multiple_choice" | "file_upload";
+  image_url?: string | null;
 };
 
 type Props = {
@@ -333,26 +334,50 @@ export default function QuizForm({
               <div className="font-display text-lg flex-1 whitespace-pre-line">{q.question}</div>
             </div>
             {isFile ? (
-              <div className="ml-9 space-y-3">
-                <label className="block">
-                  <span className="sr-only">Subir archivo</span>
-                  <input
-                    type="file"
-                    accept="image/*,application/pdf"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) setFiles((prev) => ({ ...prev, [q.id]: f }));
-                    }}
-                    className="block w-full text-sm text-ink file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-ink file:text-surface file:cursor-pointer hover:file:bg-accent hover:file:text-ink file:transition"
-                  />
-                </label>
-                {files[q.id] && (
-                  <div className="text-xs text-muted font-mono break-all">
-                    ✓ {files[q.id].name} ({Math.round(files[q.id].size / 1024)} KB)
+              <div className="ml-9 space-y-4">
+                {q.image_url && (
+                  <div className="border border-border bg-surface overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={q.image_url}
+                      alt="Ejemplo del circuito a replicar"
+                      className="w-full h-auto"
+                    />
                   </div>
                 )}
+                <div className="flex items-center gap-4 flex-wrap">
+                  <label className="inline-flex items-center gap-2 border border-ink bg-surface text-ink px-5 py-3 text-sm font-medium hover:bg-ink hover:text-surface transition cursor-pointer">
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden
+                    >
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    <span>{files[q.id] ? "Cambiar archivo" : "Add file"}</span>
+                    <input
+                      type="file"
+                      accept="image/*,application/pdf"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) setFiles((prev) => ({ ...prev, [q.id]: f }));
+                      }}
+                      className="sr-only"
+                    />
+                  </label>
+                  {files[q.id] && (
+                    <div className="text-xs text-muted font-mono break-all">
+                      ✓ {files[q.id].name} ({Math.round(files[q.id].size / 1024)} KB)
+                    </div>
+                  )}
+                </div>
                 <div className="text-xs text-muted">
-                  PDF o imagen. Máx 10 MB.
+                  Upload 1 supported file: PDF o imagen. Máx 10 MB.
                 </div>
               </div>
             ) : (

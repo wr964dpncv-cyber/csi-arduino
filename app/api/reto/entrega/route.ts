@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { notifyEntrega } from "@/lib/notify";
 
 type Body = {
   equipoNombre: string;
@@ -59,6 +60,14 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
+
+    await notifyEntrega({
+      equipoNombre: b.equipoNombre,
+      proyectoNombre: b.proyectoNombre,
+      tinkercadUrl: b.tinkercadUrl,
+      videoUrl: b.videoUrl,
+      descripcion: b.descripcion,
+    });
 
     return NextResponse.json({ ok: true, configured: true });
   } catch (err) {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { isInscripcionOpen } from "@/lib/reto";
+import { notifyInscripcion } from "@/lib/notify";
 
 type Member = {
   nombre: string;
@@ -70,6 +71,14 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
+
+    const b = body as Body;
+    await notifyInscripcion({
+      equipoNombre: b.equipo.nombre,
+      escuela: b.equipo.escuela,
+      region: b.equipo.region,
+      integrantes: b.integrantes,
+    });
 
     return NextResponse.json({ ok: true, configured: true });
   } catch (err) {
