@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 import TallerPage from "@/components/TallerPage";
-import { getAllTalleres, getTallerBySlug } from "@/lib/data";
+import {
+  getAllTalleres,
+  getTallerBySlug,
+  getCalendarEvents,
+} from "@/lib/data";
 
 export const revalidate = 60;
 
@@ -32,9 +36,28 @@ export default async function Page({
   const t = await getTallerBySlug(slug);
   if (!t) notFound();
 
-  const all = await getAllTalleres();
+  const [all, calendar] = await Promise.all([
+    getAllTalleres(),
+    getCalendarEvents(),
+  ]);
   const prev = all.find((x) => x.n === t.n - 1);
   const next = all.find((x) => x.n === t.n + 1);
+  const calendarEvent = calendar.find((c) => c.taller_n === t.n);
 
-  return <TallerPage taller={t} prev={prev} next={next} />;
+  return (
+    <TallerPage
+      taller={t}
+      prev={prev}
+      next={next}
+      calendarEvent={
+        calendarEvent
+          ? {
+              day: calendarEvent.day,
+              dateText: calendarEvent.date_text,
+              time: calendarEvent.time,
+            }
+          : undefined
+      }
+    />
+  );
 }

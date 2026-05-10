@@ -1,14 +1,36 @@
 import Link from "next/link";
 import type { Taller } from "@/lib/talleres";
+import { parseEventDate, getEventStatus } from "@/lib/dateHelpers";
+
+type CalendarEventInfo = {
+  day: string;
+  dateText: string;
+  time: string;
+};
 
 type Props = {
   taller: Taller;
   prev?: Taller;
   next?: Taller;
+  calendarEvent?: CalendarEventInfo;
 };
 
-export default function TallerPage({ taller, prev, next }: Props) {
+export default function TallerPage({
+  taller,
+  prev,
+  next,
+  calendarEvent,
+}: Props) {
   const num = String(taller.n).padStart(2, "0");
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const eventDate = calendarEvent
+    ? parseEventDate(calendarEvent.dateText)
+    : null;
+  const eventStatus = getEventStatus(eventDate, today);
+  const isUpcoming =
+    eventStatus === "future" && (!taller.videoId || !taller.quizUrl);
 
   return (
     <>
@@ -38,6 +60,25 @@ export default function TallerPage({ taller, prev, next }: Props) {
           <p className="mt-8 text-lg text-muted-2 max-w-2xl leading-relaxed">
             {taller.description}
           </p>
+
+          {isUpcoming && calendarEvent && (
+            <div className="mt-10 inline-flex flex-col gap-1.5 border border-accent/30 bg-accent/10 px-5 py-4">
+              <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.18em] text-accent">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
+                Próximamente
+              </div>
+              <div className="text-base text-surface">
+                Disponible el{" "}
+                <span className="font-medium text-accent">
+                  {calendarEvent.day} {calendarEvent.dateText}
+                </span>{" "}
+                a las{" "}
+                <span className="font-mono text-surface">
+                  {calendarEvent.time}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -99,12 +140,28 @@ export default function TallerPage({ taller, prev, next }: Props) {
                   <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
                   PRÓXIMAMENTE
                 </div>
-                <div className="font-display text-2xl md:text-3xl tracking-tight">
-                  Este video se publicará en su fecha.
-                </div>
-                <div className="mt-3 text-sm text-muted-2">
-                  Revisa el calendario para saber cuándo estará disponible.
-                </div>
+                {calendarEvent ? (
+                  <>
+                    <div className="font-display text-2xl md:text-3xl tracking-tight">
+                      Disponible el{" "}
+                      <span className="text-accent">
+                        {calendarEvent.day} {calendarEvent.dateText}
+                      </span>
+                    </div>
+                    <div className="mt-3 text-sm text-muted-2 font-mono">
+                      a las {calendarEvent.time}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="font-display text-2xl md:text-3xl tracking-tight">
+                      Este video se publicará en su fecha.
+                    </div>
+                    <div className="mt-3 text-sm text-muted-2">
+                      Revisa el calendario para saber cuándo estará disponible.
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           )}
@@ -143,14 +200,24 @@ export default function TallerPage({ taller, prev, next }: Props) {
               </span>
             </a>
           ) : (
-            <div className="inline-flex items-center gap-3 border border-dashed border-border px-7 py-5 text-muted">
-              <span className="font-mono text-xs uppercase tracking-wider text-accent-dark">
-                Próximamente
-              </span>
-              <span>·</span>
-              <span className="text-sm">
-                Quiz disponible en la fecha del taller
-              </span>
+            <div className="inline-flex flex-col gap-1.5 border border-dashed border-border px-7 py-5">
+              <div className="font-mono text-xs uppercase tracking-wider text-accent-dark">
+                ▸ Próximamente
+              </div>
+              <div className="text-sm text-ink">
+                {calendarEvent ? (
+                  <>
+                    Quiz disponible el{" "}
+                    <span className="font-medium text-accent-dark">
+                      {calendarEvent.day} {calendarEvent.dateText}
+                    </span>{" "}
+                    a las{" "}
+                    <span className="font-mono">{calendarEvent.time}</span>
+                  </>
+                ) : (
+                  <>Quiz disponible en la fecha del taller</>
+                )}
+              </div>
             </div>
           )}
 
