@@ -24,6 +24,21 @@ export default function Footer() {
               Programa educativo gratuito del Cuerpo de Solidaridad Informática
               del MEDUCA, Panamá.
             </p>
+            <a
+              href="https://www.meduca.gob.pa"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-6 transition hover:opacity-80"
+              aria-label="MEDUCA · Ministerio de Educación de Panamá"
+            >
+              <Image
+                src="/meduca-logo.png"
+                alt="MEDUCA · Ministerio de Educación de Panamá"
+                width={950}
+                height={200}
+                className="h-12 w-auto"
+              />
+            </a>
           </div>
 
           <div>
