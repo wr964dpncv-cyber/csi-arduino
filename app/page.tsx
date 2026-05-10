@@ -26,7 +26,7 @@ export default function HomePage() {
                 <span className="text-accent">Arduino</span>.
               </h1>
               <p className="mt-8 text-lg text-muted-2 max-w-xl leading-relaxed">
-                Un programa gratuito de 10 talleres para estudiantes de escuelas
+                Un programa gratuito de 12 talleres para estudiantes de escuelas
                 públicas de Panamá. Aprende electrónica, programación y a construir
                 tus propios circuitos desde cero.
               </p>
@@ -56,7 +56,7 @@ export default function HomePage() {
         <div className="border-t border-white/10">
           <div className="mx-auto max-w-6xl px-6 py-5 grid grid-cols-2 md:grid-cols-4 gap-4 md:divide-x divide-white/10 text-center">
             {[
-              ["10", "Talleres"],
+              ["12", "Talleres"],
               ["100%", "Gratuito"],
               ["A tu ritmo", "Modalidad"],
               ["Nacional", "Cobertura"],
@@ -72,14 +72,55 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* SOBRE EL PROGRAMA */}
+      <section className="border-b border-border">
+        <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
+            <div className="lg:col-span-4">
+              <div className="text-sm text-accent-dark mb-3 font-mono">
+                01 · Sobre el programa
+              </div>
+              <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+                Tecnología en cada escuela de Panamá.
+              </h2>
+            </div>
+            <div className="lg:col-span-7 lg:col-start-6 space-y-6 text-lg text-muted leading-relaxed">
+              <p>
+                Bienvenidos al programa{" "}
+                <strong className="text-ink">Principios de Arduino</strong>, una
+                iniciativa de <strong className="text-ink">Daniel Abadi</strong>{" "}
+                creada en el marco del{" "}
+                <strong className="text-ink">
+                  Cuerpo de Solidaridad Informática (CSI)
+                </strong>{" "}
+                de MEDUCA.
+              </p>
+              <p>
+                Este programa ha sido diseñado e impartido para introducir a
+                estudiantes de todo el país en el mundo de la tecnología, la
+                electrónica y la programación.
+              </p>
+              <p>
+                A lo largo de <strong className="text-ink">12 talleres</strong>,
+                aprenderás desde los conceptos más básicos hasta la creación de
+                tus propios proyectos con Arduino, desarrollando habilidades que
+                podrás aplicar en el mundo real.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* TU PRIMER PROGRAMA */}
       <section className="border-b border-border bg-surface-2">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <div className="grid lg:grid-cols-12 gap-12 items-start">
             <div className="lg:col-span-5">
-              <div className="text-sm text-accent-dark mb-3 font-mono">01</div>
+              <div className="text-sm text-accent-dark mb-3 font-mono">
+                02 · Tu primer programa
+              </div>
               <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
-                Tu primer programa.
+                Esto vas a escribir.
               </h2>
               <p className="mt-6 text-muted leading-relaxed">
                 Esto es <span className="font-mono text-ink">Blink</span>: el
@@ -121,7 +162,9 @@ export default function HomePage() {
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <div className="max-w-2xl mb-16">
-            <div className="text-sm text-accent-dark mb-3 font-mono">02</div>
+            <div className="text-sm text-accent-dark mb-3 font-mono">
+              03 · Competencias
+            </div>
             <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
               Cuatro habilidades de un ingeniero.
             </h2>
@@ -164,9 +207,11 @@ export default function HomePage() {
       <section className="bg-surface-2 border-b border-border">
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <div className="max-w-2xl mb-16">
-            <div className="text-sm text-accent-dark mb-3 font-mono">03</div>
+            <div className="text-sm text-accent-dark mb-3 font-mono">
+              04 · Para comenzar
+            </div>
             <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
-              Aprende a tu ritmo, desde cualquier escuela.
+              Tres pasos para empezar.
             </h2>
           </div>
 
@@ -174,18 +219,18 @@ export default function HomePage() {
             {[
               {
                 n: "01",
-                t: "Empieza por el Taller 0",
-                d: "No necesitas experiencia previa. Solo curiosidad y ganas de aprender.",
+                t: "Accede a la sección de talleres",
+                d: "Entra a la sección de talleres y comienza con el Taller 0. No necesitas experiencia previa.",
               },
               {
                 n: "02",
-                t: "Sigue los talleres en orden",
+                t: "Sigue el orden de los contenidos",
                 d: "Cada taller construye sobre el anterior con teoría y ejercicios prácticos.",
               },
               {
                 n: "03",
-                t: "Completa los ejercicios",
-                d: "Al final de cada taller, valida lo aprendido con la evaluación.",
+                t: "Completa cada quiz",
+                d: "Al final de cada taller, valida lo aprendido con la evaluación correspondiente.",
               },
             ].map((s) => (
               <div key={s.n}>
@@ -203,7 +248,9 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
           <div className="grid md:grid-cols-12 gap-12 items-center">
             <div className="md:col-span-7">
-              <div className="text-sm text-accent-dark mb-3 font-mono">04</div>
+              <div className="text-sm text-accent-dark mb-3 font-mono">
+                05 · Instructor
+              </div>
               <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
                 Daniel Abadi
               </h2>
@@ -212,6 +259,10 @@ export default function HomePage() {
                 de Solidaridad Informática del MEDUCA. Diseñó este currículo para
                 que cualquier estudiante panameño pueda construir sus propios
                 proyectos con Arduino.
+              </p>
+              <p className="mt-4 text-muted leading-relaxed max-w-xl">
+                Para consultas sobre el programa, talleres o quizzes, puedes
+                contactar al instructor directamente.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -236,7 +287,9 @@ export default function HomePage() {
                 <div className="relative text-center">
                   <div className="text-7xl">⚙</div>
                   <div className="mt-6 font-display text-xl">Daniel Abadi</div>
-                  <div className="text-sm text-muted mt-1 font-mono">Instructor · CSI</div>
+                  <div className="text-sm text-muted mt-1 font-mono">
+                    Instructor · CSI
+                  </div>
                 </div>
               </div>
             </div>
