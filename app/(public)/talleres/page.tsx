@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getAllTalleres, getCalendarEvents } from "@/lib/data";
 import { parseEventDate, getEventStatus } from "@/lib/dateHelpers";
-import { WhatsAppIcon } from "@/components/WhatsAppIcon";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 
 export const metadata = {
   title: "Talleres — Principios de Arduino",
@@ -215,18 +215,7 @@ export default async function TalleresPage() {
             </p>
           </div>
           <div className="md:col-span-5 flex flex-col gap-3">
-            <a
-              href="https://wa.me/50768641929"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-[#25D366] text-white px-6 py-4 text-sm font-semibold hover:bg-[#1ebe5d] shadow-[0_0_24px_rgba(37,211,102,0.35)] hover:shadow-[0_0_32px_rgba(37,211,102,0.5)] transition flex items-center gap-3"
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#25D366] transition-transform group-hover:scale-110">
-                <WhatsAppIcon className="h-5 w-5" />
-              </span>
-              <span className="flex-1">WhatsApp +507 6864-1929</span>
-              <span className="transition-transform group-hover:translate-x-1">→</span>
-            </a>
+            <WhatsAppButton />
             <a
               href="mailto:daniel10abadi@gmail.com"
               className="border border-white/20 px-6 py-4 text-sm hover:border-surface transition flex justify-between items-center"
