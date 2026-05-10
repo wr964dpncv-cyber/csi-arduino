@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "Talleres — Principios de Arduino",
-  description: "Los 10 talleres del programa Principios de Arduino.",
+  description: "Los talleres del programa Principios de Arduino.",
 };
 
 const talleres = [
@@ -85,6 +85,18 @@ const levelColor: Record<string, string> = {
   Avanzado: "text-rose-700",
 };
 
+const contenido = [
+  "Un video explicativo",
+  "Un quiz para evaluar lo aprendido",
+  "Material complementario",
+];
+
+const completar = [
+  "Ver el video completo",
+  "Revisar el material complementario",
+  "Completar el quiz correspondiente",
+];
+
 export default function TalleresPage() {
   return (
     <>
@@ -92,17 +104,17 @@ export default function TalleresPage() {
       <section className="bg-ink text-surface">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
           <div className="text-xs font-mono uppercase tracking-[0.18em] text-muted-2 mb-4">
-            Currículo · 10 Módulos
+            Currículo · 12 Módulos
           </div>
           <h1 className="font-display text-5xl md:text-7xl tracking-tight leading-[1.02] max-w-3xl">
-            10 talleres. Cero a ingeniero.
+            Los talleres.<br />
+            <span className="text-accent">Cero a ingeniero.</span>
           </h1>
           <p className="mt-8 text-lg text-muted-2 max-w-2xl leading-relaxed">
             Sigue los talleres en orden — cada uno construye sobre el anterior.
             Empieza por el Taller 0 aunque tengas experiencia previa.
           </p>
 
-          {/* Legend */}
           <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-xs font-mono">
             {[
               ["bg-muted/70", "Inicio"],
@@ -119,9 +131,92 @@ export default function TalleresPage() {
         </div>
       </section>
 
+      {/* CÓMO FUNCIONAN */}
+      <section className="bg-surface-2 border-b border-border">
+        <div className="mx-auto max-w-6xl px-6 py-24 md:py-28">
+          <div className="max-w-2xl mb-14">
+            <div className="text-sm text-accent-dark mb-3 font-mono">
+              01 · Estructura
+            </div>
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              ¿Cómo funcionan los talleres?
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-px bg-border border border-border">
+            <div className="bg-surface p-8 md:p-10">
+              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-2 mb-6">
+                Contenido del taller
+              </div>
+              <h3 className="font-display text-xl mb-6">
+                En cada taller encontrarás:
+              </h3>
+              <ul className="space-y-4">
+                {contenido.map((item, i) => (
+                  <li key={item} className="flex gap-5 items-baseline">
+                    <span className="font-mono text-sm text-accent w-6 flex-shrink-0">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-muted leading-relaxed">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="bg-surface p-8 md:p-10">
+              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-2 mb-6">
+                Cómo completarlo
+              </div>
+              <h3 className="font-display text-xl mb-6">
+                Para completar cada taller, debes:
+              </h3>
+              <ul className="space-y-4">
+                {completar.map((item, i) => (
+                  <li key={item} className="flex gap-5 items-baseline">
+                    <span className="font-mono text-sm text-accent w-6 flex-shrink-0">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-muted leading-relaxed">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Nota importante */}
+          <div className="mt-8 bg-ink text-surface border-l-2 border-accent p-6 md:p-7">
+            <div className="grid md:grid-cols-12 gap-4 md:gap-6 items-start">
+              <div className="md:col-span-2 font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
+                ! Nota importante
+              </div>
+              <p className="md:col-span-10 text-muted-2 leading-relaxed">
+                Si utilizas{" "}
+                <strong className="text-surface">correo institucional</strong> y
+                tienes dificultades para acceder al formulario, puedes utilizar un{" "}
+                <strong className="text-surface">correo personal</strong> para
+                completar el quiz.
+              </p>
+            </div>
+          </div>
+
+          <p className="mt-12 text-center font-display text-xl text-ink">
+            Selecciona un taller para comenzar ↓
+          </p>
+        </div>
+      </section>
+
       {/* Lista */}
       <section>
         <div className="mx-auto max-w-6xl px-6 py-20">
+          <div className="max-w-2xl mb-12">
+            <div className="text-sm text-accent-dark mb-3 font-mono">
+              02 · Módulos
+            </div>
+            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              Currículo completo.
+            </h2>
+          </div>
+
           <div className="divide-y divide-border border-y border-border">
             {talleres.map((t) => (
               <article
