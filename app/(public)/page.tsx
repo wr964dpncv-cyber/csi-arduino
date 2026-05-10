@@ -40,7 +40,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
         {/* Mapa de Panamá sutil como fondo */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <PanamaCircuit className="w-full max-w-7xl text-surface opacity-[0.13]" />
+          <PanamaCircuit className="w-full max-w-7xl text-surface opacity-[0.22]" />
         </div>
         <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
