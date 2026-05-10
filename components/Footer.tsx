@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { WhatsAppIcon } from "./WhatsAppIcon";
 
@@ -8,9 +9,13 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-3">
-              <div className="h-7 w-7 bg-surface text-ink flex items-center justify-center font-mono text-[10px] font-semibold">
-                csi
-              </div>
+              <Image
+                src="/csi-logo.png"
+                alt="Logo CSI"
+                width={470}
+                height={531}
+                className="h-9 w-auto"
+              />
               <div className="text-[15px] font-medium tracking-tight">
                 Principios de Arduino
               </div>

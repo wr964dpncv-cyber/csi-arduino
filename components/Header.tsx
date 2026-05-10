@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const navItems = [
@@ -12,9 +13,14 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-border bg-surface/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 h-16">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="h-7 w-7 bg-ink text-surface flex items-center justify-center font-mono text-[10px] font-semibold">
-            csi
-          </div>
+          <Image
+            src="/csi-logo.png"
+            alt="Logo CSI"
+            width={470}
+            height={531}
+            priority
+            className="h-9 w-auto"
+          />
           <div className="text-[15px] font-medium tracking-tight">
             Principios de Arduino
           </div>
