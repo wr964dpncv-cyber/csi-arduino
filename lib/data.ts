@@ -26,6 +26,7 @@ const seedCalendar: CalendarEvent[] = [
 ];
 
 type TallerRow = {
+  id: string;
   n: number;
   slug: string;
   title: string;
@@ -41,6 +42,7 @@ type TallerRow = {
 
 function rowToTaller(row: TallerRow): Taller {
   return {
+    id: row.id,
     n: row.n,
     slug: row.slug,
     title: row.title,

@@ -1,4 +1,5 @@
 export type Taller = {
+  id?: string;
   n: number;
   slug: string;
   title: string;
