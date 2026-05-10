@@ -1,148 +1,230 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Talleres — Principios de Arduino",
+  title: "Módulos — Principios de Arduino",
   description:
-    "Los 12 talleres del programa Principios de Arduino. Empieza desde cero y aprende a tu propio ritmo.",
+    "Los 12 módulos del programa Principios de Arduino. Currículo completo de electrónica y programación.",
 };
 
 const talleres = [
   {
     n: 0,
     title: "Introducción a Arduino",
-    desc: "¿Qué es Arduino? Familiarízate con la plataforma, la placa y el entorno de desarrollo.",
+    desc: "Plataforma, placa y entorno de desarrollo. Configuración del IDE y primer hola-mundo.",
     level: "Inicio",
+    tags: ["IDE", "Setup"],
   },
   {
     n: 1,
     title: "Tu primer circuito",
-    desc: "Enciende un LED, entiende voltaje, corriente y resistencias. El primer paso de todo arduinero.",
+    desc: "LEDs, voltaje, corriente y resistencias. Conceptos básicos de electrónica aplicada.",
     level: "Básico",
+    tags: ["LED", "Resistencias"],
   },
   {
     n: 2,
     title: "Variables y estructuras",
     desc: "Tipos de datos, variables, operadores y la lógica que da vida a tu programa.",
     level: "Básico",
+    tags: ["Datos", "Operadores"],
   },
   {
     n: 3,
     title: "Estructuras de control",
-    desc: "If, else, while y for. Cómo tomar decisiones y repetir acciones.",
+    desc: "If, else, while y for. Toma de decisiones y ciclos en Arduino.",
     level: "Básico",
+    tags: ["if/else", "Loops"],
   },
   {
     n: 4,
     title: "Entradas digitales",
-    desc: "Botones, switches y cómo leer el mundo exterior con tu Arduino.",
+    desc: "Botones, switches y pull-ups. Lectura del mundo exterior con tu Arduino.",
     level: "Intermedio",
+    tags: ["Digital I/O", "Pull-up"],
   },
   {
     n: 5,
     title: "Salidas analógicas (PWM)",
-    desc: "Controla brillo, velocidad y tono con modulación por ancho de pulso.",
+    desc: "Brillo, velocidad y tono mediante modulación por ancho de pulso.",
     level: "Intermedio",
+    tags: ["PWM", "Analog"],
   },
   {
     n: 6,
     title: "Sensores",
-    desc: "Mide luz, temperatura, distancia y más con sensores comunes.",
+    desc: "Luz, temperatura, distancia y movimiento. Adquisición de datos del entorno.",
     level: "Intermedio",
+    tags: ["Sensores", "ADC"],
   },
   {
     n: 7,
     title: "Funciones",
-    desc: "Organiza tu código en funciones reutilizables y modulares.",
+    desc: "Modularidad, abstracción y código reutilizable. Buenas prácticas de organización.",
     level: "Intermedio",
+    tags: ["Funciones", "Modularidad"],
   },
   {
     n: 8,
     title: "Comunicación serial",
-    desc: "Habla con tu Arduino desde la computadora y depura tus proyectos.",
+    desc: "Conversación entre Arduino y computadora. Debugging y monitoreo en tiempo real.",
     level: "Avanzado",
+    tags: ["Serial", "Debug"],
   },
   {
     n: 9,
     title: "Proyecto final",
-    desc: "Integra todo lo aprendido en un proyecto propio con aplicación real.",
+    desc: "Integración de todos los conceptos en un proyecto propio con aplicación real.",
     level: "Avanzado",
+    tags: ["Proyecto", "Aplicación"],
   },
 ];
 
-const levelStyles: Record<string, string> = {
-  Inicio: "bg-slate-100 text-slate-700",
-  Básico: "bg-arduino/10 text-arduino-dark",
-  Intermedio: "bg-amber-100 text-amber-800",
-  Avanzado: "bg-rose-100 text-rose-800",
+const levelTone: Record<string, string> = {
+  Inicio: "text-muted",
+  Básico: "text-accent-dark",
+  Intermedio: "text-warn",
+  Avanzado: "text-danger",
 };
 
 export default function TalleresPage() {
   return (
     <>
-      <section className="bg-white border-b border-slate-200">
-        <div className="mx-auto max-w-6xl px-6 py-16">
-          <span className="text-sm font-semibold text-arduino-dark uppercase tracking-wider">
-            Currículo
-          </span>
-          <h1 className="mt-3 text-4xl md:text-5xl font-extrabold tracking-tight">
-            Los 12 Talleres
-          </h1>
-          <p className="mt-6 text-lg text-slate-600 leading-relaxed max-w-2xl">
-            Sigue los talleres en orden — cada uno construye sobre el anterior. Empieza
-            con el <strong>Taller 0</strong> y avanza a tu propio ritmo.
-          </p>
+      {/* Page header */}
+      <section className="bg-ink text-surface relative overflow-hidden">
+        <div className="absolute inset-0 bp-grid-dark opacity-40" />
+        <div className="relative mx-auto max-w-7xl px-6 py-20 md:py-24">
+          <div className="grid lg:grid-cols-12 gap-10 items-end">
+            <div className="lg:col-span-8">
+              <div className="flex items-center gap-3 tech-label text-accent-bright">
+                <span className="inline-block h-px w-8 bg-accent-bright" />
+                §02 · Currículo del programa
+              </div>
+              <h1 className="mt-6 font-display text-5xl md:text-7xl tracking-tight leading-[0.95]">
+                12 módulos.<br />
+                <span className="text-accent-bright">Cero a ingeniero.</span>
+              </h1>
+              <p className="mt-6 text-muted-2 max-w-xl leading-relaxed">
+                Los módulos están diseñados para completarse en orden — cada uno
+                construye sobre los conceptos del anterior. Comienza con el Módulo 00
+                aunque tengas experiencia previa.
+              </p>
+            </div>
+            <div className="lg:col-span-4">
+              <div className="border border-white/15 bg-ink-soft/50">
+                <div className="border-b border-white/10 px-5 py-3">
+                  <span className="tech-label text-accent-bright">Leyenda · Niveles</span>
+                </div>
+                <div className="p-5 space-y-2.5 text-xs font-mono">
+                  <div className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 bg-muted" />
+                    <span className="uppercase tracking-[0.16em]">Inicio</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 bg-accent-bright" />
+                    <span className="uppercase tracking-[0.16em]">Básico</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 bg-warn" />
+                    <span className="uppercase tracking-[0.16em]">Intermedio</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 bg-danger" />
+                    <span className="uppercase tracking-[0.16em]">Avanzado</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {talleres.map((t) => (
-            <div
-              key={t.n}
-              className="group relative rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-arduino hover:shadow-lg"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-arduino/10 text-arduino-dark font-bold text-lg">
-                  {String(t.n).padStart(2, "0")}
+      {/* Module list */}
+      <section className="relative">
+        <div className="absolute inset-0 bp-grid opacity-40" />
+        <div className="relative mx-auto max-w-7xl px-6 py-20">
+          <div className="border border-ink/15 bg-surface-2 divide-y divide-ink/10">
+            {talleres.map((t) => (
+              <article
+                key={t.n}
+                className="grid md:grid-cols-12 gap-4 md:gap-6 items-start p-6 md:p-8 hover:bg-ink hover:text-surface transition group"
+              >
+                <div className="md:col-span-2 flex md:flex-col items-center md:items-start gap-3">
+                  <div className="font-mono text-4xl md:text-5xl tracking-tight text-ink group-hover:text-accent-bright leading-none">
+                    {String(t.n).padStart(2, "0")}
+                  </div>
+                  <div
+                    className={`tech-label ${levelTone[t.level]} group-hover:opacity-80`}
+                  >
+                    [ {t.level} ]
+                  </div>
                 </div>
-                <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${levelStyles[t.level]}`}
-                >
-                  {t.level}
-                </span>
-              </div>
-              <h3 className="mt-5 text-lg font-bold text-ink">
-                Taller {t.n}: {t.title}
-              </h3>
-              <p className="mt-2 text-sm text-slate-600 leading-relaxed">{t.desc}</p>
-              <div className="mt-5 inline-flex items-center text-sm font-semibold text-arduino-dark group-hover:gap-2 transition-all">
-                Próximamente
-                <span className="ml-1 transition-transform group-hover:translate-x-1">
-                  →
-                </span>
-              </div>
-            </div>
-          ))}
+                <div className="md:col-span-7">
+                  <h3 className="font-display text-2xl md:text-3xl tracking-tight">
+                    {t.title}
+                  </h3>
+                  <p className="mt-2 text-sm md:text-base text-muted group-hover:text-muted-2 leading-relaxed">
+                    {t.desc}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {t.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="border border-ink/20 group-hover:border-white/20 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="md:col-span-3 md:text-right flex md:justify-end items-center gap-2">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-2">
+                    Próximamente
+                  </span>
+                  <span className="opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                    →
+                  </span>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
+      </section>
 
-        <div className="mt-16 rounded-3xl bg-circuit text-white p-10 text-center">
-          <h2 className="text-2xl font-bold">¿Necesitas ayuda con un taller?</h2>
-          <p className="mt-3 text-slate-300 max-w-xl mx-auto">
-            Daniel está disponible por correo o WhatsApp para resolver dudas y guiarte
-            en cualquier punto del programa.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
+      {/* CTA contact */}
+      <section className="bg-ink text-surface relative">
+        <div className="absolute inset-0 bp-grid-dark opacity-40" />
+        <div className="relative mx-auto max-w-7xl px-6 py-20 grid md:grid-cols-12 gap-10 items-center">
+          <div className="md:col-span-7">
+            <div className="tech-label text-accent-bright">§ Soporte técnico</div>
+            <h2 className="mt-3 font-display text-3xl md:text-5xl tracking-tight leading-tight">
+              ¿Atascado en un<br />módulo?
+            </h2>
+            <p className="mt-4 text-muted-2 max-w-md">
+              Daniel responde directamente por correo o WhatsApp. Sin formularios,
+              sin filas — escríbele cuando lo necesites.
+            </p>
+          </div>
+          <div className="md:col-span-5 flex flex-col gap-3">
             <a
               href="https://wa.me/50768641929"
-              className="rounded-md bg-arduino px-5 py-3 text-sm font-semibold transition hover:bg-arduino-light hover:text-ink"
+              className="border border-white/15 px-6 py-4 font-mono text-xs uppercase tracking-[0.18em] hover:bg-accent-bright hover:text-ink hover:border-accent-bright transition flex justify-between items-center"
             >
-              Contactar a Daniel
+              <span>Contactar por WhatsApp</span>
+              <span>→</span>
+            </a>
+            <a
+              href="mailto:daniel10abadi@gmail.com"
+              className="border border-white/15 px-6 py-4 font-mono text-xs uppercase tracking-[0.18em] hover:bg-accent-bright hover:text-ink hover:border-accent-bright transition flex justify-between items-center"
+            >
+              <span>Enviar email</span>
+              <span>→</span>
             </a>
             <Link
               href="/sobre-el-programa"
-              className="rounded-md border border-white/20 px-5 py-3 text-sm font-semibold transition hover:bg-white/10"
+              className="px-6 py-4 font-mono text-xs uppercase tracking-[0.18em] text-muted-2 hover:text-surface transition flex justify-between items-center"
             >
-              Sobre el programa
+              <span>Ver documentación del programa</span>
+              <span>→</span>
             </Link>
           </div>
         </div>
