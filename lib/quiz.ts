@@ -1,4 +1,4 @@
-export type QuestionType = "multiple_choice" | "file_upload";
+export type QuestionType = "multiple_choice" | "file_upload" | "text_long";
 
 export type QuizQuestion = {
   id: string;

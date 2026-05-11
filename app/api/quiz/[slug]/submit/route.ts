@@ -31,6 +31,7 @@ export async function POST(
   let studentEmail = "";
   let studentSchool = "";
   let answers: Array<{ question_id: string; selected_index: number }> = [];
+  let textAnswers: Record<string, string> = {};
   const filesByQuestion = new Map<string, File>();
 
   if (isMultipart) {
@@ -42,6 +43,11 @@ export async function POST(
       answers = JSON.parse(String(form.get("answers") ?? "[]"));
     } catch {
       return NextResponse.json({ error: "answers inválido" }, { status: 400 });
+    }
+    try {
+      textAnswers = JSON.parse(String(form.get("text_answers") ?? "{}"));
+    } catch {
+      textAnswers = {};
     }
     for (const [key, value] of form.entries()) {
       if (key.startsWith("file:") && value instanceof File) {
@@ -55,6 +61,7 @@ export async function POST(
       studentEmail = body.studentEmail ?? "";
       studentSchool = body.studentSchool ?? "";
       answers = body.answers ?? [];
+      textAnswers = body.text_answers ?? {};
     } catch {
       return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
     }
@@ -127,6 +134,9 @@ export async function POST(
   const fileQuestionIds = new Set(
     qList.filter((q) => q.question_type === "file_upload").map((q) => q.id)
   );
+  const textQuestionIds = new Set(
+    qList.filter((q) => q.question_type === "text_long").map((q) => q.id)
+  );
 
   // Validate all file_upload questions have an uploaded file
   for (const fid of fileQuestionIds) {
@@ -136,6 +146,19 @@ export async function POST(
         { status: 400 }
       );
     }
+  }
+
+  // Validate all text_long questions have a non-empty answer
+  const cleanedTextAnswers: Record<string, string> = {};
+  for (const tid of textQuestionIds) {
+    const txt = (textAnswers[tid] ?? "").trim();
+    if (!txt) {
+      return NextResponse.json(
+        { error: "Falta responder una pregunta de texto." },
+        { status: 400 }
+      );
+    }
+    cleanedTextAnswers[tid] = txt;
   }
 
   // Upload files to Storage
@@ -209,6 +232,7 @@ export async function POST(
     student_school: studentSchool.trim() || null,
     answers: scoredAnswers,
     file_uploads: fileUploads,
+    text_answers: cleanedTextAnswers,
     score,
     total,
   });

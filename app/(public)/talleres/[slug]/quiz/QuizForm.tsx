@@ -8,7 +8,7 @@ type Question = {
   sort_order: number;
   question: string;
   options: string[];
-  question_type?: "multiple_choice" | "file_upload";
+  question_type?: "multiple_choice" | "file_upload" | "text_long";
   image_url?: string | null;
 };
 
@@ -40,6 +40,7 @@ export default function QuizForm({
   const [studentSchool, setStudentSchool] = useState("");
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [files, setFiles] = useState<Record<string, File>>({});
+  const [texts, setTexts] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -53,15 +54,23 @@ export default function QuizForm({
     (q) => (q.question_type ?? "multiple_choice") === "multiple_choice"
   );
   const fileQuestions = questions.filter((q) => q.question_type === "file_upload");
+  const textQuestions = questions.filter((q) => q.question_type === "text_long");
 
   const allMcAnswered = mcQuestions.every((q) => answers[q.id] !== undefined);
   const allFilesUploaded = fileQuestions.every((q) => files[q.id] !== undefined);
-  const allAnswered = allMcAnswered && allFilesUploaded;
+  const allTextsAnswered = textQuestions.every(
+    (q) => (texts[q.id] ?? "").trim().length > 0
+  );
+  const allAnswered = allMcAnswered && allFilesUploaded && allTextsAnswered;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!allMcAnswered) {
       setError("Responde todas las preguntas antes de enviar.");
+      return;
+    }
+    if (!allTextsAnswered) {
+      setError("Completa todas las preguntas de texto antes de enviar.");
       return;
     }
     if (!allFilesUploaded) {
@@ -86,6 +95,7 @@ export default function QuizForm({
           }))
         )
       );
+      form.append("text_answers", JSON.stringify(texts));
       for (const [questionId, file] of Object.entries(files)) {
         form.append(`file:${questionId}`, file);
       }
@@ -325,6 +335,7 @@ export default function QuizForm({
       <div className="space-y-6">
         {questions.map((q, i) => {
           const isFile = q.question_type === "file_upload";
+          const isText = q.question_type === "text_long";
           return (
           <div key={q.id} className="border border-border bg-surface-2 p-6">
             <div className="flex items-baseline gap-3 mb-4">
@@ -333,7 +344,22 @@ export default function QuizForm({
               </span>
               <div className="font-display text-lg flex-1 whitespace-pre-line">{q.question}</div>
             </div>
-            {isFile ? (
+            {isText ? (
+              <div className="ml-9">
+                <textarea
+                  className="w-full border border-border bg-surface px-4 py-3 text-ink placeholder:text-muted-2/70 focus:border-ink focus:outline-none transition min-h-[140px]"
+                  value={texts[q.id] ?? ""}
+                  onChange={(e) =>
+                    setTexts((prev) => ({ ...prev, [q.id]: e.target.value }))
+                  }
+                  placeholder="Escribe tu respuesta..."
+                  rows={5}
+                />
+                <div className="mt-1 text-xs text-muted">
+                  {(texts[q.id] ?? "").length} caracteres
+                </div>
+              </div>
+            ) : isFile ? (
               <div className="ml-9 space-y-4">
                 {q.image_url && (
                   <div className="border border-border bg-surface overflow-hidden">
@@ -432,7 +458,7 @@ export default function QuizForm({
 
       <div className="flex items-center justify-between pt-4 border-t border-border">
         <div className="text-sm text-muted">
-          {Object.keys(answers).length + Object.keys(files).length} / {questions.length} completadas
+          {Object.keys(answers).length + Object.keys(files).length + textQuestions.filter((q) => (texts[q.id] ?? "").trim().length > 0).length} / {questions.length} completadas
         </div>
         <button
           type="submit"

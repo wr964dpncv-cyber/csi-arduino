@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import DeleteButton from "@/components/DeleteButton";
 
 export type Row = {
@@ -14,6 +14,7 @@ export type Row = {
   score: number;
   total: number;
   file_uploads?: Record<string, string> | null;
+  text_answers?: Record<string, string> | null;
 };
 
 type SortKey =
@@ -242,7 +243,8 @@ export default function ResponsesTable({ rows }: { rows: Row[] }) {
                 const pct = Math.round((r.score / r.total) * 100);
                 const passing = pct >= 60;
                 return (
-                  <tr key={r.id} className="hover:bg-surface transition">
+                  <Fragment key={r.id}>
+                  <tr className="hover:bg-surface transition">
                     <td className="px-4 py-3 align-top font-mono text-xs text-muted whitespace-nowrap">
                       {new Date(r.created_at).toLocaleString("es-PA", {
                         day: "2-digit",
@@ -304,6 +306,25 @@ export default function ResponsesTable({ rows }: { rows: Row[] }) {
                       />
                     </td>
                   </tr>
+                  {r.text_answers && Object.keys(r.text_answers).length > 0 && (
+                    <tr className="bg-surface/60 border-t border-dashed border-border">
+                      <td colSpan={8} className="px-4 py-3">
+                        <details className="text-xs">
+                          <summary className="cursor-pointer text-muted hover:text-ink select-none">
+                            Ver respuestas de texto ({Object.keys(r.text_answers).length})
+                          </summary>
+                          <div className="mt-3 space-y-3 ml-4">
+                            {Object.entries(r.text_answers).map(([qid, txt]) => (
+                              <div key={qid} className="text-ink whitespace-pre-wrap border-l-2 border-accent pl-3 py-1">
+                                {txt}
+                              </div>
+                            ))}
+                          </div>
+                        </details>
+                      </td>
+                    </tr>
+                  )}
+                  </Fragment>
                 );
               })}
             </tbody>

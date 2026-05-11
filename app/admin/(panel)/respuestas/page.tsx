@@ -13,7 +13,7 @@ async function getResponses(): Promise<Row[]> {
     const { data } = await admin
       .from("quiz_responses")
       .select(
-        "id, created_at, taller_n, taller_title, student_name, student_email, student_school, score, total, file_uploads"
+        "id, created_at, taller_n, taller_title, student_name, student_email, student_school, score, total, file_uploads, text_answers"
       )
       .order("created_at", { ascending: false });
     return (data as Row[]) ?? [];
