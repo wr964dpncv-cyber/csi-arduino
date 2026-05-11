@@ -102,7 +102,15 @@ export async function PUT(
   const taller = await getTallerId(slug);
   if (!taller) return NextResponse.json({ error: "Taller no encontrado" }, { status: 404 });
 
-  let body: { questions?: Array<{ id?: string; question: string; options: string[]; correct_index: number }> };
+  type QPayload = {
+    id?: string;
+    question: string;
+    options: string[];
+    correct_index: number;
+    question_type?: "multiple_choice" | "file_upload" | "text_long";
+    image_url?: string | null;
+  };
+  let body: { questions?: QPayload[] };
   try {
     body = await req.json();
   } catch {
@@ -118,18 +126,29 @@ export async function PUT(
   // Update existing or insert new
   for (let i = 0; i < body.questions.length; i++) {
     const q = body.questions[i];
-    if (!q.question || !Array.isArray(q.options) || q.options.length < 2) {
+    const type = q.question_type ?? "multiple_choice";
+    if (!q.question?.trim()) {
       return NextResponse.json(
-        { error: `Pregunta ${i + 1}: debe tener texto y al menos 2 opciones` },
+        { error: `Pregunta ${i + 1}: el enunciado es requerido` },
         { status: 400 }
       );
+    }
+    if (type === "multiple_choice") {
+      if (!Array.isArray(q.options) || q.options.length < 2) {
+        return NextResponse.json(
+          { error: `Pregunta ${i + 1}: debe tener al menos 2 opciones` },
+          { status: 400 }
+        );
+      }
     }
     const payload = {
       taller_id: taller.id,
       sort_order: i + 1,
       question: q.question,
-      options: q.options,
-      correct_index: q.correct_index,
+      options: type === "multiple_choice" ? q.options : [],
+      correct_index: type === "multiple_choice" ? q.correct_index : 0,
+      question_type: type,
+      image_url: q.image_url ?? null,
       updated_at: new Date().toISOString(),
     };
     if (q.id) {

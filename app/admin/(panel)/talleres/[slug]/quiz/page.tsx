@@ -33,7 +33,7 @@ export default async function QuizEditorPage({
 
   const { data: questions } = await admin
     .from("quiz_questions")
-    .select("id, sort_order, question, options, correct_index")
+    .select("id, sort_order, question, options, correct_index, question_type, image_url")
     .eq("taller_id", taller.id)
     .order("sort_order");
 
@@ -46,6 +46,8 @@ export default async function QuizEditorPage({
         question: q.question,
         options: q.options,
         correct_index: q.correct_index,
+        question_type: q.question_type ?? "multiple_choice",
+        image_url: q.image_url ?? null,
       }))}
     />
   );
