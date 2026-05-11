@@ -36,13 +36,15 @@ export default async function QuizPage({
     sort_order: number;
     question: string;
     options: string[];
+    question_type?: "multiple_choice" | "file_upload";
+    image_url?: string | null;
   }> = [];
 
   if (isSupabaseConfigured() && taller.id) {
     const admin = adminClient();
     const { data } = await admin
       .from("quiz_questions")
-      .select("id, sort_order, question, options")
+      .select("id, sort_order, question, options, question_type, image_url")
       .eq("taller_id", taller.id)
       .order("sort_order");
     questions = data ?? [];
