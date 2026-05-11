@@ -1,7 +1,7 @@
 export const RETO_YEAR = "2026";
 
 export const RETO_DATES = {
-  inscripcionFrom: "18 de mayo",
+  inscripcionFrom: "22 de mayo",
   inscripcionTo: "31 de mayo",
   entregaProyecto: "15 de junio",
   finalistas: "20 de junio",
@@ -9,8 +9,8 @@ export const RETO_DATES = {
   finalDate: "20 de julio",
 };
 
-// 00:00 hora Panamá (UTC-5) del 18 de mayo de 2026
-export const RETO_INSCRIPCION_OPEN_AT = "2026-05-18T05:00:00Z";
+// 00:00 hora Panamá (UTC-5) del 22 de mayo de 2026
+export const RETO_INSCRIPCION_OPEN_AT = "2026-05-22T05:00:00Z";
 export const RETO_INSCRIPCION_CLOSE_AT = "2026-06-01T05:00:00Z";
 
 export function isInscripcionOpen(now: Date = new Date()): boolean {
@@ -52,7 +52,7 @@ export const requisitos = [
 
 export const cronograma = [
   {
-    date: "18 May",
+    date: "22 May",
     event: "Lanzamiento del Reto + apertura de inscripciones",
     tone: "open",
   },

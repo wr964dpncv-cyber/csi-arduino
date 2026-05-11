@@ -26,7 +26,7 @@ export default function HomePage() {
               Reto Nacional CSI 2026 · Inscripciones abiertas
             </span>
             <span className="hidden md:inline text-xs font-mono opacity-80">
-              18 al 31 de mayo
+              22 al 31 de mayo
             </span>
           </div>
           <span className="inline-flex items-center gap-1.5 text-sm font-semibold bg-ink text-accent px-4 py-1.5 group-hover:bg-ink/80 transition whitespace-nowrap">
