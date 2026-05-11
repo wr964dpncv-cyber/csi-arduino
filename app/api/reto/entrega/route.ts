@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { isEntregaOpen } from "@/lib/reto";
 import { notifyEntrega } from "@/lib/notify";
 
 type Body = {
@@ -23,6 +24,13 @@ function validate(body: unknown): body is Body {
 }
 
 export async function POST(req: Request) {
+  if (!isEntregaOpen()) {
+    return NextResponse.json(
+      { error: "La entrega de proyectos aún no está abierta." },
+      { status: 403 }
+    );
+  }
+
   let body: unknown;
   try {
     body = await req.json();

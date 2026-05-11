@@ -13,9 +13,21 @@ export const RETO_DATES = {
 export const RETO_INSCRIPCION_OPEN_AT = "2026-05-22T05:00:00Z";
 export const RETO_INSCRIPCION_CLOSE_AT = "2026-06-01T05:00:00Z";
 
+// Entrega de proyectos: abre el 22 de mayo, cierra 16 de junio 00:00 Panamá
+// (deadline visible: 15 de junio fin del día)
+export const RETO_ENTREGA_OPEN_AT = "2026-05-22T05:00:00Z";
+export const RETO_ENTREGA_CLOSE_AT = "2026-06-16T05:00:00Z";
+
 export function isInscripcionOpen(now: Date = new Date()): boolean {
   const open = new Date(RETO_INSCRIPCION_OPEN_AT).getTime();
   const close = new Date(RETO_INSCRIPCION_CLOSE_AT).getTime();
+  const t = now.getTime();
+  return t >= open && t < close;
+}
+
+export function isEntregaOpen(now: Date = new Date()): boolean {
+  const open = new Date(RETO_ENTREGA_OPEN_AT).getTime();
+  const close = new Date(RETO_ENTREGA_CLOSE_AT).getTime();
   const t = now.getTime();
   return t >= open && t < close;
 }
