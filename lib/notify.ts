@@ -365,16 +365,11 @@ export type QuizConfirmationPayload = {
   tallerN: number;
   tallerTitle: string;
   tallerSlug: string;
-  score: number;
-  total: number;
 };
 
 export async function sendQuizConfirmation(
   p: QuizConfirmationPayload
 ): Promise<void> {
-  const pct = p.total > 0 ? Math.round((p.score / p.total) * 100) : 0;
-  const passed = pct >= 60;
-
   const body = `
     <div style="font-size:15px;line-height:1.6;color:#0b1a35;">
       ¡Hola <strong>${escapeHtml(p.studentName)}</strong>! Recibimos tu quiz del
@@ -382,18 +377,10 @@ export async function sendQuizConfirmation(
     </div>
     <table cellpadding="0" cellspacing="0" style="margin-top:20px;width:100%;">
       ${row("Taller", `${p.tallerN} · ${escapeHtml(p.tallerTitle)}`)}
-      ${row(
-        "Resultado",
-        `<span style="font-size:20px;font-weight:600;color:${passed ? "#047857" : "#9f1239"};">${p.score}/${p.total} · ${pct}%</span>`
-      )}
-      ${row("Estado", passed ? "✓ Aprobado" : "✗ No aprobó (mínimo 60%)")}
     </table>
     <div style="margin-top:20px;padding:14px;background:#f4f1ea;border-left:3px solid #f5b80c;font-size:14px;line-height:1.6;color:#0b1a35;">
-      ${
-        passed
-          ? "¡Excelente trabajo! Continúa al siguiente taller cuando esté disponible."
-          : "No te desanimes — vuelve a estudiar el material del taller y consulta a Daniel si tienes dudas."
-      }
+      Daniel revisará tu quiz y te contactará si necesitas algo. Si tienes
+      dudas, puedes responder este correo directamente.
     </div>
   `;
 
@@ -402,8 +389,8 @@ export async function sendQuizConfirmation(
     ``,
     `Recibimos tu quiz del Taller ${p.tallerN} · ${p.tallerTitle}.`,
     ``,
-    `Resultado: ${p.score}/${p.total} (${pct}%)`,
-    `Estado: ${passed ? "Aprobado" : "No aprobó (mínimo 60%)"}`,
+    `Daniel revisará tu quiz y te contactará si necesitas algo.`,
+    `Si tienes dudas, puedes responder este correo.`,
     ``,
     `Ver taller: ${SITE_URL}/talleres/${p.tallerSlug}`,
     ``,
@@ -419,7 +406,7 @@ export async function sendQuizConfirmation(
 
   await sendUser(
     p.to,
-    `✓ Quiz Taller ${p.tallerN} recibido — ${p.score}/${p.total}`,
+    `✓ Quiz Taller ${p.tallerN} recibido`,
     html,
     text
   );

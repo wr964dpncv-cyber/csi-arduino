@@ -266,8 +266,6 @@ export async function POST(
     tallerN: taller.n,
     tallerTitle: taller.title,
     tallerSlug: slug,
-    score,
-    total,
   });
 
   return NextResponse.json({
