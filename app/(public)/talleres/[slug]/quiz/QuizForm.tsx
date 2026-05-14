@@ -218,9 +218,10 @@ export default function QuizForm({
           <h2 className="font-display text-2xl mb-6">Revisión</h2>
           <div className="space-y-4">
             {questions.map((q, i) => {
+              const isFile = q.question_type === "file_upload";
               const answer = correctMap.get(q.id);
               const selectedIdx = answer?.selected_index ?? -1;
-              const correct = answer?.correct ?? false;
+              const correct = isFile ? true : (answer?.correct ?? false);
               return (
                 <div
                   key={q.id}
@@ -234,28 +235,35 @@ export default function QuizForm({
                     </span>
                     <div className="flex-1">
                       <div className="font-medium text-ink">{q.question}</div>
-                      <div className="mt-3 space-y-1.5">
-                        {q.options.map((opt, oi) => (
-                          <div
-                            key={oi}
-                            className={`text-sm flex items-center gap-2 ${
-                              oi === selectedIdx
-                                ? correct
-                                  ? "text-emerald-700 font-medium"
-                                  : "text-rose-700 font-medium"
-                                : "text-muted"
-                            }`}
-                          >
-                            <span>{oi === selectedIdx ? (correct ? "✓" : "✕") : "·"}</span>
-                            <span>{opt}</span>
-                            {oi === selectedIdx && (
-                              <span className="text-xs uppercase tracking-wider ml-2">
-                                {correct ? "Tu respuesta · correcta" : "Tu respuesta"}
-                              </span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                      {isFile ? (
+                        <div className="mt-3 text-sm text-emerald-700 font-medium flex items-center gap-2">
+                          <span>✓</span>
+                          <span>Archivo entregado</span>
+                        </div>
+                      ) : (
+                        <div className="mt-3 space-y-1.5">
+                          {q.options.map((opt, oi) => (
+                            <div
+                              key={oi}
+                              className={`text-sm flex items-center gap-2 ${
+                                oi === selectedIdx
+                                  ? correct
+                                    ? "text-emerald-700 font-medium"
+                                    : "text-rose-700 font-medium"
+                                  : "text-muted"
+                              }`}
+                            >
+                              <span>{oi === selectedIdx ? (correct ? "✓" : "✕") : "·"}</span>
+                              <span>{opt}</span>
+                              {oi === selectedIdx && (
+                                <span className="text-xs uppercase tracking-wider ml-2">
+                                  {correct ? "Tu respuesta · correcta" : "Tu respuesta"}
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
