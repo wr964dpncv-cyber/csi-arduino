@@ -72,6 +72,41 @@ function row(label: string, value: string): string {
   </tr>`;
 }
 
+async function sendUser(
+  to: string | string[],
+  subject: string,
+  html: string,
+  text: string
+): Promise<void> {
+  if (!resend) {
+    console.log("[notify:user] skipping (no RESEND_API_KEY):", subject);
+    return;
+  }
+  const recipients = Array.isArray(to) ? to : [to];
+  const valid = recipients
+    .map((e) => e?.trim().toLowerCase())
+    .filter((e) => e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+  if (valid.length === 0) {
+    console.log("[notify:user] no valid recipients for:", subject);
+    return;
+  }
+  try {
+    const res = await resend.emails.send({
+      from: `Programa CSI <${FROM_EMAIL}>`,
+      to: valid,
+      replyTo: DANIEL_EMAIL || undefined,
+      subject,
+      html,
+      text,
+    });
+    if (res.error) {
+      console.error("[notify:user] resend error:", res.error);
+    }
+  } catch (err) {
+    console.error("[notify:user] send failed:", err);
+  }
+}
+
 async function send(
   kind: NotificationKind,
   subject: string,
@@ -318,5 +353,148 @@ export async function notifyInteres(p: InteresPayload): Promise<void> {
   );
 
   await send("interes", `💡 Interés Reto · ${p.nombre}`, html, text);
+}
+
+// ============================================================
+// User-facing confirmation emails
+// ============================================================
+
+export type QuizConfirmationPayload = {
+  to: string;
+  studentName: string;
+  tallerN: number;
+  tallerTitle: string;
+  tallerSlug: string;
+  score: number;
+  total: number;
+};
+
+export async function sendQuizConfirmation(
+  p: QuizConfirmationPayload
+): Promise<void> {
+  const pct = p.total > 0 ? Math.round((p.score / p.total) * 100) : 0;
+  const passed = pct >= 60;
+
+  const body = `
+    <div style="font-size:15px;line-height:1.6;color:#0b1a35;">
+      ¡Hola <strong>${escapeHtml(p.studentName)}</strong>! Recibimos tu quiz del
+      <strong>Taller ${p.tallerN}</strong>.
+    </div>
+    <table cellpadding="0" cellspacing="0" style="margin-top:20px;width:100%;">
+      ${row("Taller", `${p.tallerN} · ${escapeHtml(p.tallerTitle)}`)}
+      ${row(
+        "Resultado",
+        `<span style="font-size:20px;font-weight:600;color:${passed ? "#047857" : "#9f1239"};">${p.score}/${p.total} · ${pct}%</span>`
+      )}
+      ${row("Estado", passed ? "✓ Aprobado" : "✗ No aprobó (mínimo 60%)")}
+    </table>
+    <div style="margin-top:20px;padding:14px;background:#f4f1ea;border-left:3px solid #f5b80c;font-size:14px;line-height:1.6;color:#0b1a35;">
+      ${
+        passed
+          ? "¡Excelente trabajo! Continúa al siguiente taller cuando esté disponible."
+          : "No te desanimes — vuelve a estudiar el material del taller y consulta a Daniel si tienes dudas."
+      }
+    </div>
+  `;
+
+  const text = [
+    `¡Hola ${p.studentName}!`,
+    ``,
+    `Recibimos tu quiz del Taller ${p.tallerN} · ${p.tallerTitle}.`,
+    ``,
+    `Resultado: ${p.score}/${p.total} (${pct}%)`,
+    `Estado: ${passed ? "Aprobado" : "No aprobó (mínimo 60%)"}`,
+    ``,
+    `Ver taller: ${SITE_URL}/talleres/${p.tallerSlug}`,
+    ``,
+    `— Programa CSI · Principios de Arduino`,
+  ].join("\n");
+
+  const html = wrap(
+    `Recibimos tu quiz del Taller ${p.tallerN}`,
+    body,
+    "Ver taller",
+    `${SITE_URL}/talleres/${p.tallerSlug}`
+  );
+
+  await sendUser(
+    p.to,
+    `✓ Quiz Taller ${p.tallerN} recibido — ${p.score}/${p.total}`,
+    html,
+    text
+  );
+}
+
+export type InscripcionConfirmationPayload = {
+  tos: string[];
+  equipoNombre: string;
+  escuela: string;
+  integrantes: Array<{ nombre: string; apellido: string }>;
+};
+
+export async function sendInscripcionConfirmation(
+  p: InscripcionConfirmationPayload
+): Promise<void> {
+  const integrantesList = p.integrantes
+    .map(
+      (m, i) =>
+        `<li style="padding:4px 0;color:#0b1a35;">${i + 1}. ${escapeHtml(m.nombre)} ${escapeHtml(m.apellido)}</li>`
+    )
+    .join("");
+
+  const body = `
+    <div style="font-size:15px;line-height:1.6;color:#0b1a35;">
+      ¡Inscripción recibida! El equipo <strong>${escapeHtml(p.equipoNombre)}</strong>
+      quedó registrado en el Reto Nacional CSI.
+    </div>
+    <table cellpadding="0" cellspacing="0" style="margin-top:20px;width:100%;">
+      ${row("Equipo", `<strong>${escapeHtml(p.equipoNombre)}</strong>`)}
+      ${row("Escuela", escapeHtml(p.escuela))}
+    </table>
+    <div style="margin-top:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6b6657;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;">
+        Integrantes
+      </div>
+      <ul style="list-style:none;padding:0;margin:0;font-size:14px;line-height:1.5;">
+        ${integrantesList}
+      </ul>
+    </div>
+    <div style="margin-top:24px;padding:14px;background:#f4f1ea;border-left:3px solid #f5b80c;font-size:14px;line-height:1.6;color:#0b1a35;">
+      <strong>Próximos pasos:</strong> mantén un correo activo de cada integrante.
+      Te contactaremos con los detalles de la entrega de proyectos y la final
+      presencial.
+    </div>
+  `;
+
+  const text = [
+    `¡Inscripción recibida!`,
+    ``,
+    `El equipo "${p.equipoNombre}" quedó registrado en el Reto Nacional CSI.`,
+    ``,
+    `Escuela: ${p.escuela}`,
+    ``,
+    `Integrantes:`,
+    ...p.integrantes.map((m, i) => `${i + 1}. ${m.nombre} ${m.apellido}`),
+    ``,
+    `Te contactaremos con los detalles de la entrega de proyectos.`,
+    ``,
+    `Ver Reto: ${SITE_URL}/reto-nacional`,
+    ``,
+    `— Programa CSI · Principios de Arduino`,
+  ].join("\n");
+
+  const html = wrap(
+    `Inscripción recibida: ${p.equipoNombre}`,
+    body,
+    "Ver Reto Nacional",
+    `${SITE_URL}/reto-nacional`
+  );
+
+  await sendUser(
+    p.tos,
+    `✓ Inscripción confirmada — ${p.equipoNombre}`,
+    html,
+    text
+  );
 }
 

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { isInscripcionOpen } from "@/lib/reto";
-import { notifyInscripcion } from "@/lib/notify";
+import { notifyInscripcion, sendInscripcionConfirmation } from "@/lib/notify";
 
 type Member = {
   nombre: string;
@@ -77,6 +77,16 @@ export async function POST(req: Request) {
       equipoNombre: b.equipo.nombre,
       escuela: b.equipo.escuela,
       region: b.equipo.region,
+      integrantes: b.integrantes,
+    });
+
+    const allEmails = b.integrantes.flatMap((m) =>
+      [m.emailInstitucional, m.emailPersonal].filter(Boolean)
+    );
+    await sendInscripcionConfirmation({
+      tos: allEmails,
+      equipoNombre: b.equipo.nombre,
+      escuela: b.equipo.escuela,
       integrantes: b.integrantes,
     });
 
