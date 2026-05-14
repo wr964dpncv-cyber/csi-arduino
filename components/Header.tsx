@@ -9,7 +9,6 @@ import PanamaFlag from "@/components/PanamaFlag";
 const navItems = [
   { href: "/", label: "Inicio" },
   { href: "/sobre-el-programa", label: "Programa" },
-  { href: "/calendario", label: "Calendario" },
   { href: "/talleres", label: "Talleres" },
   { href: "/reto-nacional", label: "Reto Nacional" },
 ];

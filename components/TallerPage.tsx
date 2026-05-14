@@ -185,7 +185,7 @@ export default function TallerPage({
                       Este video se publicará en su fecha.
                     </div>
                     <div className="mt-3 text-sm text-muted-2">
-                      Revisa el calendario para saber cuándo estará disponible.
+                      Pronto publicaremos la fecha de este taller.
                     </div>
                   </>
                 )}
