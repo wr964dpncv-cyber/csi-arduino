@@ -17,6 +17,8 @@ async function getStats() {
       inscWeek,
       entrTotal,
       entrWeek,
+      interesTotal,
+      interesWeek,
       talleresTotal,
       talleresPublished,
       eventos,
@@ -36,6 +38,13 @@ async function getStats() {
         .select("id", { count: "exact", head: true }),
       supabase
         .from("reto_entregas")
+        .select("id", { count: "exact", head: true })
+        .gte("created_at", sinceDate),
+      supabase
+        .from("reto_interes")
+        .select("id", { count: "exact", head: true }),
+      supabase
+        .from("reto_interes")
         .select("id", { count: "exact", head: true })
         .gte("created_at", sinceDate),
       supabase.from("talleres").select("id", { count: "exact", head: true }),
@@ -70,6 +79,8 @@ async function getStats() {
       inscripcionesWeek: inscWeek.count ?? 0,
       entregas: entrTotal.count ?? 0,
       entregasWeek: entrWeek.count ?? 0,
+      interes: interesTotal.count ?? 0,
+      interesWeek: interesWeek.count ?? 0,
       talleres: talleresTotal.count ?? 0,
       talleresPublished: talleresPublished.count ?? 0,
       eventos: eventos.count ?? 0,
@@ -83,6 +94,8 @@ async function getStats() {
       inscripcionesWeek: 0,
       entregas: 0,
       entregasWeek: 0,
+      interes: 0,
+      interesWeek: 0,
       talleres: 0,
       talleresPublished: 0,
       eventos: 0,
@@ -176,6 +189,12 @@ export default async function DashboardPage() {
       <section>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border">
           <StatCard
+            label="Interesados"
+            value={stats.interes}
+            hint={stats.interesWeek > 0 ? `+${stats.interesWeek} esta semana` : undefined}
+            href="/admin/interes"
+          />
+          <StatCard
             label="Inscripciones"
             value={stats.inscripciones}
             hint={stats.inscripcionesWeek > 0 ? `+${stats.inscripcionesWeek} esta semana` : undefined}
@@ -226,6 +245,11 @@ export default async function DashboardPage() {
         <div className="flex flex-wrap gap-2">
           <QuickAction href="/admin/talleres" label="+ Editar talleres" />
           <QuickAction href="/admin/calendario" label="Ajustar calendario" />
+          <QuickAction
+            href="/api/admin/export/interes"
+            label="↓ CSV interesados"
+            external
+          />
           <QuickAction
             href="/api/admin/export/inscripciones"
             label="↓ CSV inscripciones"

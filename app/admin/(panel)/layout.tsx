@@ -18,6 +18,7 @@ const baseGroups = [
   {
     label: "Reto Nacional",
     items: [
+      { href: "/admin/interes", label: "Interesados" },
       { href: "/admin/inscripciones", label: "Inscripciones" },
       { href: "/admin/entregas", label: "Entregas" },
     ],
