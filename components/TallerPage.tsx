@@ -258,7 +258,7 @@ export default function TallerPage({
                   >
                     <span className="font-medium">Abrir formulario</span>
                     <span className="font-mono text-muted-2 text-xs">
-                      forms.office.com →
+                      {taller.quizUrl?.includes("google.com") ? "forms.google.com" : "forms.office.com"} →
                     </span>
                   </a>
                 ) : (

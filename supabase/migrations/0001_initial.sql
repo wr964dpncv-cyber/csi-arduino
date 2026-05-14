@@ -183,7 +183,7 @@ insert into public.talleres (n, slug, title, tagline, description, objectives, o
  '["Estructurar y planificar un proyecto en Arduino", "Integrar entradas (sensores) y salidas (LEDs, servos, etc.)", "Organizar tu código para que sea claro y funcional", "Tomar decisiones lógicas dentro de tu proyecto", "Probar y ajustar el circuito", "Convertir una idea en un sistema electrónico completo"]'::jsonb,
  'Podrás crear tu propio proyecto en Arduino combinando múltiples componentes, logrando una solución funcional que responde de forma lógica a distintas condiciones del entorno.',
  'pMjaiepNti8',
- 'https://forms.office.com/Pages/ResponsePage.aspx?id=905Ba8IGHEa7c8GQDRIqIvhy58CPb9ZGtmWNmAz5u1BUM1FOQkgxOFJVWUgyNFFLNjlEMkNOQVJQUy4u',
+ 'https://docs.google.com/forms/d/e/1FAIpQLSfsHSgcf9UQVtwOOz03-qr2-ARTJd50LQukle4GSJAP9LoR3g/viewform?usp=dialog',
  'Avanzado', 'Proyecto')
 on conflict (n) do nothing;
 
