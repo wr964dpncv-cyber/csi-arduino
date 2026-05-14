@@ -1,17 +1,11 @@
-import Proximamente from "@/components/Proximamente";
+import InscripcionForm from "./InscripcionForm";
 
 export const metadata = {
-  title: "Inscribir equipo — Próximamente",
+  title: "Inscribir equipo — Reto Nacional",
   description:
-    "Las inscripciones al Reto Nacional aún no están abiertas. Pronto publicaremos los detalles.",
+    "Formulario de inscripción al Reto Nacional. Un integrante registra al equipo completo.",
 };
 
 export default function InscripcionPage() {
-  return (
-    <Proximamente
-      eyebrow="Inscripción · Reto Nacional"
-      title="Próximamente."
-      description="Las inscripciones al Reto Nacional aún no están abiertas. Pronto publicaremos los detalles del proyecto y la fecha de apertura del formulario."
-    />
-  );
+  return <InscripcionForm />;
 }
