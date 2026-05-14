@@ -1,4 +1,6 @@
 import { Resend } from "resend";
+import { adminClient } from "@/lib/supabase/admin";
+import { isSupabaseConfigured } from "@/lib/supabase/server";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const DANIEL_EMAIL = process.env.DANIEL_EMAIL ?? "";
@@ -6,6 +8,25 @@ const FROM_EMAIL = process.env.NOTIFY_FROM_EMAIL ?? "onboarding@resend.dev";
 const SITE_URL = process.env.SITE_URL ?? "https://csi-arduino.vercel.app";
 
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
+
+type NotificationKind = "interes" | "inscripcion" | "quiz" | "entrega";
+
+async function isNotificationEnabled(kind: NotificationKind): Promise<boolean> {
+  if (!isSupabaseConfigured()) return true;
+  try {
+    const admin = adminClient();
+    const { data } = await admin
+      .from("notification_settings")
+      .select("enabled")
+      .eq("key", kind)
+      .maybeSingle();
+    if (!data) return true;
+    return data.enabled !== false;
+  } catch (err) {
+    console.error("[notify] settings check failed:", err);
+    return true;
+  }
+}
 
 function escapeHtml(s: string): string {
   return s
@@ -51,7 +72,17 @@ function row(label: string, value: string): string {
   </tr>`;
 }
 
-async function send(subject: string, html: string, text: string): Promise<void> {
+async function send(
+  kind: NotificationKind,
+  subject: string,
+  html: string,
+  text: string
+): Promise<void> {
+  const enabled = await isNotificationEnabled(kind);
+  if (!enabled) {
+    console.log(`[notify] ${kind} disabled in settings, skipping:`, subject);
+    return;
+  }
   if (!resend || !DANIEL_EMAIL) {
     console.log("[notify] skipping (missing RESEND_API_KEY or DANIEL_EMAIL):", subject);
     return;
@@ -133,7 +164,7 @@ export async function notifyInscripcion(p: InscripcionPayload): Promise<void> {
     `${SITE_URL}/admin/inscripciones`
   );
 
-  await send(`🏆 Nueva inscripción Reto: ${p.equipoNombre}`, html, text);
+  await send("inscripcion", `🏆 Nueva inscripción Reto: ${p.equipoNombre}`, html, text);
 }
 
 export type QuizPayload = {
@@ -185,6 +216,7 @@ export async function notifyQuiz(p: QuizPayload): Promise<void> {
   );
 
   await send(
+    "quiz",
     `📝 Quiz Taller ${p.tallerN} · ${p.studentName} · ${pct}%`,
     html,
     text
@@ -235,6 +267,7 @@ export async function notifyEntrega(p: EntregaPayload): Promise<void> {
   );
 
   await send(
+    "entrega",
     `🚀 Nueva entrega Reto · ${p.equipoNombre} · ${p.proyectoNombre}`,
     html,
     text
@@ -281,6 +314,6 @@ export async function notifyInteres(p: InteresPayload): Promise<void> {
     `${SITE_URL}/admin/interes`
   );
 
-  await send(`💡 Interés Reto · ${p.nombre}`, html, text);
+  await send("interes", `💡 Interés Reto · ${p.nombre}`, html, text);
 }
 

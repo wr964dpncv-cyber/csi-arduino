@@ -35,7 +35,10 @@ const baseGroups = [
 
 const ownerGroup = {
   label: "Sistema",
-  items: [{ href: "/admin/usuarios", label: "Usuarios" }],
+  items: [
+    { href: "/admin/notificaciones", label: "Notificaciones" },
+    { href: "/admin/usuarios", label: "Usuarios" },
+  ],
 };
 
 export default async function AdminLayout({
