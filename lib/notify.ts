@@ -277,6 +277,7 @@ export async function notifyEntrega(p: EntregaPayload): Promise<void> {
 export type InteresPayload = {
   nombre: string;
   email: string;
+  telefono: string;
   escuela?: string;
   region?: string;
 };
@@ -289,6 +290,7 @@ export async function notifyInteres(p: InteresPayload): Promise<void> {
     <table cellpadding="0" cellspacing="0" style="margin-top:20px;width:100%;">
       ${row("Nombre", `<strong>${escapeHtml(p.nombre)}</strong>`)}
       ${row("Correo", `<a href="mailto:${escapeHtml(p.email)}" style="color:#0b1a35;">${escapeHtml(p.email)}</a>`)}
+      ${row("Teléfono", `<a href="tel:${escapeHtml(p.telefono)}" style="color:#0b1a35;">${escapeHtml(p.telefono)}</a>`)}
       ${p.escuela ? row("Escuela", escapeHtml(p.escuela)) : ""}
       ${p.region ? row("Región", escapeHtml(p.region)) : ""}
     </table>
@@ -299,6 +301,7 @@ export async function notifyInteres(p: InteresPayload): Promise<void> {
     ``,
     `Nombre: ${p.nombre}`,
     `Correo: ${p.email}`,
+    `Teléfono: ${p.telefono}`,
     p.escuela ? `Escuela: ${p.escuela}` : null,
     p.region ? `Región: ${p.region}` : null,
     ``,

@@ -6,6 +6,7 @@ type Row = {
   created_at: string;
   nombre: string;
   email: string;
+  telefono: string | null;
   escuela: string | null;
   region: string | null;
 };
@@ -32,11 +33,12 @@ export async function GET() {
     created_at: new Date(r.created_at).toLocaleString("es-PA"),
     nombre: r.nombre,
     email: r.email,
+    telefono: r.telefono ?? "",
     escuela: r.escuela ?? "",
     region: r.region ?? "",
   }));
 
-  const fields = ["created_at", "nombre", "email", "escuela", "region"];
+  const fields = ["created_at", "nombre", "email", "telefono", "escuela", "region"];
   const csv = rowsToCSV(flat, fields);
   const stamp = new Date().toISOString().slice(0, 10);
   return csvResponse(csv, `reto-interes-${stamp}.csv`);

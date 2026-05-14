@@ -8,6 +8,7 @@ export type Row = {
   created_at: string;
   nombre: string;
   email: string;
+  telefono: string | null;
   escuela: string | null;
   region: string | null;
 };
@@ -46,7 +47,7 @@ export default function InteresTable({ rows }: { rows: Row[] }) {
       if (to && date > to) return false;
       if (!q) return true;
       const haystack =
-        `${r.nombre} ${r.email} ${r.escuela ?? ""} ${r.region ?? ""}`.toLowerCase();
+        `${r.nombre} ${r.email} ${r.telefono ?? ""} ${r.escuela ?? ""} ${r.region ?? ""}`.toLowerCase();
       return haystack.includes(q);
     });
 
@@ -165,6 +166,7 @@ export default function InteresTable({ rows }: { rows: Row[] }) {
                 <Th>Fecha</Th>
                 <Th>Nombre</Th>
                 <Th>Correo</Th>
+                <Th>Teléfono</Th>
                 <Th>Escuela</Th>
                 <Th>Región</Th>
                 <Th align="right">Acciones</Th>
@@ -191,6 +193,18 @@ export default function InteresTable({ rows }: { rows: Row[] }) {
                     >
                       {r.email}
                     </a>
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    {r.telefono ? (
+                      <a
+                        href={`tel:${r.telefono}`}
+                        className="text-ink hover:text-accent-dark transition font-mono text-xs"
+                      >
+                        {r.telefono}
+                      </a>
+                    ) : (
+                      <span className="text-muted">—</span>
+                    )}
                   </td>
                   <td className="px-4 py-3 align-top text-muted">
                     {r.escuela ?? "—"}

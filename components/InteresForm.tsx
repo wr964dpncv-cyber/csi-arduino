@@ -7,6 +7,7 @@ export default function InteresForm() {
   const [data, setData] = useState({
     nombre: "",
     email: "",
+    telefono: "",
     escuela: "",
     region: "",
   });
@@ -93,6 +94,15 @@ export default function InteresForm() {
           value={data.email}
           onChange={(e) => update("email", e.target.value)}
           placeholder="Correo electrónico *"
+          className={inputCls}
+        />
+        <input
+          required
+          type="tel"
+          name="telefono"
+          value={data.telefono}
+          onChange={(e) => update("telefono", e.target.value)}
+          placeholder="Teléfono / WhatsApp *"
           className={inputCls}
         />
         <input
