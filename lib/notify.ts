@@ -241,3 +241,46 @@ export async function notifyEntrega(p: EntregaPayload): Promise<void> {
   );
 }
 
+export type InteresPayload = {
+  nombre: string;
+  email: string;
+  escuela?: string;
+  region?: string;
+};
+
+export async function notifyInteres(p: InteresPayload): Promise<void> {
+  const body = `
+    <div style="font-size:15px;line-height:1.6;color:#0b1a35;">
+      <strong>${escapeHtml(p.nombre)}</strong> dejó su información esperando los detalles del Reto Nacional.
+    </div>
+    <table cellpadding="0" cellspacing="0" style="margin-top:20px;width:100%;">
+      ${row("Nombre", `<strong>${escapeHtml(p.nombre)}</strong>`)}
+      ${row("Correo", `<a href="mailto:${escapeHtml(p.email)}" style="color:#0b1a35;">${escapeHtml(p.email)}</a>`)}
+      ${p.escuela ? row("Escuela", escapeHtml(p.escuela)) : ""}
+      ${p.region ? row("Región", escapeHtml(p.region)) : ""}
+    </table>
+  `;
+
+  const text = [
+    `Nuevo interesado en el Reto Nacional`,
+    ``,
+    `Nombre: ${p.nombre}`,
+    `Correo: ${p.email}`,
+    p.escuela ? `Escuela: ${p.escuela}` : null,
+    p.region ? `Región: ${p.region}` : null,
+    ``,
+    `Ver en admin: ${SITE_URL}/admin/interes`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const html = wrap(
+    `Interés Reto Nacional: ${p.nombre}`,
+    body,
+    "Ver en admin",
+    `${SITE_URL}/admin/interes`
+  );
+
+  await send(`💡 Interés Reto · ${p.nombre}`, html, text);
+}
+

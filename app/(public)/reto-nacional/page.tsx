@@ -1,4 +1,5 @@
 import Proximamente from "@/components/Proximamente";
+import InteresForm from "@/components/InteresForm";
 
 export const metadata = {
   title: "Reto Nacional — Próximamente",
@@ -12,6 +13,8 @@ export default function RetoNacionalPage() {
       eyebrow="Reto Nacional"
       title="Próximamente."
       description="Estamos finalizando los detalles del Reto Nacional con MEDUCA. Pronto publicaremos las bases, fechas y el formulario de inscripción."
-    />
+    >
+      <InteresForm />
+    </Proximamente>
   );
 }

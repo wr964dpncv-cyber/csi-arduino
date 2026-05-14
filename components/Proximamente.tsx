@@ -5,9 +5,15 @@ type Props = {
   eyebrow: string;
   title: string;
   description?: string;
+  children?: React.ReactNode;
 };
 
-export default function Proximamente({ eyebrow, title, description }: Props) {
+export default function Proximamente({
+  eyebrow,
+  title,
+  description,
+  children,
+}: Props) {
   return (
     <section className="bg-ink text-surface relative overflow-hidden min-h-[80vh] flex items-center">
       <CircuitBackdrop variant="flow-left" />
@@ -23,6 +29,7 @@ export default function Proximamente({ eyebrow, title, description }: Props) {
           {description ??
             "Próximamente estaremos publicando los detalles del proyecto. Vuelve pronto para más información."}
         </p>
+        {children && <div className="mt-10">{children}</div>}
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <Link
             href="/"
