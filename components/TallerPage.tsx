@@ -213,6 +213,12 @@ export default function TallerPage({
           </div>
 
           {!isUnpublished ? (
+            <>
+            <div className="mb-6 border border-accent/40 bg-accent/10 px-5 py-4 text-sm leading-relaxed">
+              <span className="font-semibold text-accent-dark">El quiz ya está integrado en el sitio.</span>{" "}
+              Si no tienes correo institucional MEDUCA, no cambia nada — completa el quiz directamente aquí y sigue avanzando.
+              Si tienes correo institucional MEDUCA, sigue usando Microsoft Forms como siempre (Opción B).
+            </div>
             <div className="grid md:grid-cols-2 gap-px bg-border border border-border">
               {/* Opción A: Quiz nativo */}
               <div className="bg-surface p-7 flex flex-col">
@@ -277,6 +283,7 @@ export default function TallerPage({
                 )}
               </div>
             </div>
+            </>
           ) : (
             <div className="inline-flex flex-col gap-1.5 border border-dashed border-border px-7 py-5">
               <div className="font-mono text-xs uppercase tracking-wider text-rose-700">
