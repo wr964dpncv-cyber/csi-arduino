@@ -37,7 +37,18 @@ function escapeHtml(s: string): string {
     .replace(/'/g, "&#39;");
 }
 
-function wrap(title: string, bodyHtml: string, ctaLabel: string, ctaUrl: string): string {
+function wrap(
+  title: string,
+  bodyHtml: string,
+  ctaLabel?: string,
+  ctaUrl?: string
+): string {
+  const ctaBlock =
+    ctaLabel && ctaUrl
+      ? `<div style="margin-top:32px;">
+            <a href="${ctaUrl}" style="display:inline-block;background:#f5b80c;color:#0b1a35;padding:12px 22px;text-decoration:none;font-weight:600;font-size:14px;">${ctaLabel} →</a>
+          </div>`
+      : "";
   return `
 <!DOCTYPE html>
 <html lang="es">
@@ -51,9 +62,7 @@ function wrap(title: string, bodyHtml: string, ctaLabel: string, ctaUrl: string)
         </td></tr>
         <tr><td style="padding:28px;">
           ${bodyHtml}
-          <div style="margin-top:32px;">
-            <a href="${ctaUrl}" style="display:inline-block;background:#f5b80c;color:#0b1a35;padding:12px 22px;text-decoration:none;font-weight:600;font-size:14px;">${ctaLabel} →</a>
-          </div>
+          ${ctaBlock}
         </td></tr>
         <tr><td style="padding:18px 28px;background:#f4f1ea;color:#6b6657;font-size:12px;border-top:1px solid #e5dfd0;">
           Notificación automática · csi-arduino.com
@@ -382,6 +391,23 @@ export async function sendQuizConfirmation(
       Daniel revisará tu quiz y te contactará si necesitas algo. Si tienes
       dudas, puedes responder este correo directamente.
     </div>
+
+    <div style="margin-top:28px;padding-top:24px;border-top:1px solid #e5dfd0;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.2em;color:#f5b80c;margin-bottom:8px;">
+        🏆 Reto Nacional · 2026
+      </div>
+      <div style="font-size:18px;font-weight:600;color:#0b1a35;line-height:1.3;margin-bottom:6px;">
+        ¿Ya dejaste tus datos para el Reto Nacional?
+      </div>
+      <p style="font-size:14px;line-height:1.6;color:#6b6657;margin:0 0 16px 0;">
+        Equipos de 3 estudiantes compiten en una competencia nacional de
+        Arduino organizada por CSI/MEDUCA. Los 10 mejores reciben un kit
+        Arduino real para la final presencial.
+      </p>
+      <a href="${SITE_URL}/reto-nacional" style="display:inline-block;background:#0b1a35;color:#ffffff;padding:10px 18px;text-decoration:none;font-weight:600;font-size:13px;">
+        Quiero más información →
+      </a>
+    </div>
   `;
 
   const text = [
@@ -392,17 +418,14 @@ export async function sendQuizConfirmation(
     `Daniel revisará tu quiz y te contactará si necesitas algo.`,
     `Si tienes dudas, puedes responder este correo.`,
     ``,
-    `Ver taller: ${SITE_URL}/talleres/${p.tallerSlug}`,
+    `🏆 Reto Nacional 2026`,
+    `Equipos de 3 estudiantes compiten en una competencia nacional.`,
+    `Más información: ${SITE_URL}/reto-nacional`,
     ``,
     `— Programa CSI · Principios de Arduino`,
   ].join("\n");
 
-  const html = wrap(
-    `Recibimos tu quiz del Taller ${p.tallerN}`,
-    body,
-    "Ver taller",
-    `${SITE_URL}/talleres/${p.tallerSlug}`
-  );
+  const html = wrap(`Recibimos tu quiz del Taller ${p.tallerN}`, body);
 
   await sendUser(
     p.to,
