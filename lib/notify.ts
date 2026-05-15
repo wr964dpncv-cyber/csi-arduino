@@ -389,7 +389,8 @@ export async function sendQuizConfirmation(
     </table>
     <div style="margin-top:20px;padding:14px;background:#f4f1ea;border-left:3px solid #f5b80c;font-size:14px;line-height:1.6;color:#0b1a35;">
       Daniel revisará tu quiz y te contactará si necesitas algo. Si tienes
-      dudas, puedes responder este correo directamente.
+      dudas, escríbele directamente a Daniel:
+      <a href="https://wa.me/50768641929" style="color:#0b1a35;font-weight:600;text-decoration:underline;">WhatsApp +507 6864-1929</a>.
     </div>
 
     <div style="margin-top:28px;padding-top:24px;border-top:1px solid #e5dfd0;">
@@ -416,7 +417,8 @@ export async function sendQuizConfirmation(
     `Recibimos tu quiz del Taller ${p.tallerN} · ${p.tallerTitle}.`,
     ``,
     `Daniel revisará tu quiz y te contactará si necesitas algo.`,
-    `Si tienes dudas, puedes responder este correo.`,
+    `Si tienes dudas, escríbele por WhatsApp: +507 6864-1929`,
+    `https://wa.me/50768641929`,
     ``,
     `🏆 Reto Nacional 2026`,
     `Equipos de 3 estudiantes compiten en una competencia nacional.`,
