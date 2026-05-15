@@ -401,9 +401,8 @@ export async function sendQuizConfirmation(
         ¿Ya dejaste tus datos para el Reto Nacional?
       </div>
       <p style="font-size:14px;line-height:1.6;color:#6b6657;margin:0 0 16px 0;">
-        Equipos de 3 estudiantes compiten en una competencia nacional de
-        Arduino organizada por CSI/MEDUCA. Los 10 mejores reciben un kit
-        Arduino real para la final presencial.
+        Estamos finalizando los detalles del Reto Nacional con MEDUCA.
+        Pronto publicaremos las bases, fechas y el formulario de inscripción.
       </p>
       <a href="${SITE_URL}/reto-nacional" style="display:inline-block;background:#0b1a35;color:#ffffff;padding:10px 18px;text-decoration:none;font-weight:600;font-size:13px;">
         Quiero más información →
@@ -421,7 +420,7 @@ export async function sendQuizConfirmation(
     `https://wa.me/50768641929`,
     ``,
     `🏆 Reto Nacional 2026`,
-    `Equipos de 3 estudiantes compiten en una competencia nacional.`,
+    `Estamos finalizando los detalles del Reto Nacional con MEDUCA. Pronto publicaremos las bases, fechas y el formulario de inscripción.`,
     `Más información: ${SITE_URL}/reto-nacional`,
     ``,
     `— Programa CSI · Principios de Arduino`,
