@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { notifyInteres } from "@/lib/notify";
+import { notifyInteres, sendInteresConfirmation } from "@/lib/notify";
 
 type Body = {
   nombre: string;
@@ -61,6 +61,11 @@ export async function POST(req: Request) {
   }
 
   await notifyInteres(clean);
+
+  await sendInteresConfirmation({
+    to: clean.email,
+    nombre: clean.nombre,
+  });
 
   return NextResponse.json({ ok: true });
 }

@@ -509,3 +509,53 @@ export async function sendInscripcionConfirmation(
   );
 }
 
+export type InteresConfirmationPayload = {
+  to: string;
+  nombre: string;
+};
+
+export async function sendInteresConfirmation(
+  p: InteresConfirmationPayload
+): Promise<void> {
+  const body = `
+    <div style="font-size:15px;line-height:1.6;color:#0b1a35;">
+      ¡Hola <strong>${escapeHtml(p.nombre)}</strong>! Recibimos tu información.
+      Gracias por tu interés en el Reto Nacional CSI.
+    </div>
+    <div style="margin-top:20px;padding:14px;background:#f4f1ea;border-left:3px solid #f5b80c;font-size:14px;line-height:1.6;color:#0b1a35;">
+      Estamos finalizando los detalles del Reto Nacional con MEDUCA. Te
+      avisaremos por correo apenas se publiquen las bases, fechas y el
+      formulario oficial de inscripción.
+    </div>
+    <div style="margin-top:20px;font-size:14px;line-height:1.6;color:#0b1a35;">
+      Mientras tanto, si tienes preguntas puedes escribirle a Daniel por
+      <a href="https://wa.me/50768641929" style="color:#0b1a35;font-weight:600;text-decoration:underline;">WhatsApp +507 6864-1929</a>.
+    </div>
+  `;
+
+  const text = [
+    `¡Hola ${p.nombre}!`,
+    ``,
+    `Recibimos tu información. Gracias por tu interés en el Reto Nacional CSI.`,
+    ``,
+    `Estamos finalizando los detalles con MEDUCA. Te avisaremos por correo`,
+    `apenas se publiquen las bases, fechas y el formulario de inscripción.`,
+    ``,
+    `Si tienes preguntas, escríbele a Daniel por WhatsApp: +507 6864-1929`,
+    `https://wa.me/50768641929`,
+    ``,
+    `Más información: ${SITE_URL}/reto-nacional`,
+    ``,
+    `— Programa CSI · Principios de Arduino`,
+  ].join("\n");
+
+  const html = wrap(`Recibimos tu información — Reto Nacional`, body);
+
+  await sendUser(
+    p.to,
+    `✓ Recibimos tu información — Reto Nacional CSI`,
+    html,
+    text
+  );
+}
+
