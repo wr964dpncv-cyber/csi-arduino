@@ -219,9 +219,10 @@ export default function QuizForm({
           <div className="space-y-4">
             {questions.map((q, i) => {
               const isFile = q.question_type === "file_upload";
+              const isText = q.question_type === "text_long";
               const answer = correctMap.get(q.id);
               const selectedIdx = answer?.selected_index ?? -1;
-              const correct = isFile ? true : (answer?.correct ?? false);
+              const correct = isFile || isText ? true : (answer?.correct ?? false);
               return (
                 <div
                   key={q.id}
@@ -239,6 +240,11 @@ export default function QuizForm({
                         <div className="mt-3 text-sm text-emerald-700 font-medium flex items-center gap-2">
                           <span>✓</span>
                           <span>Archivo entregado</span>
+                        </div>
+                      ) : isText ? (
+                        <div className="mt-3 text-sm text-emerald-700 font-medium flex items-center gap-2">
+                          <span>✓</span>
+                          <span>Respuesta entregada</span>
                         </div>
                       ) : (
                         <div className="mt-3 space-y-1.5">
