@@ -40,7 +40,7 @@ export default function CodeBlock() {
           Arduino IDE
         </span>
       </div>
-      <pre className="font-mono text-[13px] md:text-sm leading-7 p-5 md:p-6 overflow-x-auto">
+      <pre className="font-mono text-[11px] sm:text-[13px] md:text-sm leading-7 p-4 sm:p-5 md:p-6 overflow-x-auto">
         <Line n={1}>
           <C>{`// Blink — el "hola mundo" de Arduino`}</C>
         </Line>

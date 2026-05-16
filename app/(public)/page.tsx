@@ -120,7 +120,7 @@ export default function HomePage() {
       {/* TU PRIMER PROGRAMA */}
       <section className="border-b border-border bg-surface-2">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-32">
-          <div className="grid lg:grid-cols-12 gap-12 items-start">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             <div className="lg:col-span-5">
               <h2 className="font-display text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
                 Esto vas a escribir.
@@ -130,14 +130,14 @@ export default function HomePage() {
                 que hace parpadear un LED cada segundo. Es lo primero que vas
                 a escribir — y lo entenderás línea por línea.
               </p>
-              <div className="mt-8 space-y-3 text-sm">
+              <div className="mt-8 space-y-4 sm:space-y-3 text-sm">
                 {[
                   ["setup()", "Se ejecuta una sola vez al encender."],
                   ["loop()", "Se repite indefinidamente."],
                   ["digitalWrite()", "Enciende o apaga un pin."],
                 ].map(([k, v]) => (
-                  <div key={k} className="flex gap-4">
-                    <span className="font-mono text-accent-dark w-32 flex-shrink-0">
+                  <div key={k} className="flex flex-col sm:flex-row sm:gap-4">
+                    <span className="font-mono text-accent-dark sm:w-32 sm:flex-shrink-0">
                       {k}
                     </span>
                     <span className="text-muted">{v}</span>
