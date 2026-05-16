@@ -45,8 +45,8 @@ export default function HomePage() {
         </div>
         {/* PCB traces overlay */}
         <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
-        <div className="relative mx-auto max-w-6xl px-6 pt-14 pb-16 md:pt-28 md:pb-32">
-          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <div className="relative mx-auto max-w-6xl px-6 pt-14 pb-12 md:pt-28 md:pb-32">
+          <div className="grid lg:grid-cols-12 gap-6 lg:gap-16 items-center">
             <div className="lg:col-span-7">
               <div className="text-[11px] sm:text-xs font-mono text-muted-2">
                 v1.0 · Programa CSI · MEDUCA Panamá
@@ -60,23 +60,23 @@ export default function HomePage() {
                 públicas de Panamá. Aprende electrónica, programación y a
                 construir tus propios circuitos desde cero.
               </p>
-              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row sm:flex-wrap gap-3">
+              <div className="mt-8 sm:mt-10 flex flex-wrap gap-3">
                 <Link
                   href="/talleres"
-                  className="inline-flex items-center justify-center bg-accent text-ink px-6 sm:px-7 py-3.5 text-base font-semibold hover:bg-accent-bright glow-gold transition"
+                  className="inline-flex items-center bg-accent text-ink px-6 sm:px-7 py-3.5 text-base font-semibold hover:bg-accent-bright glow-gold transition"
                 >
                   Comenzar talleres →
                 </Link>
                 <Link
                   href="/sobre-el-programa"
-                  className="inline-flex items-center justify-center px-6 sm:px-7 py-3.5 text-base text-muted-2 hover:text-surface transition"
+                  className="inline-flex items-center border border-white/15 px-5 sm:px-7 py-3.5 text-base text-muted-2 hover:border-surface hover:text-surface transition"
                 >
                   Conocer el programa
                 </Link>
               </div>
             </div>
 
-            <div className="lg:col-span-5 max-w-md mx-auto lg:max-w-none w-full">
+            <div className="lg:col-span-5 max-w-[280px] sm:max-w-sm mx-auto lg:max-w-none w-full -mt-2 lg:mt-0">
               <ArduinoSchematic className="w-full text-surface/85" />
             </div>
           </div>
