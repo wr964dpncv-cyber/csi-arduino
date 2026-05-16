@@ -19,18 +19,19 @@ export default function HomePage() {
         href="/reto-nacional/inscripcion"
         className="block bg-accent text-ink hover:bg-accent-bright transition relative overflow-hidden group"
       >
-        <div className="mx-auto max-w-6xl px-6 py-3 flex flex-wrap items-center justify-center md:justify-between gap-3 text-center md:text-left">
-          <div className="flex items-center gap-3 flex-wrap justify-center">
-            <span className="text-xl">🏆</span>
-            <span className="text-sm md:text-base font-semibold">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <span className="text-lg sm:text-xl shrink-0" aria-hidden>🏆</span>
+            <span className="text-[13px] sm:text-base font-semibold truncate">
               Reto Nacional CSI 2026
             </span>
             <span className="hidden md:inline text-xs font-mono opacity-80">
               Próximamente
             </span>
           </div>
-          <span className="inline-flex items-center gap-1.5 text-sm font-semibold bg-ink text-accent px-4 py-1.5 group-hover:bg-ink/80 transition whitespace-nowrap">
-            <span>Inscribir mi equipo</span>
+          <span className="inline-flex items-center gap-1.5 text-[12px] sm:text-sm font-semibold bg-ink text-accent px-3 sm:px-4 py-1 sm:py-1.5 group-hover:bg-ink/80 transition whitespace-nowrap shrink-0">
+            <span className="hidden sm:inline">Inscribir mi equipo</span>
+            <span className="sm:hidden">Inscribirme</span>
             <span aria-hidden>→</span>
           </span>
         </div>
@@ -44,38 +45,38 @@ export default function HomePage() {
         </div>
         {/* PCB traces overlay */}
         <div className="absolute inset-0 bp-traces opacity-100 pointer-events-none" />
-        <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-24 md:pt-28 md:pb-32">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="relative mx-auto max-w-6xl px-6 pt-14 pb-16 md:pt-28 md:pb-32">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
             <div className="lg:col-span-7">
-              <div className="text-xs font-mono text-muted-2">
+              <div className="text-[11px] sm:text-xs font-mono text-muted-2">
                 v1.0 · Programa CSI · MEDUCA Panamá
               </div>
-              <h1 className="mt-6 font-display text-5xl md:text-7xl tracking-tight leading-[1.02]">
+              <h1 className="mt-5 sm:mt-6 font-display text-[40px] sm:text-5xl md:text-7xl tracking-tight leading-[1.05] md:leading-[1.02]">
                 Aprende ingeniería con{" "}
                 <span className="text-accent">Arduino</span>.
               </h1>
-              <p className="mt-8 text-lg text-muted-2 max-w-xl leading-relaxed">
+              <p className="mt-6 sm:mt-8 text-base sm:text-lg text-muted-2 max-w-xl leading-relaxed">
                 Un programa gratuito de 12 talleres para estudiantes de escuelas
                 públicas de Panamá. Aprende electrónica, programación y a
                 construir tus propios circuitos desde cero.
               </p>
-              <div className="mt-10 flex flex-wrap gap-3">
+              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row sm:flex-wrap gap-3">
                 <Link
                   href="/talleres"
-                  className="inline-flex items-center bg-accent text-ink px-7 py-3.5 text-base font-semibold hover:bg-accent-bright glow-gold transition"
+                  className="inline-flex items-center justify-center bg-accent text-ink px-6 sm:px-7 py-3.5 text-base font-semibold hover:bg-accent-bright glow-gold transition"
                 >
                   Comenzar talleres →
                 </Link>
                 <Link
                   href="/sobre-el-programa"
-                  className="inline-flex items-center px-7 py-3.5 text-base text-muted-2 hover:text-surface transition"
+                  className="inline-flex items-center justify-center px-6 sm:px-7 py-3.5 text-base text-muted-2 hover:text-surface transition"
                 >
                   Conocer el programa
                 </Link>
               </div>
             </div>
 
-            <div className="lg:col-span-5">
+            <div className="lg:col-span-5 max-w-md mx-auto lg:max-w-none w-full">
               <ArduinoSchematic className="w-full text-surface/85" />
             </div>
           </div>
@@ -84,10 +85,10 @@ export default function HomePage() {
 
       {/* SOBRE */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-32">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
             <div className="lg:col-span-4">
-              <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
                 Tecnología en cada escuela de Panamá.
               </h2>
             </div>
@@ -118,10 +119,10 @@ export default function HomePage() {
 
       {/* TU PRIMER PROGRAMA */}
       <section className="border-b border-border bg-surface-2">
-        <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-32">
           <div className="grid lg:grid-cols-12 gap-12 items-start">
             <div className="lg:col-span-5">
-              <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
                 Esto vas a escribir.
               </h2>
               <p className="mt-6 text-muted leading-relaxed">
@@ -153,9 +154,9 @@ export default function HomePage() {
 
       {/* QUÉ APRENDERÁS */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-32">
           <div className="max-w-2xl mb-16">
-            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
               Cuatro habilidades de un ingeniero.
             </h2>
           </div>
@@ -195,9 +196,9 @@ export default function HomePage() {
 
       {/* CÓMO FUNCIONA */}
       <section className="bg-surface-2 border-b border-border">
-        <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-32">
           <div className="max-w-2xl mb-16">
-            <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
               Tres pasos para empezar.
             </h2>
           </div>
@@ -232,7 +233,7 @@ export default function HomePage() {
 
       {/* INSTRUCTOR */}
       <section className="border-b border-border">
-        <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-32">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
             <div className="lg:col-span-5">
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-2">
@@ -247,7 +248,7 @@ export default function HomePage() {
             </div>
             <div className="lg:col-span-7">
               <div className="text-sm text-muted mb-3">El instructor</div>
-              <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
                 Daniel Abadi
               </h2>
               <p className="mt-6 text-lg text-muted leading-relaxed">
@@ -270,8 +271,8 @@ export default function HomePage() {
 
       {/* CTA */}
       <section className="bg-ink text-surface">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-24 text-center">
-          <h2 className="font-display text-4xl md:text-5xl tracking-tight leading-tight max-w-2xl mx-auto">
+        <div className="mx-auto max-w-6xl px-6 py-14 md:py-24 text-center">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight max-w-2xl mx-auto">
             Empieza a construir tu primer proyecto.
           </h2>
           <p className="mt-5 text-muted-2 max-w-md mx-auto">

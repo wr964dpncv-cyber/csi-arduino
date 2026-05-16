@@ -43,7 +43,7 @@ export default function InteresForm() {
   }
 
   const inputCls =
-    "w-full bg-white/[0.04] border border-white/15 px-4 py-3 text-sm text-surface placeholder:text-muted-2/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/40 transition";
+    "w-full bg-white/[0.04] border border-white/15 px-4 py-3 text-base sm:text-sm text-surface placeholder:text-muted-2/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/40 transition";
 
   if (status === "success") {
     return (

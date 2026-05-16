@@ -17,7 +17,7 @@ export default function AboutPage() {
           <div className="text-xs font-mono text-muted-2 mb-4">
             Sobre el programa
           </div>
-          <h1 className="font-display text-5xl md:text-7xl tracking-tight leading-[1.02] max-w-3xl">
+          <h1 className="font-display text-[40px] sm:text-5xl md:text-7xl tracking-tight leading-[1.05] md:leading-[1.02] max-w-3xl">
             Tecnología al alcance de cada estudiante.
           </h1>
           <p className="mt-8 text-lg text-muted-2 max-w-2xl leading-relaxed">

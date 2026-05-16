@@ -17,7 +17,7 @@ export default function Proximamente({
   return (
     <section className="bg-ink text-surface relative overflow-hidden min-h-[80vh] flex items-center">
       <CircuitBackdrop variant="flow-left" />
-      <div className="relative mx-auto max-w-2xl px-6 py-24 text-center">
+      <div className="relative mx-auto max-w-2xl px-6 py-16 md:py-24 text-center w-full">
         <div className="inline-flex items-center gap-2 text-xs font-mono text-muted-2 mb-6">
           <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
           {eyebrow}
