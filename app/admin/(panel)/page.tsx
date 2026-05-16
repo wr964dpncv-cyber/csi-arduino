@@ -572,18 +572,20 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <div>
-              <div className="flex items-end gap-1 h-32">
+              <div className="flex items-stretch gap-1 h-32">
                 {activity.map((b) => {
                   const h = Math.round((b.count / maxActivity) * 100);
                   return (
                     <div
                       key={b.date}
-                      className="flex-1 flex flex-col items-center justify-end"
+                      className="flex-1 flex flex-col justify-end"
                       title={`${b.label}: ${b.count}`}
                     >
                       <div
-                        className={`w-full ${b.count > 0 ? "bg-accent" : "bg-border"} transition`}
-                        style={{ height: `${Math.max(h, b.count > 0 ? 4 : 1)}%` }}
+                        className={`w-full ${b.count > 0 ? "bg-accent" : "bg-border/60"} transition`}
+                        style={{
+                          height: `${b.count > 0 ? Math.max(h, 4) : 2}%`,
+                        }}
                       />
                     </div>
                   );
