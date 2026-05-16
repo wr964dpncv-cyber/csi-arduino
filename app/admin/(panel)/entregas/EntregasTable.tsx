@@ -155,7 +155,7 @@ export default function EntregasTable({ rows }: { rows: Row[] }) {
                 <h3 className="font-display text-xl">{r.proyecto_nombre}</h3>
                 <div className="flex items-center gap-4">
                   <div className="font-mono text-xs text-muted">
-                    {new Date(r.created_at).toLocaleString("es-PA")}
+                    {new Date(r.created_at).toLocaleString("es-PA", { timeZone: "America/Panama" })}
                   </div>
                   <DeleteButton
                     url={`/api/admin/entregas/${r.id}`}

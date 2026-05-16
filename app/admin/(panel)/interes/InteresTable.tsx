@@ -177,6 +177,7 @@ export default function InteresTable({ rows }: { rows: Row[] }) {
                 <tr key={r.id} className="hover:bg-surface transition">
                   <td className="px-4 py-3 align-top font-mono text-xs text-muted whitespace-nowrap">
                     {new Date(r.created_at).toLocaleString("es-PA", {
+                      timeZone: "America/Panama",
                       day: "2-digit",
                       month: "short",
                       hour: "2-digit",

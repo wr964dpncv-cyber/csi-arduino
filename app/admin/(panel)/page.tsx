@@ -162,6 +162,7 @@ async function getRecentRespuestas() {
 
 function fmtTime(iso: string) {
   return new Date(iso).toLocaleString("es-PA", {
+    timeZone: "America/Panama",
     day: "2-digit",
     month: "short",
     hour: "2-digit",
