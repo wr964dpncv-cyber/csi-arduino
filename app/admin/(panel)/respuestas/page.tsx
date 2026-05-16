@@ -1,7 +1,10 @@
 import { adminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 import PageHeader from "@/components/admin/PageHeader";
-import ResponsesTable, { type Row } from "./ResponsesTable";
+import ResponsesTable, {
+  type Row,
+  type QuestionInfo,
+} from "./ResponsesTable";
 
 export const metadata = { title: "Respuestas Quiz · Admin" };
 export const dynamic = "force-dynamic";
@@ -13,7 +16,7 @@ async function getResponses(): Promise<Row[]> {
     const { data } = await admin
       .from("quiz_responses")
       .select(
-        "id, created_at, taller_n, taller_title, student_name, student_email, student_school, score, total, file_uploads, text_answers"
+        "id, created_at, taller_n, taller_title, student_name, student_email, student_school, score, total, answers, file_uploads, text_answers"
       )
       .order("created_at", { ascending: false });
     return (data as Row[]) ?? [];
@@ -22,8 +25,39 @@ async function getResponses(): Promise<Row[]> {
   }
 }
 
+async function getQuestionsMap(): Promise<Record<string, QuestionInfo>> {
+  if (!isSupabaseConfigured()) return {};
+  try {
+    const admin = adminClient();
+    const { data } = await admin
+      .from("quiz_questions")
+      .select("id, question, options, correct_index, question_type");
+    const map: Record<string, QuestionInfo> = {};
+    for (const q of (data ?? []) as Array<{
+      id: string;
+      question: string;
+      options: string[] | null;
+      correct_index: number;
+      question_type: string | null;
+    }>) {
+      map[q.id] = {
+        question: q.question,
+        options: q.options ?? [],
+        correct_index: q.correct_index,
+        question_type: q.question_type,
+      };
+    }
+    return map;
+  } catch {
+    return {};
+  }
+}
+
 export default async function RespuestasPage() {
-  const rows = await getResponses();
+  const [rows, questionsMap] = await Promise.all([
+    getResponses(),
+    getQuestionsMap(),
+  ]);
   const totals = rows.reduce(
     (acc, r) => {
       acc.score += r.score;
@@ -60,7 +94,7 @@ export default async function RespuestasPage() {
         }
       />
 
-      <ResponsesTable rows={rows} />
+      <ResponsesTable rows={rows} questionsMap={questionsMap} />
     </div>
   );
 }

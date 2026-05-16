@@ -13,8 +13,20 @@ export type Row = {
   student_school: string | null;
   score: number;
   total: number;
+  answers?: Array<{
+    question_id: string;
+    selected_index: number;
+    correct: boolean;
+  }> | null;
   file_uploads?: Record<string, string> | null;
   text_answers?: Record<string, string> | null;
+};
+
+export type QuestionInfo = {
+  question: string;
+  options: string[];
+  correct_index: number;
+  question_type: string | null;
 };
 
 type SortKey =
@@ -35,7 +47,13 @@ const initialState = {
   sortKey: "date_desc" as SortKey,
 };
 
-export default function ResponsesTable({ rows }: { rows: Row[] }) {
+export default function ResponsesTable({
+  rows,
+  questionsMap,
+}: {
+  rows: Row[];
+  questionsMap: Record<string, QuestionInfo>;
+}) {
   const [state, setState] = useState(initialState);
   const set = <K extends keyof typeof state>(k: K, v: (typeof state)[K]) =>
     setState((s) => ({ ...s, [k]: v }));
@@ -307,19 +325,117 @@ export default function ResponsesTable({ rows }: { rows: Row[] }) {
                       />
                     </td>
                   </tr>
-                  {r.text_answers && Object.keys(r.text_answers).length > 0 && (
+                  {((r.answers && r.answers.length > 0) ||
+                    (r.text_answers && Object.keys(r.text_answers).length > 0)) && (
                     <tr className="bg-surface/60 border-t border-dashed border-border">
                       <td colSpan={8} className="px-4 py-3">
                         <details className="text-xs">
-                          <summary className="cursor-pointer text-muted hover:text-ink select-none">
-                            Ver respuestas de texto ({Object.keys(r.text_answers).length})
+                          <summary className="cursor-pointer text-muted hover:text-ink select-none font-mono uppercase tracking-wider">
+                            Ver detalle de respuestas
                           </summary>
-                          <div className="mt-3 space-y-3 ml-4">
-                            {Object.entries(r.text_answers).map(([qid, txt]) => (
-                              <div key={qid} className="text-ink whitespace-pre-wrap border-l-2 border-accent pl-3 py-1">
-                                {txt}
-                              </div>
-                            ))}
+                          <div className="mt-4 space-y-4">
+                            {/* Multiple-choice answers */}
+                            {r.answers?.map((ans, idx) => {
+                              const q = questionsMap[ans.question_id];
+                              return (
+                                <div
+                                  key={ans.question_id}
+                                  className={`border-l-2 pl-4 py-2 ${
+                                    ans.correct
+                                      ? "border-emerald-500"
+                                      : "border-rose-500"
+                                  }`}
+                                >
+                                  <div className="flex items-start gap-2">
+                                    <span
+                                      className={`font-mono text-xs font-bold shrink-0 ${
+                                        ans.correct
+                                          ? "text-emerald-700"
+                                          : "text-rose-700"
+                                      }`}
+                                    >
+                                      {ans.correct ? "✓" : "✗"} {idx + 1}.
+                                    </span>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="text-ink font-medium">
+                                        {q?.question ?? (
+                                          <span className="text-muted italic">
+                                            (pregunta eliminada)
+                                          </span>
+                                        )}
+                                      </div>
+                                      {q && (
+                                        <div className="mt-2 space-y-1">
+                                          {q.options.map((opt, i) => {
+                                            const isSelected =
+                                              i === ans.selected_index;
+                                            const isCorrect =
+                                              i === q.correct_index;
+                                            return (
+                                              <div
+                                                key={i}
+                                                className={`flex items-center gap-2 ${
+                                                  isCorrect
+                                                    ? "text-emerald-700 font-medium"
+                                                    : isSelected
+                                                      ? "text-rose-700"
+                                                      : "text-muted"
+                                                }`}
+                                              >
+                                                <span className="font-mono w-4 shrink-0">
+                                                  {isSelected ? "●" : "○"}
+                                                </span>
+                                                <span>{opt}</span>
+                                                {isCorrect && (
+                                                  <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700">
+                                                    correcta
+                                                  </span>
+                                                )}
+                                                {isSelected && !isCorrect && (
+                                                  <span className="text-[10px] font-mono uppercase tracking-wider text-rose-700">
+                                                    elegida
+                                                  </span>
+                                                )}
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+
+                            {/* Text answers */}
+                            {r.text_answers &&
+                              Object.entries(r.text_answers).map(([qid, txt]) => {
+                                const q = questionsMap[qid];
+                                return (
+                                  <div
+                                    key={qid}
+                                    className="border-l-2 border-accent pl-4 py-2"
+                                  >
+                                    <div className="flex items-start gap-2">
+                                      <span className="font-mono text-xs text-accent-dark shrink-0">
+                                        ✎
+                                      </span>
+                                      <div className="flex-1 min-w-0">
+                                        <div className="text-ink font-medium">
+                                          {q?.question ?? (
+                                            <span className="text-muted italic">
+                                              (pregunta de texto)
+                                            </span>
+                                          )}
+                                        </div>
+                                        <div className="mt-2 text-ink whitespace-pre-wrap bg-surface p-2 border border-border">
+                                          {txt}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
                           </div>
                         </details>
                       </td>
