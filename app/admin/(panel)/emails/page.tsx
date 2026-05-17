@@ -31,21 +31,32 @@ export type Recipient = {
 };
 
 type Cohorts = {
-  A: Recipient[]; // in progress
+  A: Recipient[]; // in progress — todavía les faltan talleres ABIERTOS
   B: Recipient[]; // not started
-  C: Recipient[]; // completed
+  C: Recipient[]; // completed — terminaron los 12 del programa
 };
 
 async function loadData() {
   const admin = adminClient();
 
-  // Total = todos los talleres registrados (incluyendo no publicados).
-  // El programa son 12 talleres aunque algunos todavía no estén abiertos a
-  // los estudiantes; los correos hablan del programa completo.
-  const [{ count: talleresTotal }, quizzes, interes] = await Promise.all([
+  // Dos cuentas:
+  //  - `total`     = todos los talleres del programa (12)
+  //  - `published` = talleres actualmente abiertos a estudiantes
+  // Total se usa para que los correos hablen del programa completo.
+  // Published se usa para saber quién ya hizo todo lo disponible y por lo
+  // tanto NO necesita un recordatorio "te faltan N talleres" — esa gente
+  // está al día y queda fuera de la cohorte A.
+  const [
+    { count: talleresTotal },
+    { count: talleresPublished },
+    quizzes,
+    interes,
+  ] = await Promise.all([
+    admin.from("talleres").select("id", { count: "exact", head: true }),
     admin
       .from("talleres")
-      .select("id", { count: "exact", head: true }),
+      .select("id", { count: "exact", head: true })
+      .eq("published", true),
     fetchAllPages<QuizRow>((from, to) =>
       admin
         .from("quiz_responses")
@@ -60,6 +71,7 @@ async function loadData() {
   ]);
 
   const total = talleresTotal ?? 0;
+  const published = talleresPublished ?? 0;
 
   // Aggregate distinct talleres per email
   type Agg = {
@@ -85,6 +97,7 @@ async function loadData() {
   });
 
   const cohorts: Cohorts = { A: [], B: [], C: [] };
+  let alDia = 0;
 
   for (const [email, agg] of byEmail.entries()) {
     const completed = agg.talleres.size;
@@ -94,8 +107,19 @@ async function loadData() {
       completed,
       school: agg.school,
     };
-    if (total > 0 && completed >= total) cohorts.C.push(recipient);
-    else if (completed > 0) cohorts.A.push(recipient);
+    // C — terminaron el programa completo (12/12)
+    if (total > 0 && completed >= total) {
+      cohorts.C.push(recipient);
+      continue;
+    }
+    // Al día — completaron todo lo publicado pero el programa no terminó.
+    // No están en ninguna cohorte de correo: nada que pedirles ahora.
+    if (published > 0 && completed >= published) {
+      alDia++;
+      continue;
+    }
+    // A — en progreso, todavía pueden hacer más talleres abiertos
+    if (completed > 0) cohorts.A.push(recipient);
   }
 
   // Cohort B = interes whose email is NOT in byEmail
@@ -117,11 +141,11 @@ async function loadData() {
     cohorts[variant].sort((a, b) => a.name.localeCompare(b.name, "es"));
   }
 
-  return { total, cohorts };
+  return { total, published, cohorts, alDia };
 }
 
 export default async function EmailsPage() {
-  const [{ total, cohorts }, templates] = await Promise.all([
+  const [{ total, published, cohorts, alDia }, templates] = await Promise.all([
     loadData(),
     getAllTemplates(),
   ]);
@@ -134,10 +158,17 @@ export default async function EmailsPage() {
         description="Edita el contenido de cada recordatorio, previsualízalo y envíalo a la cohorte correspondiente."
         meta={
           <>
-            <span>{total} talleres publicados</span>
+            <span>
+              {published}/{total} talleres abiertos
+            </span>
             <span>{cohorts.A.length} en progreso</span>
             <span>{cohorts.B.length} sin empezar</span>
             <span>{cohorts.C.length} completaron</span>
+            {alDia > 0 && (
+              <span title="Completaron todos los talleres abiertos. No reciben recordatorio hasta que se publique el siguiente.">
+                {alDia} al día (sin correo)
+              </span>
+            )}
           </>
         }
       />
