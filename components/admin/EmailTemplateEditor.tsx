@@ -15,7 +15,24 @@ type Props = {
 
 type SaveState = { kind: "idle" } | { kind: "saving" } | { kind: "ok" } | { kind: "error"; msg: string };
 type TestState = SaveState;
-type BulkState = { kind: "idle" } | { kind: "sending" } | { kind: "ok"; sent: number; failed: number } | { kind: "error"; msg: string };
+type BulkState =
+  | { kind: "idle" }
+  | {
+      kind: "sending";
+      batch: number;
+      totalBatches: number;
+      sent: number;
+      failed: number;
+      total: number;
+    }
+  | { kind: "ok"; sent: number; failed: number; total: number }
+  | { kind: "error"; msg: string; sent: number; failed: number };
+
+// El servidor tiene tope de 500 por request, pero además los serverless
+// de Vercel cortan a 60s — con la tarifa free de Resend (10 emails/s)
+// eso son ~600 emails como mucho. Quedarnos en 100 por lote da margen
+// holgado y permite mostrar progreso al usuario.
+const BATCH_SIZE = 100;
 type SingleState =
   | { kind: "idle" }
   | { kind: "sending"; email: string }
@@ -159,42 +176,74 @@ export default function EmailTemplateEditor({
 
   async function handleSendBulk() {
     if (selected.size === 0) return;
+    const allPayload = recipients
+      .filter((r) => selected.has(r.email))
+      .map((r) => ({
+        email: r.email,
+        name: r.name,
+        completed: r.completed,
+      }));
+
+    const totalRecipients = allPayload.length;
+    const totalBatches = Math.ceil(totalRecipients / BATCH_SIZE);
+    const lots =
+      totalBatches > 1
+        ? ` en ${totalBatches} tandas de hasta ${BATCH_SIZE}`
+        : "";
     const ok = window.confirm(
-      `¿Enviar el correo a ${selected.size} estudiante${selected.size === 1 ? "" : "s"} de la cohorte "${variantLabel}"?\n\nLos correos saldrán a sus inboxes reales. Esto no se puede deshacer.`
+      `¿Enviar el correo a ${totalRecipients} estudiante${totalRecipients === 1 ? "" : "s"} de la cohorte "${variantLabel}"${lots}?\n\nLos correos saldrán a sus inboxes reales. Esto no se puede deshacer.`
     );
     if (!ok) return;
-    setBulk({ kind: "sending" });
-    try {
-      const payload = recipients
-        .filter((r) => selected.has(r.email))
-        .map((r) => ({
-          email: r.email,
-          name: r.name,
-          completed: r.completed,
-        }));
-      const res = await fetch("/api/admin/campaign/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          variant,
-          total,
-          recipients: payload,
-          template: buildOverride(),
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+
+    let sent = 0;
+    let failed = 0;
+    setBulk({
+      kind: "sending",
+      batch: 0,
+      totalBatches,
+      sent: 0,
+      failed: 0,
+      total: totalRecipients,
+    });
+
+    for (let i = 0; i < totalBatches; i++) {
+      const chunk = allPayload.slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE);
       setBulk({
-        kind: "ok",
-        sent: json.sent ?? 0,
-        failed: json.failed ?? 0,
+        kind: "sending",
+        batch: i + 1,
+        totalBatches,
+        sent,
+        failed,
+        total: totalRecipients,
       });
-    } catch (err) {
-      setBulk({
-        kind: "error",
-        msg: err instanceof Error ? err.message : String(err),
-      });
+      try {
+        const res = await fetch("/api/admin/campaign/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            variant,
+            total,
+            recipients: chunk,
+            template: buildOverride(),
+          }),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+        sent += json.sent ?? 0;
+        failed += json.failed ?? 0;
+      } catch (err) {
+        // If a whole batch fails, count its recipients as failed but keep
+        // going with the next batches so a transient blip doesn't kill the
+        // whole send.
+        failed += chunk.length;
+        console.error(
+          `[bulk send] lote ${i + 1}/${totalBatches} falló:`,
+          err
+        );
+      }
     }
+
+    setBulk({ kind: "ok", sent, failed, total: totalRecipients });
   }
 
   const previewHtml = useMemo(() => {
@@ -457,8 +506,8 @@ export default function EmailTemplateEditor({
                   className="w-full inline-flex items-center justify-center border border-accent bg-accent text-ink px-4 py-2.5 text-sm font-medium uppercase tracking-wide hover:bg-accent-dark hover:border-accent-dark hover:text-surface transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {bulk.kind === "sending"
-                    ? "Enviando…"
-                    : `↑ Enviar a ${selected.size} estudiante${selected.size === 1 ? "" : "s"}`}
+                    ? `Enviando lote ${bulk.batch}/${bulk.totalBatches} · ${bulk.sent}/${bulk.total}…`
+                    : `↑ Enviar a ${selected.size} estudiante${selected.size === 1 ? "" : "s"}${selected.size > BATCH_SIZE ? ` (${Math.ceil(selected.size / BATCH_SIZE)} tandas)` : ""}`}
                 </button>
               </div>
             )}
@@ -553,9 +602,22 @@ function Feedback({
           Error al enviar a {single.email}: {single.msg}
         </div>
       )}
+      {bulk.kind === "sending" && (
+        <div className="text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1">
+          Enviando lote {bulk.batch} de {bulk.totalBatches} · {bulk.sent}/
+          {bulk.total} enviados…
+        </div>
+      )}
       {bulk.kind === "ok" && (
-        <div className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1">
-          Envío masivo: {bulk.sent} enviados, {bulk.failed} fallidos.
+        <div
+          className={
+            bulk.failed > 0
+              ? "text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1"
+              : "text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1"
+          }
+        >
+          Envío masivo terminado: {bulk.sent} de {bulk.total} enviados
+          {bulk.failed > 0 ? ` · ${bulk.failed} fallidos` : ""}.
         </div>
       )}
       {bulk.kind === "error" && (
