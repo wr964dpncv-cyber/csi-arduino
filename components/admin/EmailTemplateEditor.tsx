@@ -91,12 +91,18 @@ export default function EmailTemplateEditor({
   async function handleSendTest() {
     setTest({ kind: "saving" });
     try {
+      const mock = mockForVariant(variant, total);
       const res = await fetch("/api/admin/campaign/test", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           variant,
           template: buildOverride(),
+          mockVars: {
+            nombre: mock.nombre,
+            completed: mock.completed,
+            total,
+          },
         }),
       });
       const json = await res.json();
