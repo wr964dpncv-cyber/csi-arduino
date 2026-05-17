@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { adminClient } from "@/lib/supabase/admin";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { pickStudentDisplay } from "@/lib/studentDisplay";
 import PageHeader from "@/components/admin/PageHeader";
 
 export const dynamic = "force-dynamic";
@@ -118,19 +119,10 @@ export default async function EstudianteDetailPage({
 
   const { responses, talleres, questionsMap } = data;
 
-  // Pick info from the most recently created response (most up-to-date),
-  // preferring one that has a school filled in if available.
-  const byDateDesc = [...responses].sort(
+  const student = pickStudentDisplay(responses);
+  const lastActivity = [...responses].sort(
     (a, b) => +new Date(b.created_at) - +new Date(a.created_at)
-  );
-  const newest = byDateDesc[0];
-  const newestWithSchool = byDateDesc.find((r) => r.student_school) ?? newest;
-  const student = {
-    name: newest.student_name,
-    email: newest.student_email,
-    school: newestWithSchool.student_school,
-  };
-  const lastActivity = newest.created_at;
+  )[0].created_at;
 
   // Map taller_n → response
   const responseByN = new Map<number, Resp>();

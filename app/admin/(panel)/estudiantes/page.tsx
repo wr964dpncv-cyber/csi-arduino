@@ -1,6 +1,7 @@
 import { adminClient } from "@/lib/supabase/admin";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { fetchAllPages } from "@/lib/supabase/fetchAll";
+import { pickStudentDisplay } from "@/lib/studentDisplay";
 import PageHeader from "@/components/admin/PageHeader";
 import StudentsTable, { type StudentRow } from "./StudentsTable";
 
@@ -46,9 +47,7 @@ async function getStudents(): Promise<{
     const byEmail = new Map<
       string,
       {
-        name: string;
-        email: string;
-        school: string | null;
+        rows: RawResp[];
         tallerNs: Set<number>;
         scoreSum: number;
         totalSum: number;
@@ -62,9 +61,7 @@ async function getStudents(): Promise<{
       let entry = byEmail.get(key);
       if (!entry) {
         entry = {
-          name: r.student_name,
-          email: r.student_email,
-          school: r.student_school,
+          rows: [],
           tallerNs: new Set(),
           scoreSum: 0,
           totalSum: 0,
@@ -74,6 +71,7 @@ async function getStudents(): Promise<{
         };
         byEmail.set(key, entry);
       }
+      entry.rows.push(r);
       entry.tallerNs.add(r.taller_n);
       entry.scoreSum += r.score;
       entry.totalSum += r.total;
@@ -81,27 +79,29 @@ async function getStudents(): Promise<{
         entry.validCount++;
         if (r.score / r.total >= 0.6) entry.passing++;
       }
-      // Keep most recent name/school if different (response is sorted desc)
       if (+new Date(r.created_at) > +new Date(entry.lastDate)) {
         entry.lastDate = r.created_at;
       }
     }
 
-    const students: StudentRow[] = Array.from(byEmail.values()).map((s) => ({
-      name: s.name,
-      email: s.email,
-      school: s.school,
-      talleresCount: s.tallerNs.size,
-      avgPct:
-        s.validCount > 0
-          ? Math.round((s.scoreSum / s.totalSum) * 100)
-          : 0,
-      passRate:
-        s.validCount > 0
-          ? Math.round((s.passing / s.validCount) * 100)
-          : 0,
-      lastActivity: s.lastDate,
-    }));
+    const students: StudentRow[] = Array.from(byEmail.values()).map((s) => {
+      const display = pickStudentDisplay(s.rows);
+      return {
+        name: display.name,
+        email: display.email,
+        school: display.school,
+        talleresCount: s.tallerNs.size,
+        avgPct:
+          s.validCount > 0
+            ? Math.round((s.scoreSum / s.totalSum) * 100)
+            : 0,
+        passRate:
+          s.validCount > 0
+            ? Math.round((s.passing / s.validCount) * 100)
+            : 0,
+        lastActivity: s.lastDate,
+      };
+    });
 
     return { students, totalTalleres };
   } catch {
