@@ -32,6 +32,7 @@ export async function POST(
   let studentSchool = "";
   let studentPhone = "";
   let studentRegion = "";
+  let retoInteresado = false;
   let answers: Array<{ question_id: string; selected_index: number }> = [];
   let textAnswers: Record<string, string> = {};
   const filesByQuestion = new Map<string, File>();
@@ -43,6 +44,7 @@ export async function POST(
     studentSchool = String(form.get("studentSchool") ?? "");
     studentPhone = String(form.get("studentPhone") ?? "");
     studentRegion = String(form.get("studentRegion") ?? "");
+    retoInteresado = String(form.get("retoInteresado") ?? "") === "1";
     try {
       answers = JSON.parse(String(form.get("answers") ?? "[]"));
     } catch {
@@ -66,6 +68,7 @@ export async function POST(
       studentSchool = body.studentSchool ?? "";
       studentPhone = body.studentPhone ?? "";
       studentRegion = body.studentRegion ?? "";
+      retoInteresado = Boolean(body.retoInteresado);
       answers = body.answers ?? [];
       textAnswers = body.text_answers ?? {};
     } catch {
@@ -284,6 +287,29 @@ export async function POST(
       .neq("taller_id", taller.id);
   } catch (err) {
     console.error("[quiz:submit] backfill failed", err);
+  }
+
+  // Si marcó interés en el Reto Nacional, lo agregamos a reto_interes
+  // (dedup por email para no duplicar si ya se había registrado).
+  if (retoInteresado) {
+    try {
+      const { data: existingInteres } = await admin
+        .from("reto_interes")
+        .select("id")
+        .eq("email", emailLower)
+        .maybeSingle();
+      if (!existingInteres) {
+        await admin.from("reto_interes").insert({
+          nombre: studentName.trim(),
+          email: emailLower,
+          telefono: studentPhone.trim(),
+          escuela: studentSchool.trim() || null,
+          region: studentRegion.trim() || null,
+        });
+      }
+    } catch (err) {
+      console.error("[quiz:submit] reto_interes insert failed", err);
+    }
   }
 
   await notifyQuiz({

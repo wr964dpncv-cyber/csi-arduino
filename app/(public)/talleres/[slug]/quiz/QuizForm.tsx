@@ -41,6 +41,7 @@ export default function QuizForm({
   const [studentSchool, setStudentSchool] = useState("");
   const [studentPhone, setStudentPhone] = useState("");
   const [studentRegion, setStudentRegion] = useState("");
+  const [retoInteresado, setRetoInteresado] = useState(false);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [files, setFiles] = useState<Record<string, File>>({});
   const [texts, setTexts] = useState<Record<string, string>>({});
@@ -118,6 +119,7 @@ export default function QuizForm({
       form.append("studentSchool", studentSchool);
       form.append("studentPhone", studentPhone);
       form.append("studentRegion", studentRegion);
+      form.append("retoInteresado", retoInteresado ? "1" : "0");
       form.append(
         "answers",
         JSON.stringify(
@@ -408,6 +410,19 @@ export default function QuizForm({
               </option>
             ))}
           </select>
+        </label>
+        <label className="flex items-start gap-3 cursor-pointer pt-2 border-t border-border">
+          <input
+            type="checkbox"
+            className="mt-1 h-4 w-4 accent-accent cursor-pointer"
+            checked={retoInteresado}
+            onChange={(e) => setRetoInteresado(e.target.checked)}
+          />
+          <span className="text-sm text-ink leading-relaxed">
+            Me interesa recibir información sobre el{" "}
+            <span className="font-semibold">Reto Nacional</span> cuando se
+            definan los detalles.
+          </span>
         </label>
         {progress && progress.allTalleres.length > 0 && (() => {
           const completedSet = new Set(progress.completed);
