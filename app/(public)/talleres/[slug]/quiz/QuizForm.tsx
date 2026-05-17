@@ -692,17 +692,30 @@ export default function QuizForm({
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-4 border-t border-border">
-        <div className="text-sm text-muted">
-          {Object.keys(answers).length + Object.keys(files).length + textQuestions.filter((q) => (texts[q.id] ?? "").trim().length > 0).length} / {questions.length} completadas
+      <div className="pt-4 border-t border-border space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted">
+            {Object.keys(answers).length + Object.keys(files).length + textQuestions.filter((q) => (texts[q.id] ?? "").trim().length > 0).length} / {questions.length} completadas
+          </div>
+          <button
+            type="submit"
+            disabled={submitting || !allAnswered}
+            className="bg-accent text-ink px-7 py-3.5 text-base font-semibold hover:bg-accent-bright glow-gold transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {submitting ? "Enviando..." : "Enviar quiz"}
+          </button>
         </div>
-        <button
-          type="submit"
-          disabled={submitting || !allAnswered}
-          className="bg-accent text-ink px-7 py-3.5 text-base font-semibold hover:bg-accent-bright glow-gold transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {submitting ? "Enviando..." : "Enviar quiz"}
-        </button>
+        <p className="text-[11px] text-muted leading-relaxed">
+          Al enviar autorizas ser contactado por temas del programa CSI ·
+          Principios de Arduino del MEDUCA. Ver{" "}
+          <Link
+            href="/privacidad"
+            className="underline underline-offset-2 hover:text-ink transition"
+          >
+            política de privacidad
+          </Link>
+          .
+        </p>
       </div>
     </form>
   );

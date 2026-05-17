@@ -170,6 +170,18 @@ export default function InteresForm() {
           </>
         )}
       </button>
+
+      <p className="mt-3 text-[11px] text-muted-2/80 leading-relaxed text-center">
+        Al enviar autorizas ser contactado por temas del programa CSI ·
+        Principios de Arduino del MEDUCA. Ver{" "}
+        <a
+          href="/privacidad"
+          className="underline underline-offset-2 hover:text-surface transition"
+        >
+          política de privacidad
+        </a>
+        .
+      </p>
     </form>
   );
 }
