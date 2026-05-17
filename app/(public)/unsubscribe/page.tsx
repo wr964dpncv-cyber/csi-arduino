@@ -69,7 +69,7 @@ export default async function UnsubscribePage({
                 CSI · Principios de Arduino.
               </p>
               <div className="border-l-4 border-accent pl-4 py-1 text-sm text-muted">
-                Si te diste de baja por error, escribile a Daniel por{" "}
+                Si te diste de baja por error, escríbele a Daniel por{" "}
                 <a
                   href="https://wa.me/50768641929"
                   className="text-ink font-semibold underline"
@@ -83,7 +83,7 @@ export default async function UnsubscribePage({
           {status === "invalid" && (
             <p className="text-lg">
               El enlace no parece válido. Puede que esté incompleto, alterado o
-              ya haya expirado. Si querés darte de baja, escribile directo a
+              ya haya expirado. Si quieres darte de baja, escríbele directo a
               Daniel por{" "}
               <a
                 href="https://wa.me/50768641929"
@@ -97,8 +97,8 @@ export default async function UnsubscribePage({
           {status === "error" && (
             <>
               <p className="text-lg">
-                No pudimos registrar la baja en este momento. Por favor intentá
-                más tarde o escribile a Daniel por{" "}
+                No pudimos registrar la baja en este momento. Por favor intenta
+                más tarde o escríbele a Daniel por{" "}
                 <a
                   href="https://wa.me/50768641929"
                   className="text-ink font-semibold underline"

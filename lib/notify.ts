@@ -6,6 +6,13 @@ import {
   unsubscribeUrl,
   unsubscribePostUrl,
 } from "@/lib/unsubscribe";
+import {
+  getTemplate,
+  pickVariant,
+  renderTemplate,
+  type EmailTemplate,
+  type TemplateVars,
+} from "@/lib/emailTemplates";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const DANIEL_EMAIL = process.env.DANIEL_EMAIL ?? "";
@@ -57,7 +64,7 @@ function wrap(
       : "";
   const unsubBlock = unsubUrl
     ? `<div style="margin-top:10px;font-size:11px;color:#9d978a;">
-         ¿No querés recibir más correos del programa?
+         ¿No quieres recibir más correos del programa?
          <a href="${unsubUrl}" style="color:#6b6657;text-decoration:underline;">Darte de baja con un click</a>.
        </div>`
     : "";
@@ -559,10 +566,63 @@ export type ProgressReminderPayload = {
   studentName: string;
   completed: number;
   total: number;
+  // Optional overrides — if `template` is provided, it is rendered against the
+  // recipient's vars. Otherwise the appropriate variant is pulled from DB.
+  template?: EmailTemplate;
 };
 
 function firstName(full: string): string {
   return (full ?? "").trim().split(/\s+/)[0] || "estudiante";
+}
+
+export function buildProgressEmailHtml(
+  rendered: {
+    title: string;
+    intro_html: string;
+    body_html: string;
+    signature_html: string;
+    cta_label: string | null;
+    cta_url: string | null;
+  },
+  completed: number,
+  total: number,
+  unsubUrl?: string
+): string {
+  const progressStrip = total > 0 ? buildProgressStrip(completed, total) : "";
+  const body = `
+    <div style="font-size:15px;line-height:1.6;color:#0b1a35;">
+      ${rendered.intro_html}
+    </div>
+    <div style="font-size:15px;line-height:1.7;color:#0b1a35;margin-top:14px;">
+      ${rendered.body_html}
+    </div>
+    ${progressStrip}
+    <div style="margin-top:28px;padding-top:20px;border-top:1px solid #e5dfd0;font-size:14px;line-height:1.6;color:#0b1a35;">
+      ${rendered.signature_html}
+    </div>
+  `;
+  return wrap(
+    rendered.title,
+    body,
+    rendered.cta_label ?? undefined,
+    rendered.cta_url ?? undefined,
+    unsubUrl
+  );
+}
+
+function stripHtml(s: string): string {
+  return s
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n\n")
+    .replace(/<li>/gi, "- ")
+    .replace(/<\/li>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 export async function sendProgressReminder(
@@ -570,110 +630,35 @@ export async function sendProgressReminder(
 ): Promise<void> {
   const name = firstName(p.studentName);
   const completed = Math.max(0, Math.min(p.completed, p.total));
-  const missing = Math.max(0, p.total - completed);
-  const done = missing === 0 && p.total > 0;
-  const started = completed > 0;
-
-  let subject: string;
-  let title: string;
-  let intro: string;
-  let bodyMid: string;
-  let ctaLabel: string;
-  let ctaUrl: string;
-  let textIntro: string;
-  let textMid: string;
-
-  if (done) {
-    // Variant C — Done
-    subject = `🎓 ¡${name}, completaste todos los talleres!`;
-    title = `¡Completaste el programa!`;
-    intro = `¡Hola <strong>${escapeHtml(name)}</strong>!`;
-    bodyMid = `
-      Completaste los <strong>${p.total} talleres</strong> del programa CSI Arduino.
-      Estamos preparando tu <strong>Certificado oficial</strong>.
-      <br/><br/>
-      El <strong>Reto Nacional de Arduino</strong> está a un paso —
-      inscribite con tu equipo y pone en práctica todo lo aprendido.
-    `;
-    ctaLabel = "Inscribirme al Reto Nacional";
-    ctaUrl = `${SITE_URL}/reto-nacional`;
-    textIntro = `¡Hola ${name}!`;
-    textMid = `Completaste los ${p.total} talleres del programa CSI Arduino. Estamos preparando tu Certificado oficial.\n\nEl Reto Nacional de Arduino está a un paso — inscribite con tu equipo.\n\nInscripción: ${SITE_URL}/reto-nacional`;
-  } else if (!started) {
-    // Variant B — Not started
-    subject = `${name}, te esperamos en CSI Arduino`;
-    title = `Empecemos los talleres`;
-    intro = `Hola <strong>${escapeHtml(name)}</strong>,`;
-    bodyMid = `
-      Te inscribiste en CSI Arduino pero aún no enviaste ningún quiz.
-      ¡Arranquemos!
-      <br/><br/>
-      Son <strong>${p.total} talleres cortos</strong>. Al terminarlos:
-      <ul style="padding-left:18px;margin:14px 0;line-height:1.7;">
-        <li>🎓 Recibís tu <strong>Certificado oficial</strong> del programa</li>
-        <li>🏆 Podés aplicar al <strong>Reto Nacional de Arduino</strong> con MEDUCA</li>
-      </ul>
-    `;
-    ctaLabel = "Empezar con el Taller 1";
-    ctaUrl = `${SITE_URL}/talleres`;
-    textIntro = `Hola ${name},`;
-    textMid = `Te inscribiste en CSI Arduino pero aún no enviaste ningún quiz. ¡Arranquemos!\n\nSon ${p.total} talleres cortos. Al terminarlos recibís tu Certificado oficial y podés aplicar al Reto Nacional de Arduino con MEDUCA.\n\nEmpezar: ${SITE_URL}/talleres`;
-  } else {
-    // Variant A — In progress
-    subject = `${name}, te faltan ${missing} ${missing === 1 ? "taller" : "talleres"} para tu Certificado`;
-    title = `Vas ${completed}/${p.total} en tus quizzes`;
-    intro = `Hola <strong>${escapeHtml(name)}</strong>,`;
-    bodyMid = `
-      Vemos que ya completaste <strong>${completed} de ${p.total} quizzes</strong>
-      del programa CSI Arduino. ¡Buen ritmo!
-      <br/><br/>
-      Todavía tenés oportunidad de terminar
-      ${missing === 1 ? "el <strong>1 taller restante</strong>" : `los <strong>${missing} talleres restantes</strong>`}.
-      Al completarlos todos:
-      <ul style="padding-left:18px;margin:14px 0;line-height:1.7;">
-        <li>🎓 Recibís tu <strong>Certificado oficial</strong> del programa</li>
-        <li>🏆 Podés aplicar al <strong>Reto Nacional de Arduino</strong> con MEDUCA</li>
-      </ul>
-    `;
-    ctaLabel = "Continuar con los talleres";
-    ctaUrl = `${SITE_URL}/talleres`;
-    textIntro = `Hola ${name},`;
-    textMid = `Vemos que ya completaste ${completed} de ${p.total} quizzes del programa CSI Arduino. ¡Buen ritmo!\n\nTodavía tenés oportunidad de terminar los ${missing} talleres restantes. Al completarlos todos:\n- Recibís tu Certificado oficial\n- Podés aplicar al Reto Nacional de Arduino con MEDUCA\n\nContinuar: ${SITE_URL}/talleres`;
-  }
-
-  const progressStrip = p.total > 0 ? buildProgressStrip(completed, p.total) : "";
-
-  const body = `
-    <div style="font-size:15px;line-height:1.6;color:#0b1a35;">
-      ${intro}
-    </div>
-    <div style="font-size:15px;line-height:1.7;color:#0b1a35;margin-top:14px;">
-      ${bodyMid}
-    </div>
-    ${progressStrip}
-    <div style="margin-top:28px;padding-top:20px;border-top:1px solid #e5dfd0;font-size:14px;line-height:1.6;color:#0b1a35;">
-      Cualquier duda, escribime directo por
-      <a href="https://wa.me/50768641929" style="color:#0b1a35;font-weight:600;text-decoration:underline;">WhatsApp +507 6864-1929</a>.
-      <br/><br/>
-      — <strong>Daniel</strong> · Programa CSI
-    </div>
-  `;
+  const variant = pickVariant(completed, p.total);
+  const template = p.template ?? (await getTemplate(variant));
+  const vars: TemplateVars = {
+    nombre: name,
+    completed,
+    total: p.total,
+    missing: Math.max(0, p.total - completed),
+  };
+  const rendered = renderTemplate(template, vars);
 
   const text = [
-    textIntro,
+    stripHtml(rendered.intro_html),
     ``,
-    textMid,
+    stripHtml(rendered.body_html),
     ``,
-    `Cualquier duda, escribime por WhatsApp: +507 6864-1929`,
-    `https://wa.me/50768641929`,
+    rendered.cta_label && rendered.cta_url
+      ? `${rendered.cta_label}: ${rendered.cta_url}`
+      : null,
     ``,
-    `— Daniel · Programa CSI · Principios de Arduino`,
-  ].join("\n");
+    stripHtml(rendered.signature_html),
+  ]
+    .filter((line) => line !== null)
+    .join("\n");
 
   await sendUser(
     p.to,
-    subject,
-    (unsubUrl) => wrap(title, body, ctaLabel, ctaUrl, unsubUrl),
+    rendered.subject,
+    (unsubUrl) =>
+      buildProgressEmailHtml(rendered, completed, p.total, unsubUrl),
     text
   );
 }

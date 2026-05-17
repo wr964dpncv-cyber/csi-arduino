@@ -31,6 +31,10 @@ const baseGroups = [
       { href: "/admin/respuestas", label: "Respuestas Quiz" },
     ],
   },
+  {
+    label: "Comunicación",
+    items: [{ href: "/admin/emails", label: "Emails" }],
+  },
 ];
 
 const ownerGroup = {
