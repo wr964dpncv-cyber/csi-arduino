@@ -285,6 +285,15 @@ export default function EmailTemplateEditor({
   function selectNone() {
     setSelected(new Set());
   }
+  // "Marca este destinatario y todos los que vienen después como
+  // seleccionados; desmarca todos los anteriores". Útil para resumir
+  // un envío que se cortó por rate limit: encuentras al último ya
+  // enviado, haces click 'desde aquí' en el SIGUIENTE, y mandas.
+  function selectFromHere(email: string) {
+    const idx = recipients.findIndex((r) => r.email === email);
+    if (idx < 0) return;
+    setSelected(new Set(recipients.slice(idx).map((r) => r.email)));
+  }
 
   return (
     <section className="border border-border bg-surface-2">
@@ -483,6 +492,14 @@ export default function EmailTemplateEditor({
                                 </span>
                               )}
                             </label>
+                            <button
+                              type="button"
+                              onClick={() => selectFromHere(r.email)}
+                              title="Marcar este y los siguientes; desmarcar todos los anteriores (para reanudar un envío parcial)"
+                              className="shrink-0 text-[10px] font-mono uppercase tracking-wider border border-border bg-surface px-2 py-1 text-muted hover:border-ink hover:text-ink hover:bg-surface-2 transition"
+                            >
+                              ↳ desde aquí
+                            </button>
                             <button
                               type="button"
                               onClick={() => handleSendOne(r)}
