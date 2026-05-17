@@ -1,6 +1,11 @@
 import { Resend } from "resend";
 import { adminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
+import {
+  filterUnsubscribed,
+  unsubscribeUrl,
+  unsubscribePostUrl,
+} from "@/lib/unsubscribe";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const DANIEL_EMAIL = process.env.DANIEL_EMAIL ?? "";
@@ -41,7 +46,8 @@ function wrap(
   title: string,
   bodyHtml: string,
   ctaLabel?: string,
-  ctaUrl?: string
+  ctaUrl?: string,
+  unsubUrl?: string
 ): string {
   const ctaBlock =
     ctaLabel && ctaUrl
@@ -49,6 +55,12 @@ function wrap(
             <a href="${ctaUrl}" style="display:inline-block;background:#f5b80c;color:#0b1a35;padding:12px 22px;text-decoration:none;font-weight:600;font-size:14px;">${ctaLabel} →</a>
           </div>`
       : "";
+  const unsubBlock = unsubUrl
+    ? `<div style="margin-top:10px;font-size:11px;color:#9d978a;">
+         ¿No querés recibir más correos del programa?
+         <a href="${unsubUrl}" style="color:#6b6657;text-decoration:underline;">Darte de baja con un click</a>.
+       </div>`
+    : "";
   return `
 <!DOCTYPE html>
 <html lang="es">
@@ -66,6 +78,7 @@ function wrap(
         </td></tr>
         <tr><td style="padding:18px 28px;background:#f4f1ea;color:#6b6657;font-size:12px;border-top:1px solid #e5dfd0;">
           Notificación automática · csi-arduino.com
+          ${unsubBlock}
         </td></tr>
       </table>
     </td></tr>
@@ -81,10 +94,12 @@ function row(label: string, value: string): string {
   </tr>`;
 }
 
+type HtmlBuilder = (unsubUrl: string) => string;
+
 async function sendUser(
   to: string | string[],
   subject: string,
-  html: string,
+  buildHtml: HtmlBuilder,
   text: string
 ): Promise<void> {
   if (!resend) {
@@ -99,20 +114,45 @@ async function sendUser(
     console.log("[notify:user] no valid recipients for:", subject);
     return;
   }
-  try {
-    const res = await resend.emails.send({
-      from: `Programa CSI <${FROM_EMAIL}>`,
-      to: valid,
-      replyTo: DANIEL_EMAIL || undefined,
-      subject,
-      html,
-      text,
-    });
-    if (res.error) {
-      console.error("[notify:user] resend error:", res.error);
+
+  const { allowed, blocked } = await filterUnsubscribed(valid);
+  if (blocked.length > 0) {
+    console.log(
+      `[notify:user] skipping ${blocked.length} unsubscribed recipient(s):`,
+      blocked
+    );
+  }
+  if (allowed.length === 0) {
+    console.log("[notify:user] all recipients unsubscribed, skipping:", subject);
+    return;
+  }
+
+  // Send one email per recipient so each gets a personalized
+  // unsubscribe link in the body AND a List-Unsubscribe header
+  // (RFC 2369 / 8058 — one-click in Gmail/Outlook).
+  for (const recipient of allowed) {
+    const bodyUnsubUrl = unsubscribeUrl(recipient);
+    const headerUnsubUrl = unsubscribePostUrl(recipient);
+    const html = buildHtml(bodyUnsubUrl);
+    try {
+      const res = await resend.emails.send({
+        from: `Programa CSI <${FROM_EMAIL}>`,
+        to: recipient,
+        replyTo: DANIEL_EMAIL || undefined,
+        subject,
+        html,
+        text,
+        headers: {
+          "List-Unsubscribe": `<${headerUnsubUrl}>, <${bodyUnsubUrl}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
+      });
+      if (res.error) {
+        console.error("[notify:user] resend error for", recipient, ":", res.error);
+      }
+    } catch (err) {
+      console.error("[notify:user] send failed for", recipient, ":", err);
     }
-  } catch (err) {
-    console.error("[notify:user] send failed:", err);
   }
 }
 
@@ -426,12 +466,17 @@ export async function sendQuizConfirmation(
     `— Programa CSI · Principios de Arduino`,
   ].join("\n");
 
-  const html = wrap(`Recibimos tu quiz del Taller ${p.tallerN}`, body);
-
   await sendUser(
     p.to,
     `✓ Quiz Taller ${p.tallerN} recibido`,
-    html,
+    (unsubUrl) =>
+      wrap(
+        `Recibimos tu quiz del Taller ${p.tallerN}`,
+        body,
+        undefined,
+        undefined,
+        unsubUrl
+      ),
     text
   );
 }
@@ -494,17 +539,17 @@ export async function sendInscripcionConfirmation(
     `— Programa CSI · Principios de Arduino`,
   ].join("\n");
 
-  const html = wrap(
-    `Inscripción recibida: ${p.equipoNombre}`,
-    body,
-    "Ver Reto Nacional",
-    `${SITE_URL}/reto-nacional`
-  );
-
   await sendUser(
     p.tos,
     `✓ Inscripción confirmada — ${p.equipoNombre}`,
-    html,
+    (unsubUrl) =>
+      wrap(
+        `Inscripción recibida: ${p.equipoNombre}`,
+        body,
+        "Ver Reto Nacional",
+        `${SITE_URL}/reto-nacional`,
+        unsubUrl
+      ),
     text
   );
 }
@@ -625,9 +670,12 @@ export async function sendProgressReminder(
     `— Daniel · Programa CSI · Principios de Arduino`,
   ].join("\n");
 
-  const html = wrap(title, body, ctaLabel, ctaUrl);
-
-  await sendUser(p.to, subject, html, text);
+  await sendUser(
+    p.to,
+    subject,
+    (unsubUrl) => wrap(title, body, ctaLabel, ctaUrl, unsubUrl),
+    text
+  );
 }
 
 function buildProgressStrip(completed: number, total: number): string {
@@ -688,12 +736,17 @@ export async function sendInteresConfirmation(
     `— Programa CSI · Principios de Arduino`,
   ].join("\n");
 
-  const html = wrap(`Recibimos tu información — Reto Nacional`, body);
-
   await sendUser(
     p.to,
     `✓ Recibimos tu información — Reto Nacional CSI`,
-    html,
+    (unsubUrl) =>
+      wrap(
+        `Recibimos tu información — Reto Nacional`,
+        body,
+        undefined,
+        undefined,
+        unsubUrl
+      ),
     text
   );
 }
