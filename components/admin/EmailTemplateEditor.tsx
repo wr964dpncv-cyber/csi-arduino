@@ -16,6 +16,11 @@ type Props = {
 type SaveState = { kind: "idle" } | { kind: "saving" } | { kind: "ok" } | { kind: "error"; msg: string };
 type TestState = SaveState;
 type BulkState = { kind: "idle" } | { kind: "sending" } | { kind: "ok"; sent: number; failed: number } | { kind: "error"; msg: string };
+type SingleState =
+  | { kind: "idle" }
+  | { kind: "sending"; email: string }
+  | { kind: "ok"; name: string; email: string }
+  | { kind: "error"; email: string; msg: string };
 
 const VARIANT_ACCENT: Record<Variant, string> = {
   A: "bg-amber-100 text-amber-800 border-amber-200",
@@ -50,6 +55,7 @@ export default function EmailTemplateEditor({
   const [save, setSave] = useState<SaveState>({ kind: "idle" });
   const [test, setTest] = useState<TestState>({ kind: "idle" });
   const [bulk, setBulk] = useState<BulkState>({ kind: "idle" });
+  const [single, setSingle] = useState<SingleState>({ kind: "idle" });
 
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -111,6 +117,41 @@ export default function EmailTemplateEditor({
     } catch (err) {
       setTest({
         kind: "error",
+        msg: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  async function handleSendOne(r: Recipient) {
+    const ok = window.confirm(
+      `¿Enviar el correo a ${r.name} (${r.email})?\n\nEsto va al inbox real del estudiante.`
+    );
+    if (!ok) return;
+    setSingle({ kind: "sending", email: r.email });
+    try {
+      const res = await fetch("/api/admin/campaign/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          variant,
+          total,
+          recipients: [{ email: r.email, name: r.name, completed: r.completed }],
+          template: buildOverride(),
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+      if (json.failed && json.failed > 0) {
+        const detail =
+          json.failures?.[0]?.error ?? "Falló sin detalle del servidor";
+        setSingle({ kind: "error", email: r.email, msg: detail });
+      } else {
+        setSingle({ kind: "ok", name: r.name, email: r.email });
+      }
+    } catch (err) {
+      setSingle({
+        kind: "error",
+        email: r.email,
         msg: err instanceof Error ? err.message : String(err),
       });
     }
@@ -322,7 +363,7 @@ export default function EmailTemplateEditor({
                 {showPreview ? "Ocultar preview" : "Mostrar preview"}
               </button>
             </div>
-            <Feedback save={save} test={test} bulk={bulk} />
+            <Feedback save={save} test={test} bulk={bulk} single={single} />
           </div>
 
           {/* Recipients */}
@@ -367,28 +408,44 @@ export default function EmailTemplateEditor({
                     </div>
                   ) : (
                     <ul className="divide-y divide-border">
-                      {filteredRecipients.map((r) => (
-                        <li key={r.email}>
-                          <label className="flex items-center gap-3 px-3 py-1.5 hover:bg-surface-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={selected.has(r.email)}
-                              onChange={() => toggleOne(r.email)}
-                            />
-                            <span className="flex-1 min-w-0 text-sm truncate">
-                              {r.name}
-                            </span>
-                            <span className="text-xs font-mono text-muted truncate hidden sm:inline">
-                              {r.email}
-                            </span>
-                            {variant === "A" && (
-                              <span className="text-[10px] font-mono text-muted-2 w-12 text-right shrink-0">
-                                {r.completed}/{total}
+                      {filteredRecipients.map((r) => {
+                        const sending =
+                          single.kind === "sending" && single.email === r.email;
+                        return (
+                          <li
+                            key={r.email}
+                            className="flex items-center gap-3 px-3 py-1.5 hover:bg-surface-2"
+                          >
+                            <label className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={selected.has(r.email)}
+                                onChange={() => toggleOne(r.email)}
+                              />
+                              <span className="flex-1 min-w-0 text-sm truncate">
+                                {r.name}
                               </span>
-                            )}
-                          </label>
-                        </li>
-                      ))}
+                              <span className="text-xs font-mono text-muted truncate hidden sm:inline">
+                                {r.email}
+                              </span>
+                              {variant === "A" && (
+                                <span className="text-[10px] font-mono text-muted-2 w-12 text-right shrink-0">
+                                  {r.completed}/{total}
+                                </span>
+                              )}
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => handleSendOne(r)}
+                              disabled={sending || single.kind === "sending"}
+                              title={`Enviar solo a ${r.name}`}
+                              className="shrink-0 text-[10px] font-mono uppercase tracking-wider border border-border bg-surface px-2 py-1 text-ink hover:border-ink hover:bg-surface-2 transition disabled:opacity-50 disabled:cursor-wait"
+                            >
+                              {sending ? "…" : "→ enviar"}
+                            </button>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>
@@ -457,10 +514,12 @@ function Feedback({
   save,
   test,
   bulk,
+  single,
 }: {
   save: SaveState;
   test: TestState;
   bulk: BulkState;
+  single: SingleState;
 }) {
   return (
     <div className="space-y-1.5 text-xs font-mono">
@@ -482,6 +541,16 @@ function Feedback({
       {test.kind === "error" && (
         <div className="text-rose-700 bg-rose-50 border border-rose-200 px-2 py-1">
           Error en prueba: {test.msg}
+        </div>
+      )}
+      {single.kind === "ok" && (
+        <div className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1">
+          Enviado a {single.name} ({single.email}).
+        </div>
+      )}
+      {single.kind === "error" && (
+        <div className="text-rose-700 bg-rose-50 border border-rose-200 px-2 py-1">
+          Error al enviar a {single.email}: {single.msg}
         </div>
       )}
       {bulk.kind === "ok" && (
