@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { adminClient } from "@/lib/supabase/admin";
 import { fetchAllPages } from "@/lib/supabase/fetchAll";
 import PageHeader from "@/components/admin/PageHeader";
+import ReportButton, { type ReportData } from "@/components/admin/ReportButton";
 
 export const dynamic = "force-dynamic";
 
@@ -436,6 +437,59 @@ export default async function DashboardPage() {
     month: "long",
   });
 
+  const deltaPct = (curr: number, prev: number): number | null =>
+    prev > 0 ? Math.round(((curr - prev) / prev) * 100) : null;
+
+  const reportData: ReportData = {
+    generatedAt: new Date().toISOString(),
+    kpis: {
+      interes: {
+        total: interes.length,
+        week: interesWeek,
+        deltaPct: deltaPct(interesWeek, interesPrevWeek),
+      },
+      inscripciones: {
+        total: inscripciones.length,
+        week: inscWeek,
+        deltaPct: deltaPct(inscWeek, inscPrevWeek),
+      },
+      entregas: {
+        total: entregas.length,
+        week: entrWeek,
+        deltaPct: deltaPct(entrWeek, entrPrevWeek),
+      },
+      quizzes: {
+        total: respuestas.length,
+        week: respWeek,
+        deltaPct: deltaPct(respWeek, respPrevWeek),
+      },
+    },
+    overall: {
+      uniqueStudents,
+      uniqueSchools,
+      talleresActivos: talleresPublished,
+      talleresTotal: talleres.length,
+      eventos,
+      avgScore,
+      passRate,
+      passing,
+      validResp: validResp.length,
+    },
+    funnel: funnel.map((step, i) => {
+      const prev = i > 0 ? funnel[i - 1].count : null;
+      const conversionPct =
+        prev !== null && prev > 0
+          ? Math.round((step.count / prev) * 100)
+          : null;
+      return { label: step.label, count: step.count, conversionPct };
+    }),
+    activity30d: activity.map((b) => ({ label: b.label, count: b.count })),
+    tallerStats,
+    scoreDist,
+    topSchools,
+    regional,
+  };
+
   return (
     <div className="space-y-10">
       <PageHeader
@@ -449,6 +503,7 @@ export default async function DashboardPage() {
             <span>{respuestas.length} quizzes en total</span>
           </>
         }
+        actions={<ReportButton data={reportData} />}
       />
 
       {/* KPI cards */}

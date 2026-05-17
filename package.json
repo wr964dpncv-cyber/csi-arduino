@@ -12,6 +12,7 @@
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
     "next": "^16.2.6",
+    "pptxgenjs": "^4.0.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "resend": "^6.12.3"
