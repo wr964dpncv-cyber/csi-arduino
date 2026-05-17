@@ -39,11 +39,13 @@ type Cohorts = {
 async function loadData() {
   const admin = adminClient();
 
-  const [{ count: talleresPublished }, quizzes, interes] = await Promise.all([
+  // Total = todos los talleres registrados (incluyendo no publicados).
+  // El programa son 12 talleres aunque algunos todavía no estén abiertos a
+  // los estudiantes; los correos hablan del programa completo.
+  const [{ count: talleresTotal }, quizzes, interes] = await Promise.all([
     admin
       .from("talleres")
-      .select("id", { count: "exact", head: true })
-      .eq("published", true),
+      .select("id", { count: "exact", head: true }),
     fetchAllPages<QuizRow>((from, to) =>
       admin
         .from("quiz_responses")
@@ -57,7 +59,7 @@ async function loadData() {
       .order("created_at", { ascending: false }),
   ]);
 
-  const total = talleresPublished ?? 0;
+  const total = talleresTotal ?? 0;
 
   // Aggregate distinct talleres per email
   type Agg = {
