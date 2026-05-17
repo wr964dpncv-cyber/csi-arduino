@@ -64,9 +64,32 @@ export default function QuizForm({
       region: string | null;
     };
   } | null>(null);
+  // Recuerda qué email y qué valores fueron auto-pre-llenados, para poder
+  // limpiarlos cuando el estudiante cambie el email (sin borrar lo que
+  // escribió a mano).
+  const [prefilledFor, setPrefilledFor] = useState<string | null>(null);
+  const [prefilledValues, setPrefilledValues] = useState<{
+    name?: string;
+    phone?: string;
+    school?: string;
+    region?: string;
+  }>({});
 
   useEffect(() => {
     const email = studentEmail.trim().toLowerCase();
+
+    // Si el email cambió respecto al último pre-llenado, limpia los datos
+    // que provienen de ese pre-llenado para que no se filtren al nuevo email.
+    if (prefilledFor && email !== prefilledFor) {
+      setProgress(null);
+      if (studentName === prefilledValues.name) setStudentName("");
+      if (studentPhone === prefilledValues.phone) setStudentPhone("");
+      if (studentSchool === prefilledValues.school) setStudentSchool("");
+      if (studentRegion === prefilledValues.region) setStudentRegion("");
+      setPrefilledFor(null);
+      setPrefilledValues({});
+    }
+
     if (!email.includes("@") || !email.includes(".")) {
       setProgress(null);
       return;
@@ -81,12 +104,27 @@ export default function QuizForm({
           if (!data) return;
           setProgress(data);
           const pf = data.prefill;
+          const applied: typeof prefilledValues = {};
           if (pf) {
-            if (pf.name && !studentName.trim()) setStudentName(pf.name);
-            if (pf.phone && !studentPhone.trim()) setStudentPhone(pf.phone);
-            if (pf.school && !studentSchool.trim()) setStudentSchool(pf.school);
-            if (pf.region && !studentRegion) setStudentRegion(pf.region);
+            if (pf.name && !studentName.trim()) {
+              setStudentName(pf.name);
+              applied.name = pf.name;
+            }
+            if (pf.phone && !studentPhone.trim()) {
+              setStudentPhone(pf.phone);
+              applied.phone = pf.phone;
+            }
+            if (pf.school && !studentSchool.trim()) {
+              setStudentSchool(pf.school);
+              applied.school = pf.school;
+            }
+            if (pf.region && !studentRegion) {
+              setStudentRegion(pf.region);
+              applied.region = pf.region;
+            }
           }
+          setPrefilledFor(email);
+          setPrefilledValues(applied);
         })
         .catch(() => {});
     }, 500);
@@ -94,6 +132,7 @@ export default function QuizForm({
       clearTimeout(timeout);
       controller.abort();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentEmail]);
 
   const mcQuestions = questions.filter(
