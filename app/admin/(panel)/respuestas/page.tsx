@@ -1,5 +1,6 @@
 import { adminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
+import { fetchAllPages } from "@/lib/supabase/fetchAll";
 import PageHeader from "@/components/admin/PageHeader";
 import ResponsesTable, {
   type Row,
@@ -13,13 +14,16 @@ async function getResponses(): Promise<Row[]> {
   if (!isSupabaseConfigured()) return [];
   try {
     const admin = adminClient();
-    const { data } = await admin
-      .from("quiz_responses")
-      .select(
-        "id, created_at, taller_n, taller_title, student_name, student_email, student_school, score, total, answers, file_uploads, text_answers"
-      )
-      .order("created_at", { ascending: false });
-    return (data as Row[]) ?? [];
+    const { data } = await fetchAllPages<Row>((from, to) =>
+      admin
+        .from("quiz_responses")
+        .select(
+          "id, created_at, taller_n, taller_title, student_name, student_email, student_school, score, total, answers, file_uploads, text_answers"
+        )
+        .order("created_at", { ascending: false })
+        .range(from, to)
+    );
+    return data;
   } catch {
     return [];
   }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { adminClient } from "@/lib/supabase/admin";
+import { fetchAllPages } from "@/lib/supabase/fetchAll";
 import PageHeader from "@/components/admin/PageHeader";
 
 export const dynamic = "force-dynamic";
@@ -64,12 +65,15 @@ async function getData() {
       talleresRes,
       eventosCount,
     ] = await Promise.all([
-      admin
-        .from("quiz_responses")
-        .select(
-          "id, created_at, taller_n, taller_title, student_name, student_email, student_school, score, total"
-        )
-        .order("created_at", { ascending: false }),
+      fetchAllPages<Resp>((from, to) =>
+        admin
+          .from("quiz_responses")
+          .select(
+            "id, created_at, taller_n, taller_title, student_name, student_email, student_school, score, total"
+          )
+          .order("created_at", { ascending: false })
+          .range(from, to)
+      ),
       supabase
         .from("reto_interes")
         .select("id, created_at, nombre, email, escuela, region")
@@ -87,7 +91,7 @@ async function getData() {
     ]);
 
     return {
-      respuestas: (respuestasRes.data ?? []) as Resp[],
+      respuestas: respuestasRes.data,
       interes: (interesRes.data ?? []) as Interes[],
       inscripciones: (inscripcionesRes.data ?? []) as Inscripcion[],
       entregas: (entregasRes.data ?? []) as Entrega[],

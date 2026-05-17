@@ -1,6 +1,18 @@
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { adminClient } from "@/lib/supabase/admin";
+import { fetchAllPages } from "@/lib/supabase/fetchAll";
 import { csvResponse, rowsToCSV } from "@/lib/csv";
+
+type ExportRow = {
+  created_at: string;
+  taller_n: number;
+  taller_title: string;
+  student_name: string;
+  student_email: string;
+  student_school: string | null;
+  score: number;
+  total: number;
+};
 
 export async function GET() {
   if (!isSupabaseConfigured()) {
@@ -14,16 +26,22 @@ export async function GET() {
   if (!user) return new Response("No autorizado", { status: 401 });
 
   const admin = adminClient();
-  const { data, error } = await admin
-    .from("quiz_responses")
-    .select(
-      "created_at, taller_n, taller_title, student_name, student_email, student_school, score, total"
-    )
-    .order("created_at", { ascending: true });
+  const { data, error } = await fetchAllPages<ExportRow>((from, to) =>
+    admin
+      .from("quiz_responses")
+      .select(
+        "created_at, taller_n, taller_title, student_name, student_email, student_school, score, total"
+      )
+      .order("created_at", { ascending: true })
+      .range(from, to)
+  );
 
-  if (error) return new Response("Error: " + error.message, { status: 500 });
+  if (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    return new Response("Error: " + msg, { status: 500 });
+  }
 
-  const flat = (data ?? []).map((r) => ({
+  const flat = data.map((r) => ({
     fecha: new Date(r.created_at).toLocaleString("es-PA"),
     taller_n: r.taller_n,
     taller: r.taller_title,

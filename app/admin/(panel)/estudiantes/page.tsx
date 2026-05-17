@@ -1,5 +1,6 @@
 import { adminClient } from "@/lib/supabase/admin";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { fetchAllPages } from "@/lib/supabase/fetchAll";
 import PageHeader from "@/components/admin/PageHeader";
 import StudentsTable, { type StudentRow } from "./StudentsTable";
 
@@ -26,16 +27,19 @@ async function getStudents(): Promise<{
     const admin = adminClient();
     const supabase = await createClient();
     const [respRes, talleresRes] = await Promise.all([
-      admin
-        .from("quiz_responses")
-        .select(
-          "created_at, taller_n, student_name, student_email, student_school, score, total"
-        )
-        .order("created_at", { ascending: false }),
+      fetchAllPages<RawResp>((from, to) =>
+        admin
+          .from("quiz_responses")
+          .select(
+            "created_at, taller_n, student_name, student_email, student_school, score, total"
+          )
+          .order("created_at", { ascending: false })
+          .range(from, to)
+      ),
       supabase.from("talleres").select("id", { count: "exact", head: true }),
     ]);
 
-    const resps = (respRes.data ?? []) as RawResp[];
+    const resps = respRes.data;
     const totalTalleres = talleresRes.count ?? 0;
 
     // Group by email
