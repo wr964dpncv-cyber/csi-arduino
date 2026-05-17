@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { REGIONES_EDUCATIVAS } from "@/lib/reto";
 
 type Question = {
   id: string;
@@ -39,6 +40,7 @@ export default function QuizForm({
   const [studentEmail, setStudentEmail] = useState("");
   const [studentSchool, setStudentSchool] = useState("");
   const [studentPhone, setStudentPhone] = useState("");
+  const [studentRegion, setStudentRegion] = useState("");
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [files, setFiles] = useState<Record<string, File>>({});
   const [texts, setTexts] = useState<Record<string, string>>({});
@@ -115,6 +117,7 @@ export default function QuizForm({
       form.append("studentEmail", studentEmail);
       form.append("studentSchool", studentSchool);
       form.append("studentPhone", studentPhone);
+      form.append("studentRegion", studentRegion);
       form.append(
         "answers",
         JSON.stringify(
@@ -363,7 +366,7 @@ export default function QuizForm({
         <div className="grid md:grid-cols-2 gap-4">
           <label className="block">
             <div className="text-sm text-muted mb-1.5">
-              Número de celular <span className="text-accent-dark">*</span>
+              Teléfono / WhatsApp <span className="text-accent-dark">*</span>
             </div>
             <input
               type="tel"
@@ -388,6 +391,24 @@ export default function QuizForm({
             />
           </label>
         </div>
+        <label className="block">
+          <div className="text-sm text-muted mb-1.5">
+            Región educativa{" "}
+            <span className="text-xs text-muted-2 font-mono">(opcional)</span>
+          </div>
+          <select
+            className={inputCls}
+            value={studentRegion}
+            onChange={(e) => setStudentRegion(e.target.value)}
+          >
+            <option value="">Selecciona tu región…</option>
+            {REGIONES_EDUCATIVAS.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        </label>
         {progress && progress.allTalleres.length > 0 && (() => {
           const completedSet = new Set(progress.completed);
           const missing = progress.allTalleres.filter(

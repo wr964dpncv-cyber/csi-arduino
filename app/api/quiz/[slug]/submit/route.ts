@@ -31,6 +31,7 @@ export async function POST(
   let studentEmail = "";
   let studentSchool = "";
   let studentPhone = "";
+  let studentRegion = "";
   let answers: Array<{ question_id: string; selected_index: number }> = [];
   let textAnswers: Record<string, string> = {};
   const filesByQuestion = new Map<string, File>();
@@ -41,6 +42,7 @@ export async function POST(
     studentEmail = String(form.get("studentEmail") ?? "");
     studentSchool = String(form.get("studentSchool") ?? "");
     studentPhone = String(form.get("studentPhone") ?? "");
+    studentRegion = String(form.get("studentRegion") ?? "");
     try {
       answers = JSON.parse(String(form.get("answers") ?? "[]"));
     } catch {
@@ -63,6 +65,7 @@ export async function POST(
       studentEmail = body.studentEmail ?? "";
       studentSchool = body.studentSchool ?? "";
       studentPhone = body.studentPhone ?? "";
+      studentRegion = body.studentRegion ?? "";
       answers = body.answers ?? [];
       textAnswers = body.text_answers ?? {};
     } catch {
@@ -239,6 +242,7 @@ export async function POST(
     student_email: emailLower,
     student_school: studentSchool.trim() || null,
     student_phone: studentPhone.trim(),
+    student_region: studentRegion.trim() || null,
     answers: scoredAnswers,
     file_uploads: fileUploads,
     text_answers: cleanedTextAnswers,
@@ -269,6 +273,9 @@ export async function POST(
     };
     if (studentSchool.trim()) {
       backfill.student_school = studentSchool.trim();
+    }
+    if (studentRegion.trim()) {
+      backfill.student_region = studentRegion.trim();
     }
     await admin
       .from("quiz_responses")
