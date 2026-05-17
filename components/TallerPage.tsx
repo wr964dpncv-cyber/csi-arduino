@@ -211,7 +211,7 @@ export default function TallerPage({
           </div>
 
           {!isUnpublished ? (
-            <div className="bg-surface border border-border p-7 flex flex-col max-w-xl">
+            <div className="bg-surface border border-border p-7 flex flex-col max-w-3xl">
               <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-dark mb-4">
                 ▸ Quiz del taller
               </div>
