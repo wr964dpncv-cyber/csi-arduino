@@ -27,6 +27,7 @@ const baseGroups = [
       { href: "/admin/talleres", label: "Talleres" },
       { href: "/admin/calendario", label: "Calendario" },
       { href: "/admin/estudiantes", label: "Estudiantes" },
+      { href: "/admin/contactos", label: "Contactos" },
       { href: "/admin/respuestas", label: "Respuestas Quiz" },
     ],
   },
