@@ -16,7 +16,7 @@ export async function GET(req: Request) {
   }
 
   const admin = adminClient();
-  const [respRes, talleresRes] = await Promise.all([
+  const [respRes, talleresRes, interesRes] = await Promise.all([
     admin
       .from("quiz_responses")
       .select("taller_n")
@@ -26,6 +26,11 @@ export async function GET(req: Request) {
       .select("n, title")
       .eq("published", true)
       .order("n", { ascending: true }),
+    admin
+      .from("reto_interes")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle(),
   ]);
 
   const completed = Array.from(
@@ -33,6 +38,7 @@ export async function GET(req: Request) {
   ).sort((a, b) => a - b);
 
   const allTalleres = (talleresRes.data ?? []) as Array<{ n: number; title: string }>;
+  const retoInteresado = Boolean(interesRes.data);
 
-  return NextResponse.json({ completed, allTalleres });
+  return NextResponse.json({ completed, allTalleres, retoInteresado });
 }

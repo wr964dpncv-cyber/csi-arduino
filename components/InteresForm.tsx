@@ -12,7 +12,9 @@ export default function InteresForm() {
     region: "",
   });
   const [submitting, setSubmitting] = useState(false);
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "success" | "already" | "error"
+  >("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const update = (key: keyof typeof data, value: string) =>
@@ -29,6 +31,10 @@ export default function InteresForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      if (res.status === 409) {
+        setStatus("already");
+        return;
+      }
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
         throw new Error(j.error ?? "No se pudo enviar.");
@@ -56,6 +62,23 @@ export default function InteresForm() {
         </div>
         <p className="mt-3 text-sm text-muted-2 leading-relaxed">
           Te avisaremos por correo apenas se publiquen las bases del Reto.
+        </p>
+      </div>
+    );
+  }
+
+  if (status === "already") {
+    return (
+      <div className="border border-white/30 bg-white/[0.06] px-6 py-8 text-center">
+        <div className="inline-flex h-10 w-10 items-center justify-center bg-white/15 text-surface font-mono mb-3">
+          ✓
+        </div>
+        <div className="font-display text-2xl text-surface tracking-tight">
+          Ya estás en la lista
+        </div>
+        <p className="mt-3 text-sm text-muted-2 leading-relaxed">
+          Este correo ya está registrado. Te escribiremos apenas se publiquen
+          las bases del Reto.
         </p>
       </div>
     );

@@ -45,6 +45,21 @@ export async function POST(req: Request) {
   if (isSupabaseConfigured()) {
     try {
       const supabase = await createClient();
+      const { data: existing } = await supabase
+        .from("reto_interes")
+        .select("id, created_at")
+        .eq("email", clean.email)
+        .maybeSingle();
+      if (existing) {
+        return NextResponse.json(
+          {
+            error: "Ya te registraste con este correo.",
+            alreadyRegistered: true,
+            registeredAt: existing.created_at,
+          },
+          { status: 409 }
+        );
+      }
       const { error } = await supabase.from("reto_interes").insert({
         nombre: clean.nombre,
         email: clean.email,
@@ -52,7 +67,15 @@ export async function POST(req: Request) {
         escuela: clean.escuela ?? null,
         region: clean.region ?? null,
       });
-      if (error) console.error("[reto:interes] DB error", error);
+      if (error) {
+        if ((error as { code?: string }).code === "23505") {
+          return NextResponse.json(
+            { error: "Ya te registraste con este correo.", alreadyRegistered: true },
+            { status: 409 }
+          );
+        }
+        console.error("[reto:interes] DB error", error);
+      }
     } catch (err) {
       console.error("[reto:interes] DB failed", err);
     }
