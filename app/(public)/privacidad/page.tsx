@@ -103,6 +103,15 @@ export default function PrivacidadPage() {
               >
                 daniel10abadi@gmail.com
               </a>{" "}
+              o por WhatsApp al{" "}
+              <a
+                href="https://wa.me/50768641929"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent-dark underline underline-offset-4 hover:text-ink transition"
+              >
+                +507 6864-1929
+              </a>{" "}
               y los borraremos.
             </p>
           </div>
