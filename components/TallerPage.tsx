@@ -33,10 +33,8 @@ export default function TallerPage({
   const eventStatus = getEventStatus(eventDate, today);
   const isUnpublished = taller.published === false;
   const isUpcoming =
-    isUnpublished ||
-    (eventStatus === "future" && (!taller.videoId || !taller.quizUrl));
+    isUnpublished || (eventStatus === "future" && !taller.videoId);
   const showVideo = !isUnpublished && Boolean(taller.videoId);
-  const showQuiz = !isUnpublished && Boolean(taller.quizUrl);
 
   return (
     <>
@@ -208,82 +206,32 @@ export default function TallerPage({
             <p className="mt-4 text-muted leading-relaxed">
               {isUnpublished
                 ? "El quiz se habilitará cuando se publique el taller."
-                : "Elige una de las dos opciones según el correo que vayas a usar."}
+                : "Completa el quiz directamente en el sitio con cualquier correo."}
             </p>
           </div>
 
           {!isUnpublished ? (
-            <>
-            <div className="mb-6 border border-accent/40 bg-accent/10 px-5 py-4 text-sm leading-relaxed">
-              <span className="font-semibold text-accent-dark">El quiz ya está integrado en el sitio.</span>{" "}
-              Si no tienes correo institucional MEDUCA, no cambia nada — completa el quiz directamente aquí y sigue avanzando.
-              Si tienes correo institucional MEDUCA, sigue usando Microsoft Forms como siempre (Opción B).
-            </div>
-            <div className="grid md:grid-cols-2 gap-px bg-border border border-border">
-              {/* Opción A: Quiz nativo */}
-              <div className="bg-surface p-7 flex flex-col">
-                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-dark mb-4">
-                  ▸ Opción A · Cualquier correo
-                </div>
-                <h3 className="font-display text-xl tracking-tight">
-                  Quiz en el sitio
-                </h3>
-                <p className="mt-2 text-sm text-muted leading-relaxed flex-1">
-                  Completa el quiz aquí mismo con cualquier correo. Recibe tu
-                  resultado al instante.
-                </p>
-                <Link
-                  href={`/talleres/${taller.slug}/quiz`}
-                  className="mt-6 inline-flex items-center justify-between bg-ink text-surface px-5 py-4 text-sm hover:bg-accent hover:text-ink glow-gold transition group"
-                >
-                  <span className="font-medium">Empezar quiz</span>
-                  <span className="font-mono text-muted-2 group-hover:text-ink text-xs">
-                    →
-                  </span>
-                </Link>
+            <div className="bg-surface border border-border p-7 flex flex-col max-w-xl">
+              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-dark mb-4">
+                ▸ Quiz del taller
               </div>
-
-              {/* Opción B: Microsoft Forms */}
-              <div className="bg-surface p-7 flex flex-col">
-                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-dark mb-4">
-                  ▸ Opción B · MEDUCA
-                </div>
-                <h3 className="font-display text-xl tracking-tight">
-                  Microsoft Forms
-                </h3>
-                <p className="mt-2 text-sm text-muted leading-relaxed flex-1">
-                  Si tienes correo institucional MEDUCA, completa el quiz a
-                  través de Microsoft Forms.
-                </p>
-                {showQuiz ? (
-                  <a
-                    href={taller.quizUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-6 inline-flex items-center justify-between border border-ink px-5 py-4 text-sm hover:bg-ink hover:text-surface transition"
-                  >
-                    <span className="font-medium">Abrir formulario</span>
-                    <span className="font-mono text-muted-2 text-xs">
-                      {taller.quizUrl?.includes("google.com") ? "forms.google.com" : "forms.office.com"} →
-                    </span>
-                  </a>
-                ) : (
-                  <div className="mt-6 border border-dashed border-border px-5 py-4 text-sm text-muted">
-                    {calendarEvent ? (
-                      <>
-                        Disponible el{" "}
-                        <span className="font-medium text-accent-dark">
-                          {calendarEvent.day} {calendarEvent.dateText}
-                        </span>
-                      </>
-                    ) : (
-                      <>Disponible en la fecha del taller</>
-                    )}
-                  </div>
-                )}
-              </div>
+              <h3 className="font-display text-xl tracking-tight">
+                Quiz en el sitio
+              </h3>
+              <p className="mt-2 text-sm text-muted leading-relaxed">
+                Completa el quiz aquí mismo con cualquier correo. Recibe tu
+                resultado al instante.
+              </p>
+              <Link
+                href={`/talleres/${taller.slug}/quiz`}
+                className="mt-6 inline-flex items-center justify-between bg-ink text-surface px-5 py-4 text-sm hover:bg-accent hover:text-ink glow-gold transition group"
+              >
+                <span className="font-medium">Empezar quiz</span>
+                <span className="font-mono text-muted-2 group-hover:text-ink text-xs">
+                  →
+                </span>
+              </Link>
             </div>
-            </>
           ) : (
             <div className="inline-flex flex-col gap-1.5 border border-dashed border-border px-7 py-5">
               <div className="font-mono text-xs uppercase tracking-wider text-rose-700">
@@ -305,9 +253,9 @@ export default function TallerPage({
           )}
 
           <p className="mt-8 text-sm text-muted leading-relaxed max-w-2xl">
-            <span className="text-ink font-medium">Nota:</span> ambas opciones
-            evalúan el mismo contenido. Si tienes dificultades, contacta a
-            Daniel directamente por WhatsApp o correo.
+            <span className="text-ink font-medium">Nota:</span> si tienes
+            dificultades con el quiz, contacta a Daniel directamente por
+            WhatsApp o correo.
           </p>
         </div>
       </section>
