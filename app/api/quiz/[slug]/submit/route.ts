@@ -250,6 +250,25 @@ export async function POST(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // Backfill: rellena nombre/escuela en otras respuestas del mismo estudiante.
+  // Ej: si entregó Taller 0 como histórico (sólo email + score), al hacer
+  // un quiz nuevo con su nombre real, ese se propaga a sus quizzes anteriores.
+  try {
+    const backfill: Record<string, string> = {
+      student_name: studentName.trim(),
+    };
+    if (studentSchool.trim()) {
+      backfill.student_school = studentSchool.trim();
+    }
+    await admin
+      .from("quiz_responses")
+      .update(backfill)
+      .eq("student_email", emailLower)
+      .neq("taller_id", taller.id);
+  } catch (err) {
+    console.error("[quiz:submit] backfill failed", err);
+  }
+
   await notifyQuiz({
     tallerN: taller.n,
     tallerTitle: taller.title,

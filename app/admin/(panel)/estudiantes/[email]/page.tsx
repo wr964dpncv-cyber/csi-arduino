@@ -118,13 +118,19 @@ export default async function EstudianteDetailPage({
 
   const { responses, talleres, questionsMap } = data;
 
-  // Use most recent response for student info
-  const latest = responses[responses.length - 1];
+  // Pick info from the most recently created response (most up-to-date),
+  // preferring one that has a school filled in if available.
+  const byDateDesc = [...responses].sort(
+    (a, b) => +new Date(b.created_at) - +new Date(a.created_at)
+  );
+  const newest = byDateDesc[0];
+  const newestWithSchool = byDateDesc.find((r) => r.student_school) ?? newest;
   const student = {
-    name: latest.student_name,
-    email: latest.student_email,
-    school: latest.student_school,
+    name: newest.student_name,
+    email: newest.student_email,
+    school: newestWithSchool.student_school,
   };
+  const lastActivity = newest.created_at;
 
   // Map taller_n → response
   const responseByN = new Map<number, Resp>();
@@ -210,7 +216,7 @@ export default async function EstudianteDetailPage({
         />
         <Stat
           label="Última entrega"
-          value={fmtShortDate(latest.created_at)}
+          value={fmtShortDate(lastActivity)}
         />
       </section>
 
