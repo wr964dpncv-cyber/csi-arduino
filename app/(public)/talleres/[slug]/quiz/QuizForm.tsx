@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type Question = {
@@ -49,6 +49,33 @@ export default function QuizForm({
     total?: number;
     created_at?: string;
   } | null>(null);
+  const [progress, setProgress] = useState<{
+    completed: number[];
+    allTalleres: Array<{ n: number; title: string }>;
+  } | null>(null);
+
+  useEffect(() => {
+    const email = studentEmail.trim().toLowerCase();
+    if (!email.includes("@") || !email.includes(".")) {
+      setProgress(null);
+      return;
+    }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => {
+      fetch(`/api/quiz/progress?email=${encodeURIComponent(email)}`, {
+        signal: controller.signal,
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (data) setProgress(data);
+        })
+        .catch(() => {});
+    }, 500);
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [studentEmail]);
 
   const mcQuestions = questions.filter(
     (q) => (q.question_type ?? "multiple_choice") === "multiple_choice"
@@ -343,6 +370,54 @@ export default function QuizForm({
             placeholder="Nombre de tu colegio"
           />
         </label>
+        {progress && progress.allTalleres.length > 0 && (() => {
+          const completedSet = new Set(progress.completed);
+          const missing = progress.allTalleres.filter(
+            (t) => !completedSet.has(t.n) && t.n !== tallerNumber
+          );
+          const alreadyDoneThis = completedSet.has(tallerNumber);
+          if (progress.completed.length === 0) {
+            return (
+              <div className="border-l-2 border-accent bg-surface px-4 py-3 text-sm">
+                Este sería tu primer taller. Te faltan {progress.allTalleres.length}{" "}
+                en total.
+              </div>
+            );
+          }
+          if (missing.length === 0 && alreadyDoneThis) {
+            return (
+              <div className="border-l-2 border-emerald-500 bg-surface px-4 py-3 text-sm">
+                Ya completaste todos los talleres publicados.
+              </div>
+            );
+          }
+          if (missing.length === 0) {
+            return (
+              <div className="border-l-2 border-accent bg-surface px-4 py-3 text-sm">
+                Después de este, tendrás todos los talleres completos.
+              </div>
+            );
+          }
+          return (
+            <div className="border-l-2 border-accent bg-surface px-4 py-3 text-sm space-y-1">
+              <div>
+                Ya completaste{" "}
+                <span className="font-mono">{progress.completed.length}</span> de{" "}
+                <span className="font-mono">{progress.allTalleres.length}</span>{" "}
+                talleres.
+                {alreadyDoneThis && (
+                  <span className="text-muted"> (incluyendo éste).</span>
+                )}
+              </div>
+              <div className="text-muted">
+                Te falta{missing.length === 1 ? "" : "n"}:{" "}
+                <span className="font-mono text-ink">
+                  {missing.map((t) => `Taller ${t.n}`).join(", ")}.
+                </span>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Preguntas */}
