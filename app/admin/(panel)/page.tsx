@@ -4,6 +4,7 @@ import { adminClient } from "@/lib/supabase/admin";
 import { fetchAllPages } from "@/lib/supabase/fetchAll";
 import PageHeader from "@/components/admin/PageHeader";
 import ReportButton, { type ReportData } from "@/components/admin/ReportButton";
+import CampaignTestButton from "@/components/admin/CampaignTestButton";
 
 export const dynamic = "force-dynamic";
 
@@ -880,7 +881,8 @@ export default async function DashboardPage() {
       {/* Quick actions */}
       <section>
         <SectionTitle>Acciones rápidas</SectionTitle>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 items-start">
+          <CampaignTestButton />
           <QuickAction href="/admin/talleres" label="Editar talleres" />
           <QuickAction href="/admin/calendario" label="Ajustar calendario" />
           <QuickAction href="/admin/notificaciones" label="Notificaciones" />
