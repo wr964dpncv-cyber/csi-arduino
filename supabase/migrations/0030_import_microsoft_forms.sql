@@ -32,7 +32,7 @@ begin
   select
     v_taller_id, 0, v_taller_title,
     name, email, null,
-    '[]'::jsonb, score, 4, ctime
+    '[]'::jsonb, score, 4, ctime::timestamptz
   from (values
       ('abigail.taborda@meduca.edu.pa', 'Abigail Taborda', 3, '2026-05-02T20:17:31Z'),
       ('adiel.jordan@meduca.edu.pa', 'Adiel Jordan', 4, '2026-04-12T11:16:30Z'),
@@ -115,7 +115,7 @@ begin
   select
     v_taller_id, 1, v_taller_title,
     name, email, null,
-    '[]'::jsonb, score, 7, ctime
+    '[]'::jsonb, score, 7, ctime::timestamptz
   from (values
       ('abdiel.barria3@meduca.edu.pa', 'Abdiel Barria', 5, '2026-05-11T02:02:06Z'),
       ('abigail.taborda@meduca.edu.pa', 'Abigail Taborda', 7, '2026-05-02T21:03:22Z'),
@@ -268,7 +268,7 @@ begin
   select
     v_taller_id, 2, v_taller_title,
     name, email, null,
-    '[]'::jsonb, score, 10, ctime
+    '[]'::jsonb, score, 10, ctime::timestamptz
   from (values
       ('abigail.taborda@meduca.edu.pa', 'Abigail Taborda', 8, '2026-05-03T15:01:52Z'),
       ('abrahan.garcia1@meduca.edu.pa', 'Abrahan Garcia', 10, '2026-03-26T18:33:00Z'),
@@ -418,7 +418,7 @@ begin
   select
     v_taller_id, 3, v_taller_title,
     name, email, null,
-    '[]'::jsonb, score, 8, ctime
+    '[]'::jsonb, score, 8, ctime::timestamptz
   from (values
       ('abdiel.barria3@meduca.edu.pa', 'Abdiel Barria', 6, '2026-05-11T02:36:03Z'),
       ('abrahan.garcia1@meduca.edu.pa', 'Abrahan Garcia', 7, '2026-04-01T12:05:27Z'),
@@ -562,7 +562,7 @@ begin
   select
     v_taller_id, 4, v_taller_title,
     name, email, null,
-    '[]'::jsonb, score, 8, ctime
+    '[]'::jsonb, score, 8, ctime::timestamptz
   from (values
       ('abrahan.garcia1@meduca.edu.pa', 'Abrahan Garcia', 7, '2026-04-06T18:51:48Z'),
       ('adiel.jordan@meduca.edu.pa', 'Adiel Jordan', 6, '2026-04-11T18:17:32Z'),
@@ -703,7 +703,7 @@ begin
   select
     v_taller_id, 5, v_taller_title,
     name, email, null,
-    '[]'::jsonb, score, 8, ctime
+    '[]'::jsonb, score, 8, ctime::timestamptz
   from (values
       ('abrahan.garcia1@meduca.edu.pa', 'Abrahan Garcia', 6, '2026-04-20T19:42:37Z'),
       ('adiel.jordan@meduca.edu.pa', 'Adiel Jordan', 7, '2026-04-22T15:18:51Z'),
@@ -800,7 +800,7 @@ begin
   select
     v_taller_id, 6, v_taller_title,
     name, email, null,
-    '[]'::jsonb, score, 6, ctime
+    '[]'::jsonb, score, 6, ctime::timestamptz
   from (values
       ('abrahan.garcia1@meduca.edu.pa', 'Abrahan Garcia', 5, '2026-04-25T01:04:55Z'),
       ('adiel.jordan@meduca.edu.pa', 'Adiel Jordan', 5, '2026-04-23T18:43:30Z'),
@@ -905,7 +905,7 @@ begin
   select
     v_taller_id, 7, v_taller_title,
     name, email, null,
-    '[]'::jsonb, score, 8, ctime
+    '[]'::jsonb, score, 8, ctime::timestamptz
   from (values
       ('abrahan.garcia1@meduca.edu.pa', 'Abrahan Garcia', 7, '2026-04-28T13:03:49Z'),
       ('adiel.jordan@meduca.edu.pa', 'Adiel Jordan', 7, '2026-04-27T18:31:31Z'),
@@ -1009,7 +1009,7 @@ begin
   select
     v_taller_id, 8, v_taller_title,
     name, email, null,
-    '[]'::jsonb, score, 6, ctime
+    '[]'::jsonb, score, 6, ctime::timestamptz
   from (values
       ('abrahan.garcia1@meduca.edu.pa', 'Abrahan Garcia', 5, '2026-05-01T06:52:54Z'),
       ('adiel.jordan@meduca.edu.pa', 'Adiel Jordan', 5, '2026-04-30T18:22:16Z'),
@@ -1105,7 +1105,7 @@ begin
   select
     v_taller_id, 9, v_taller_title,
     name, email, null,
-    '[]'::jsonb, score, 9, ctime
+    '[]'::jsonb, score, 9, ctime::timestamptz
   from (values
       ('abrahan.garcia1@meduca.edu.pa', 'Abrahan Garcia', 5, '2026-05-04T18:43:58Z'),
       ('adiel.jordan@meduca.edu.pa', 'Adiel Jordan', 5, '2026-05-07T19:03:47Z'),
@@ -1180,7 +1180,7 @@ begin
   select
     v_taller_id, 10, v_taller_title,
     name, email, null,
-    '[]'::jsonb, score, 6, ctime
+    '[]'::jsonb, score, 6, ctime::timestamptz
   from (values
       ('abrahan.garcia1@meduca.edu.pa', 'Abrahan Garcia', 4, '2026-05-14T19:39:18Z'),
       ('bladimir.cabrera@meduca.edu.pa', 'Bladimir Cabrera', 4, '2026-05-16T15:21:09Z'),
