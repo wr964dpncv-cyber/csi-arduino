@@ -36,6 +36,12 @@ type Cohorts = {
   C: Recipient[]; // completed — terminaron los 12 del programa
 };
 
+type UnsubRow = {
+  email: string;
+  unsubscribed_at: string;
+  source: string | null;
+};
+
 async function loadData() {
   const admin = adminClient();
 
@@ -51,6 +57,7 @@ async function loadData() {
     { count: talleresPublished },
     quizzes,
     interes,
+    unsubsRes,
   ] = await Promise.all([
     admin.from("talleres").select("id", { count: "exact", head: true }),
     admin
@@ -68,10 +75,20 @@ async function loadData() {
       .from("reto_interes")
       .select("email, nombre, escuela")
       .order("created_at", { ascending: false }),
+    admin
+      .from("email_unsubscribes")
+      .select("email, unsubscribed_at, source")
+      .order("unsubscribed_at", { ascending: false }),
   ]);
 
   const total = talleresTotal ?? 0;
   const published = talleresPublished ?? 0;
+  const unsubs: UnsubRow[] = (unsubsRes.data ?? []).map((r) => ({
+    email: ((r as { email: string }).email ?? "").trim().toLowerCase(),
+    unsubscribed_at: (r as { unsubscribed_at: string }).unsubscribed_at,
+    source: (r as { source: string | null }).source,
+  }));
+  const unsubSet = new Set(unsubs.map((u) => u.email));
 
   // Aggregate distinct talleres per email
   type Agg = {
@@ -98,8 +115,16 @@ async function loadData() {
 
   const cohorts: Cohorts = { A: [], B: [], C: [] };
   let alDia = 0;
+  let unsubExcluded = 0;
 
   for (const [email, agg] of byEmail.entries()) {
+    // Excluimos a desuscritos de las cohortes — no van a recibir nada
+    // igual (sendUser filtra) pero los sacamos para no inflar contadores
+    // ni confundir al admin al elegir destinatarios.
+    if (unsubSet.has(email)) {
+      unsubExcluded++;
+      continue;
+    }
     const completed = agg.talleres.size;
     const recipient: Recipient = {
       email,
@@ -128,6 +153,10 @@ async function loadData() {
     const email = (r.email ?? "").trim().toLowerCase();
     if (!email) continue;
     if (byEmail.has(email)) continue;
+    if (unsubSet.has(email)) {
+      unsubExcluded++;
+      continue;
+    }
     cohorts.B.push({
       email,
       name: r.nombre || email,
@@ -141,14 +170,12 @@ async function loadData() {
     cohorts[variant].sort((a, b) => a.name.localeCompare(b.name, "es"));
   }
 
-  return { total, published, cohorts, alDia };
+  return { total, published, cohorts, alDia, unsubs, unsubExcluded };
 }
 
 export default async function EmailsPage() {
-  const [{ total, published, cohorts, alDia }, templates] = await Promise.all([
-    loadData(),
-    getAllTemplates(),
-  ]);
+  const [{ total, published, cohorts, alDia, unsubs, unsubExcluded }, templates] =
+    await Promise.all([loadData(), getAllTemplates()]);
 
   return (
     <div className="space-y-10">
@@ -169,9 +196,82 @@ export default async function EmailsPage() {
                 {alDia} al día (sin correo)
               </span>
             )}
+            {unsubs.length > 0 && (
+              <span title="Pidieron darse de baja del programa. Quedan fuera de todos los envíos.">
+                {unsubs.length} desuscritos
+              </span>
+            )}
           </>
         }
       />
+
+      {unsubs.length > 0 && (
+        <details className="border border-border bg-surface-2 group">
+          <summary className="cursor-pointer px-5 py-4 flex items-center gap-3 hover:bg-surface select-none">
+            <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted">
+              Desuscritos
+            </span>
+            <span className="text-sm text-ink">
+              {unsubs.length} estudiante{unsubs.length === 1 ? "" : "s"} pidió
+              darse de baja
+            </span>
+            {unsubExcluded > 0 && (
+              <span className="text-xs font-mono text-muted">
+                · {unsubExcluded} excluidos de las cohortes
+              </span>
+            )}
+            <span className="ml-auto text-xs font-mono text-muted-2 group-open:hidden">
+              ver lista ▾
+            </span>
+            <span className="ml-auto text-xs font-mono text-muted-2 hidden group-open:inline">
+              ocultar ▴
+            </span>
+          </summary>
+          <div className="border-t border-border max-h-72 overflow-y-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-surface border-b border-border">
+                <tr className="text-left">
+                  <th className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-muted">
+                    Correo
+                  </th>
+                  <th className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-muted">
+                    Fecha
+                  </th>
+                  <th className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-muted">
+                    Origen
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {unsubs.map((u) => (
+                  <tr key={u.email} className="hover:bg-surface">
+                    <td className="px-4 py-1.5 font-mono text-xs text-ink truncate">
+                      {u.email}
+                    </td>
+                    <td className="px-4 py-1.5 font-mono text-xs text-muted">
+                      {new Date(u.unsubscribed_at).toLocaleString("es-PA", {
+                        timeZone: "America/Panama",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </td>
+                    <td className="px-4 py-1.5 font-mono text-[10px] text-muted-2">
+                      {u.source ?? "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="px-5 py-3 border-t border-border text-[11px] text-muted-2 font-mono leading-relaxed">
+            Para reactivar a alguien, borra su fila desde Supabase → Table
+            Editor → <code>email_unsubscribes</code>.
+          </div>
+        </details>
+      )}
 
       <div className="bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-900">
         <strong>Recordatorio:</strong> los placeholders disponibles son{" "}
