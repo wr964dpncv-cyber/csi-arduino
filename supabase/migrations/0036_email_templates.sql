@@ -19,7 +19,7 @@ create table if not exists public.email_templates (
   cta_label text,
   cta_url text,
   signature_html text not null default
-    'Cualquier duda, escríbeme directo por <a href="https://wa.me/50768641929" style="color:#0b1a35;font-weight:600;text-decoration:underline;">WhatsApp +507 6864-1929</a>.<br/><br/>— <strong>Daniel</strong> · Programa CSI',
+    'Cualquier duda, escríbeme directo por <a href="https://wa.me/50768641929" style="color:#0b1a35;font-weight:600;text-decoration:underline;">WhatsApp +507 6864-1929</a> o al correo <a href="mailto:daniel10abadi@gmail.com" style="color:#0b1a35;font-weight:600;text-decoration:underline;">daniel10abadi@gmail.com</a>.<br/><br/>— <strong>Daniel Abadi</strong> · Programa CSI',
   updated_at timestamptz not null default now(),
   updated_by text
 );
