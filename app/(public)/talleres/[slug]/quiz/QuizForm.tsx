@@ -64,7 +64,6 @@ export default function QuizForm({
       region: string | null;
     };
   } | null>(null);
-  const [editingProfile, setEditingProfile] = useState(false);
 
   useEffect(() => {
     const email = studentEmail.trim().toLowerCase();
@@ -370,11 +369,10 @@ export default function QuizForm({
 
         {(() => {
           const pf = progress?.prefill;
-          const haveName = !!pf?.name && !editingProfile;
-          const havePhone = !!pf?.phone && !editingProfile;
-          const haveSchool = !!pf?.school && !editingProfile;
-          const haveRegion = !!pf?.region && !editingProfile;
-          const anyHidden = haveName || havePhone || haveSchool || haveRegion;
+          const haveName = !!pf?.name;
+          const havePhone = !!pf?.phone;
+          const haveSchool = !!pf?.school;
+          const haveRegion = !!pf?.region;
 
           return (
             <>
@@ -458,15 +456,6 @@ export default function QuizForm({
                 </label>
               )}
 
-              {anyHidden && (
-                <button
-                  type="button"
-                  onClick={() => setEditingProfile(true)}
-                  className="text-xs font-mono text-muted hover:text-ink transition underline underline-offset-4"
-                >
-                  Editar mis datos
-                </button>
-              )}
             </>
           );
         })()}
