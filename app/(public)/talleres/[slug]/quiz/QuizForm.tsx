@@ -57,7 +57,14 @@ export default function QuizForm({
     completed: number[];
     allTalleres: Array<{ n: number; title: string }>;
     retoInteresado?: boolean;
+    prefill?: {
+      name: string | null;
+      phone: string | null;
+      school: string | null;
+      region: string | null;
+    };
   } | null>(null);
+  const [editingProfile, setEditingProfile] = useState(false);
 
   useEffect(() => {
     const email = studentEmail.trim().toLowerCase();
@@ -72,7 +79,15 @@ export default function QuizForm({
       })
         .then((r) => (r.ok ? r.json() : null))
         .then((data) => {
-          if (data) setProgress(data);
+          if (!data) return;
+          setProgress(data);
+          const pf = data.prefill;
+          if (pf) {
+            if (pf.name && !studentName.trim()) setStudentName(pf.name);
+            if (pf.phone && !studentPhone.trim()) setStudentPhone(pf.phone);
+            if (pf.school && !studentSchool.trim()) setStudentSchool(pf.school);
+            if (pf.region && !studentRegion) setStudentRegion(pf.region);
+          }
         })
         .catch(() => {});
     }, 500);
@@ -339,79 +354,122 @@ export default function QuizForm({
       {/* Datos del estudiante */}
       <div className="border border-border bg-surface-2 p-6 space-y-4">
         <div className="font-display text-lg">Tus datos</div>
-        <div className="grid md:grid-cols-2 gap-4">
-          <label className="block">
-            <div className="text-sm text-muted mb-1.5">
-              Nombre completo <span className="text-accent-dark">*</span>
-            </div>
-            <input
-              className={inputCls}
-              required
-              value={studentName}
-              onChange={(e) => setStudentName(e.target.value)}
-              placeholder="Tu nombre y apellido"
-            />
-          </label>
-          <label className="block">
-            <div className="text-sm text-muted mb-1.5">
-              Email <span className="text-accent-dark">*</span>
-            </div>
-            <input
-              type="email"
-              className={inputCls}
-              required
-              value={studentEmail}
-              onChange={(e) => setStudentEmail(e.target.value)}
-              placeholder="tucorreo@gmail.com"
-            />
-          </label>
-        </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          <label className="block">
-            <div className="text-sm text-muted mb-1.5">
-              Teléfono / WhatsApp <span className="text-accent-dark">*</span>
-            </div>
-            <input
-              type="tel"
-              className={inputCls}
-              required
-              value={studentPhone}
-              onChange={(e) => setStudentPhone(e.target.value)}
-              placeholder="6000-0000"
-              inputMode="tel"
-            />
-          </label>
-          <label className="block">
-            <div className="text-sm text-muted mb-1.5">
-              Escuela{" "}
-              <span className="text-xs text-muted-2 font-mono">(opcional)</span>
-            </div>
-            <input
-              className={inputCls}
-              value={studentSchool}
-              onChange={(e) => setStudentSchool(e.target.value)}
-              placeholder="Nombre de tu colegio"
-            />
-          </label>
-        </div>
         <label className="block">
           <div className="text-sm text-muted mb-1.5">
-            Región educativa{" "}
-            <span className="text-xs text-muted-2 font-mono">(opcional)</span>
+            Email <span className="text-accent-dark">*</span>
           </div>
-          <select
+          <input
+            type="email"
             className={inputCls}
-            value={studentRegion}
-            onChange={(e) => setStudentRegion(e.target.value)}
-          >
-            <option value="">Selecciona tu región…</option>
-            {REGIONES_EDUCATIVAS.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
+            required
+            value={studentEmail}
+            onChange={(e) => setStudentEmail(e.target.value)}
+            placeholder="tucorreo@gmail.com"
+          />
         </label>
+
+        {(() => {
+          const pf = progress?.prefill;
+          const haveName = !!pf?.name && !editingProfile;
+          const havePhone = !!pf?.phone && !editingProfile;
+          const haveSchool = !!pf?.school && !editingProfile;
+          const haveRegion = !!pf?.region && !editingProfile;
+          const anyHidden = haveName || havePhone || haveSchool || haveRegion;
+
+          return (
+            <>
+              {haveName ? (
+                <div className="text-sm text-muted">
+                  Hola, <span className="text-ink font-semibold">{studentName}</span>.
+                </div>
+              ) : (
+                <label className="block">
+                  <div className="text-sm text-muted mb-1.5">
+                    Nombre completo <span className="text-accent-dark">*</span>
+                  </div>
+                  <input
+                    className={inputCls}
+                    required
+                    value={studentName}
+                    onChange={(e) => setStudentName(e.target.value)}
+                    placeholder="Tu nombre y apellido"
+                  />
+                </label>
+              )}
+
+              {(!havePhone || !haveSchool) && (
+                <div className="grid md:grid-cols-2 gap-4">
+                  {!havePhone && (
+                    <label className="block">
+                      <div className="text-sm text-muted mb-1.5">
+                        Teléfono / WhatsApp{" "}
+                        <span className="text-accent-dark">*</span>
+                      </div>
+                      <input
+                        type="tel"
+                        className={inputCls}
+                        required
+                        value={studentPhone}
+                        onChange={(e) => setStudentPhone(e.target.value)}
+                        placeholder="6000-0000"
+                        inputMode="tel"
+                      />
+                    </label>
+                  )}
+                  {!haveSchool && (
+                    <label className="block">
+                      <div className="text-sm text-muted mb-1.5">
+                        Escuela{" "}
+                        <span className="text-xs text-muted-2 font-mono">
+                          (opcional)
+                        </span>
+                      </div>
+                      <input
+                        className={inputCls}
+                        value={studentSchool}
+                        onChange={(e) => setStudentSchool(e.target.value)}
+                        placeholder="Nombre de tu colegio"
+                      />
+                    </label>
+                  )}
+                </div>
+              )}
+
+              {!haveRegion && (
+                <label className="block">
+                  <div className="text-sm text-muted mb-1.5">
+                    Región educativa{" "}
+                    <span className="text-xs text-muted-2 font-mono">
+                      (opcional)
+                    </span>
+                  </div>
+                  <select
+                    className={inputCls}
+                    value={studentRegion}
+                    onChange={(e) => setStudentRegion(e.target.value)}
+                  >
+                    <option value="">Selecciona tu región…</option>
+                    {REGIONES_EDUCATIVAS.map((r) => (
+                      <option key={r} value={r}>
+                        {r}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+
+              {anyHidden && (
+                <button
+                  type="button"
+                  onClick={() => setEditingProfile(true)}
+                  className="text-xs font-mono text-muted hover:text-ink transition underline underline-offset-4"
+                >
+                  Editar mis datos
+                </button>
+              )}
+            </>
+          );
+        })()}
         {progress?.retoInteresado ? (
           <div className="text-sm text-muted pt-2 border-t border-border">
             Ya estás registrado para recibir información del Reto Nacional.
