@@ -30,6 +30,7 @@ export async function POST(
   let studentName = "";
   let studentEmail = "";
   let studentSchool = "";
+  let studentPhone = "";
   let answers: Array<{ question_id: string; selected_index: number }> = [];
   let textAnswers: Record<string, string> = {};
   const filesByQuestion = new Map<string, File>();
@@ -39,6 +40,7 @@ export async function POST(
     studentName = String(form.get("studentName") ?? "");
     studentEmail = String(form.get("studentEmail") ?? "");
     studentSchool = String(form.get("studentSchool") ?? "");
+    studentPhone = String(form.get("studentPhone") ?? "");
     try {
       answers = JSON.parse(String(form.get("answers") ?? "[]"));
     } catch {
@@ -60,6 +62,7 @@ export async function POST(
       studentName = body.studentName ?? "";
       studentEmail = body.studentEmail ?? "";
       studentSchool = body.studentSchool ?? "";
+      studentPhone = body.studentPhone ?? "";
       answers = body.answers ?? [];
       textAnswers = body.text_answers ?? {};
     } catch {
@@ -67,7 +70,12 @@ export async function POST(
     }
   }
 
-  if (!studentName.trim() || !studentEmail.trim() || !Array.isArray(answers)) {
+  if (
+    !studentName.trim() ||
+    !studentEmail.trim() ||
+    !studentPhone.trim() ||
+    !Array.isArray(answers)
+  ) {
     return NextResponse.json({ error: "Datos incompletos." }, { status: 400 });
   }
 
@@ -230,6 +238,7 @@ export async function POST(
     student_name: studentName.trim(),
     student_email: emailLower,
     student_school: studentSchool.trim() || null,
+    student_phone: studentPhone.trim(),
     answers: scoredAnswers,
     file_uploads: fileUploads,
     text_answers: cleanedTextAnswers,
@@ -256,6 +265,7 @@ export async function POST(
   try {
     const backfill: Record<string, string> = {
       student_name: studentName.trim(),
+      student_phone: studentPhone.trim(),
     };
     if (studentSchool.trim()) {
       backfill.student_school = studentSchool.trim();

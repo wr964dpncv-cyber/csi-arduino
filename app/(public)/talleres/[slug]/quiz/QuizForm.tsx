@@ -38,6 +38,7 @@ export default function QuizForm({
   const [studentName, setStudentName] = useState("");
   const [studentEmail, setStudentEmail] = useState("");
   const [studentSchool, setStudentSchool] = useState("");
+  const [studentPhone, setStudentPhone] = useState("");
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [files, setFiles] = useState<Record<string, File>>({});
   const [texts, setTexts] = useState<Record<string, string>>({});
@@ -113,6 +114,7 @@ export default function QuizForm({
       form.append("studentName", studentName);
       form.append("studentEmail", studentEmail);
       form.append("studentSchool", studentSchool);
+      form.append("studentPhone", studentPhone);
       form.append(
         "answers",
         JSON.stringify(
@@ -358,18 +360,34 @@ export default function QuizForm({
             />
           </label>
         </div>
-        <label className="block">
-          <div className="text-sm text-muted mb-1.5">
-            Escuela{" "}
-            <span className="text-xs text-muted-2 font-mono">(opcional)</span>
-          </div>
-          <input
-            className={inputCls}
-            value={studentSchool}
-            onChange={(e) => setStudentSchool(e.target.value)}
-            placeholder="Nombre de tu colegio"
-          />
-        </label>
+        <div className="grid md:grid-cols-2 gap-4">
+          <label className="block">
+            <div className="text-sm text-muted mb-1.5">
+              Número de celular <span className="text-accent-dark">*</span>
+            </div>
+            <input
+              type="tel"
+              className={inputCls}
+              required
+              value={studentPhone}
+              onChange={(e) => setStudentPhone(e.target.value)}
+              placeholder="6000-0000"
+              inputMode="tel"
+            />
+          </label>
+          <label className="block">
+            <div className="text-sm text-muted mb-1.5">
+              Escuela{" "}
+              <span className="text-xs text-muted-2 font-mono">(opcional)</span>
+            </div>
+            <input
+              className={inputCls}
+              value={studentSchool}
+              onChange={(e) => setStudentSchool(e.target.value)}
+              placeholder="Nombre de tu colegio"
+            />
+          </label>
+        </div>
         {progress && progress.allTalleres.length > 0 && (() => {
           const completedSet = new Set(progress.completed);
           const missing = progress.allTalleres.filter(
